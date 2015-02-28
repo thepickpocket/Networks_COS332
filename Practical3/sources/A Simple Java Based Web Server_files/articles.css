@@ -1,0 +1,163 @@
+A:link, A:visited, A:active {
+    text-decoration: none;
+  }
+
+#content 
+{
+    right: 30px;
+    left: 30px;
+    padding: 5px;
+    background-color: #FFFFFF;
+}
+#content a {text-decoration: none;}
+#content a:link {
+	color: #003399;
+	font-weight: bold;
+}
+#content a:visited {color: #0066FF;}
+#content a:hover {color: #000000;}
+body {background-color : #CCCCFF;}
+
+#prediv
+{
+	margin-left: 5%;
+}
+
+p {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: small;
+	font-style: normal;
+	color: #000000;
+	padding-right: 20px;
+	padding-left: 40px;
+	font-weight: normal;
+	background-color: #FFFFFF;
+	border-top: none #FFCC99;
+	border-right: none #FFCC99;
+	border-bottom: none #FFCC99;
+	border-left: none #FFCC99;
+	text-align: justify;
+	margin-right: 5%;
+  }
+
+.tabletext {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: small;
+    color: #000000;
+    background-color: #FFFFFF;
+    vertical-align: top;
+  }
+.tabletextsmall {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: x-small;
+    color: #0000CC;
+  }
+.tabletextvert {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: x-small;
+    color: #000000;
+    writing-mode: tb-rl;
+    filter: flipv fliph;
+  }
+.tablehead {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: small;
+    color: #000000;
+    background-color: #CCCCCC;
+    font-weight: bold;
+  }
+.tableheadvert {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: xx-small;
+    color: #000000;
+    font-weight: bold;
+    writing-mode: tb-rl;
+    filter: flipv fliph;
+  }
+.imgfloatright {
+	clear: none;
+	float: right;
+	margin: 10px;
+
+}
+.imgfloatleft {
+	clear: none;
+	float: left;
+	margin: 10px;
+
+}
+img{
+	border-style: none;
+}
+.articletitle
+{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: large;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 1.25;
+    color: #330000;
+    text-align: center;
+}
+h1 {
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: large;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 1.25;
+    margin-left : 1%;
+    margin-right : 5%;
+    border-bottom : 1px dashed #000000;
+    color: #330000;
+    text-align: left;
+}
+h2 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: medium;
+    font-style: normal;
+    font-weight: bold;
+    margin-left : 3%;
+    margin-right :5%;
+    border-bottom : 1px dashed #000000;
+    color: #330000;
+    text-align: left;
+}
+h3 {
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: small;
+    font-style: normal;
+    font-weight: bold;
+    margin-left : 5%;
+    margin-right :5%;
+    border-bottom : 1px dashed #000000;
+    color: #330000;
+    text-align: left;
+}
+
+ol {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: small;
+	padding-left: 10%;
+	list-style-position: outside;
+	list-style-type: lower-roman;
+	margin-right:5%;
+}
+.decimal
+{
+	list-style-type: decimal;
+}
+.code {
+	font-style: italic;
+	color: #666666;
+	display: inline;
+}
+.bibentrytitle
+{
+	font-style: italic;
+	color: #333333;
+	display: inline;
+}.strengthen {
+	font-weight: bold;
+}

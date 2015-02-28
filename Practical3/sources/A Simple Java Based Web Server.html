@@ -1,0 +1,2099 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0051)http://kcd.sytes.net/articles/simple_web_server.php -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>A Simple Java Based Web Server</title>
+
+<link href="./A Simple Java Based Web Server_files/articles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div id="content"> 
+  <p class="articletitle">A Simple Java Based HTTP Server</p>
+  <p> Written by Charles Dobson, May 2009<span class="printonly">, article accessed 28-Feb-2015</span>. Published on <a href="http://kcd.sytes.net/articles/index.php">kcd.sytes.net</a></p>
+	<p><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img alt="Creative
+	Commons License" style="border-width:0" src="./A Simple Java Based Web Server_files/88x31.png"></a><br>This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons
+	Attribution-Noncommercial-Share Alike 3.0 Unported License</a>.</p>
+  <h1>Introduction</h1>
+	<p>	The purpose of this document is to learn about the principles of server side development
+	through the development of a simple implementation of the http protocol.  In other words, to develop
+	a web server from an educational, learning perspective.
+	</p>
+	<p>The project begins by implementing a simple server that can respond to standard GET requests,
+	thereby providing the services required to serve a static web site.  Part two then investigates
+	incorporating CGI within the server, specifically using PHP, to provide dynamic processing
+	capabilities. Part three evaluates the server as it stands and suggests several areas for future
+	investigation and development.
+	</p>
+	<p>
+        The server will be developed in stages, each one being explained in this document and
+        supported by code that can be downloaded from the website (<a href="http://kcd.sytes.net/simplewebserver/index.php">http://kcd.sytes.net/simplewebserver</a>).  Readers are
+        encouraged to progress through the development following these stages and performing the suggested
+        tests at each stage.  This will maximise the understanding developed and enable the suggested
+        developments in part three to be tackled.  Where code is included directly in this tutorial it is
+        for illustrative purposes and in the interest of space and readability it will not contain comment
+        statements.  Readers are encouraged to download the appropriate version of the program at each stage
+        in the development process and to identify and then understand the code changes between the
+        versions.
+	</p>
+	<h2>Choice of Implementation Language</h2>
+	<p>This development could be implemented using any one of several common programming languages.
+	If performance was the key requirement then C or C++ would be the obvious choices.  In this case,
+	ease of development is more important than performance and the ability to run the resulting program
+	on different operating platforms is also a key requirement.  To this end, Java will be the language
+	used for this development, thus enabling the server to be implemented on Mac, Linux or Windows
+	platforms with no changes to the underlying code required. Java development can be done with a
+	simple text editor and some command line tools, however using an Integrated Development Environment
+	(IDE) dramatically increases the ease with which software can be developed.  Java is a cross
+	platform language and it is possible that users with different operating systems will be using this
+	tutorial so a cross platform IDE should be used.  Netbeans is such and IDE and it is open source but
+	can be resource intensive (especially the newer versions).  To enable use by those using less
+	powerful computers an older version of Netbeans has been used for this project, version 4.1 which
+	can be <a href="http://www.netbeans.info/downloads/all.php?b_id=521&src=1">downloaded for free</a>.
+	 Prior to installing Netbeans you need to download and install a version of the Java Software
+	Development Kit, any version from 1.4 or later will be suitable.
+	</p>
+	<h2>What is a Web Server</h2>
+	<p>A web server is simply an implementation of the HTTP protocol.  The HTTP protocol describes
+	how HTTP clients (web browsers) should communicate with HTTP server (web servers).  In simple terms,
+	the web server runs on a computer and listens or waits for a HTTP request from a client. Normally a
+	HTTP server will listen on a TCP/IP port, typically port 80, but this can effectively be any port
+	number over 1024.  The use of ports enables one physical machine to maintain multiple connections
+	simultaneously with many different services.  The first 1024 ports are reserved for named purposes,
+	some typical ones being 80 for HTTP, 110 for POP3 (email), 25 for SMTP (also email), 22 for SSH to
+	name but a few.  There are theoretically 65535 ports that can be used, although a computer using all
+	of these would be perhaps a little overworked!
+	</p>
+	<p>It is worth introducing here the concept of inbound and outbound ports. Whilst the server
+	might be listening on port 80, it cannot use port 80 to send out the requested resources as this
+	would tie up the port for further inbound requests.  An added problem is that request from the
+	browser might have been made from behind a firewall meaning that any incoming requests that are
+	expected in return must be expected by the firewall to allow them through.  The solution to these
+	problems is very simple once pointed out, the request from the browser will be being sent port 80 at
+	the server, but it will come from a different port number on the client.  This port number will be a
+	random port number that is greater than 1024, less than 65535 and not currently in use by any other
+	application. The browser opens this port number as part of the TCP/IP information in the request, it
+	then listens on this port for the response from the server.  In the meantime the server is busy
+	servicing the request and will then send this back to the browser on the same port from which the
+	request originated.  This process is how several browsers can run simultaneously on a computer at
+	any one time, where each of them receives only the pages meant for it.
+	</p>
+	<p>When the listening program (known as a service or daemon) gets notified of a request on its
+	port, it reads the characters being sent over the network via an input stream.  These characters
+	could theoretically be anything so the first job of any server is to determine if the message being
+	read conforms to the expected format of the protocol being used.  Protocols are typically simple in
+	concept but extensive in detail.  Fully implementing the HTTP protocol would be a long and
+	complicated task.  If a full implementation of the HTTP protocol is required then you should use one
+	of many freely available web servers such as Apache.  To understand the principles of server
+	development a subset of the protocol is all that is required, implementing the complete detail of
+	the protocol is usually an exercise in more of the same and would not necessarily add deeper
+	understanding.  For these reasons, this development will initially concentrate on providing the
+	functionality to service typical GET requests, recognise incorrectly formatted HTTP requests and
+	notify the client of unsupported features. Part three of this document will extend the server
+	functionality to enable the generation of dynamic pages using the CGI protocol and PHP. Section 4
+	will then suggest several enhancements that could be undertaken to further your knowledge.
+	</p>
+	<h1>Part One - the GUI Interface (Version 0.1)</h1>
+	<p><img src="./A Simple Java Based Web Server_files/web_server_basic_gui.png" alt="The layout of the web server user interface" width="340" height="322" class="imgfloatright">The first stage is to think about the server from
+	the users perspective, what operations will the user want to perform with the server and what
+	information will they want to be able to view or amend.  Firstly the obvious things, the server will
+	need to be able to be started and stopped; a facility to set the directory out of which documents
+	are served will be required; the port number on which the server will listen will need to be
+	specified; the current status of the server should be obvious and finally a field in which general
+	status messages can be displayed would be useful. Figure 1 shows how the GUI might appear at this
+	stage, and the code for this can be <a href="http://kcd.sytes.net/simplewebserver/KCDWebServer0.1.tar.gz">downloaded
+	as a zipped folder</a>.
+	</p>
+	<p>In terms of control, it is important to ensure that the server is not closed down when it is
+	running, so the facility to stop the server will be turned off when the server is started.
+	Similarly it will be undesirable to allow the user to change the port number or the Document Root
+	once the server is listening, therefore these facilities will also be disabled when the server is
+	started.  When the server is stopped, these items can be re-enabled.  Some error handling and
+	checking can be included at this early stage also, for example if the port number is changed it
+	needs to be a valid number (between 1024 and 65535) or if the document root is changed then the
+	folder needs to actually exist.Rather than explain all of the code required to build the interface
+	as shown above, it is simpler to download the code from the website associated with this document
+	and use this as the starting point for your own coding.  As stated above, the code is provided as a
+	<a href="http://kcd.sytes.net/simplewebserver/KCDWebServer0.1.tar.gz">Netbeans project (in a zipped folder)</a>.
+	</p>
+	<h2>Testing the GUI, Version 0.1</h2>
+	<p>Testing software thoroughly throughout the development process is an effective way of
+	improving the quality of the final product.  Another technique to improve the quality of software is
+	to reduce the chances of errors being introduced into the system.  For these reasons the GUI will be
+	designed to try and prevent users making errors, for example the port number must be numeric and
+	between 1024 and 65535; the document root directory must exist; and the server cannot be started
+	once it has already started or stopped if it is already stopped. The testing at this stage therefore
+	is to ensure that these characteristics work as expected.  Compile and build version0.1 and then try
+	to find some problems with the program (if you find any, let me know!).
+	</p>
+	<p>Performing tests such as this during the development will enable errors to be spotted as soon
+	as possible.  It will also ensure that the core elements of the system (those developed first) will
+	receive the most testing upon final completion (as they will be tested after each update or addition
+	to the system).  Once you have tested the software proceed to Part Two, developing the actual server
+	itself. Some example tests that can be performed are:
+	</p><ol>
+		<li>try to enter an incorrect Port number;</li>
+		<li>try to fool the system into using a non-existent document root folder;</li>
+		<li>try to cause the various controls to become active or inactive at inappropriate
+		times;</li>
+		<li>try to use the controls that are disabled.</li>
+	</ol>
+	<p></p>
+	<h1>Part Two, a simple server for static resources</h1>
+	<p>Now that the basic interface has been created the server itself can be developed.  This stage
+	requires the creation of a program that listens to a specified port on the local machine.  Once a
+	message has been received on this port, the server will parse the message to make sure that it is in
+	the required format (HTTP) and then respond accordingly, normally by returning the resource that has
+	been requested or an appropriate error code.
+	</p>
+	<h2>Step One - Listening on an IP/Port socket (Version 0.2.1)</h2>
+	<p>The server itself needs to run in a separate thread to the GUI interface as the server needs
+	to constantly listen for incoming connections on the specified port. Running this in the same thread
+	as the GUI would cause the GUI to become unresponsive whilst the server listened and there would be
+	no way to then stop the server from listening!  This isn't as complicated as it sounds but the code
+	can become tricky and the resulting program no longer behaves in a traditional structured manner as
+	there are multiple threads running simultaneously which means that code in different parts of the
+	program can theoretically be executed simultaneously.  Care must be taken to ensure that problems do
+	not occur with code that might change operating principles of other code as a result of this thread
+	activity.  In Java this can be achieved by synchronising these inter-dependant functions.
+	</p>
+	<p>The first set of methods that can be written in the Server class are those to set and get the
+	various operating parameters of the server, in our case these are the port number and the document
+	root.  We must also provide a method of attaching the server class to the controlling GUI, otherwise
+	status messages cannot be relayed back from the server (it wouldn't know where to send them!). The
+	server class is instantiated from the GUI class and will ultimately have an operating status (true
+	for running and false for stopped).  This will allow the status to be checked before the server is
+	started or stopped from the GUI and for the program to respond accordingly.  When the server is
+	started the basic configuration parameters of port number and document root will be passed from the
+	GUI to the Server, this will be done for each start of the server to simplify the code (rather than
+	checking if these values have changed in the GUI before sending them through to the Server).  Any
+	error checking of these values therefore needs to be done in the GUI, good programming practice
+	would also dictate that further error checking is done by the server itself.  Errors to check for
+	include the use of a 'free' port number in the correct range (&gt; 1024) and the selection of a
+	document root that actually exists.  This error handling has been built into the GUI in Version 0.1
+	</p>
+	<p>To enable the Server class to run in its own thread it needs to implement the runnable
+	interface and have a method called run() which contains the code to execute when the thread is
+	started.  Early versions of Java allowed threads to be paused but this can lead to problems, so
+	control of threads in newer versions of Java is handled through the use of synchronised methods.
+	Threads and synchronisation are quite complicated concepts, as is multi-threaded programming in
+	general, but explanations will be offered throughout this tutorial where they are used.
+	</p>
+	<p>The run() method in the KCDWebServer class will contain the continuous loop to listen to the
+	network socket, as well as the code to handle the synchronised server start and stop interactions.
+	The server will effectively be in a continuous loop (inside the run() method) waiting for incoming
+	messages on the designated port.  When the user chooses to stop the server we have to find some way
+	of stopping the thread running without closing it down - as it would have to be initialised and
+	restarted again.  However the server, once running is in a continuous loop, inside of which is a
+	statement, accept(), that effectively sits and waits for an incoming message on a network socket.
+	The server therefore must receive and process a HTTP process message before it can be stopped!  To
+	avoid this problem synchronised statements can be used to effectively jump to a different section of
+	code when a call to the notify() method is executed.  Synchronised functions can make a call to the
+	notify() function which can effectively wake a Thread from the waiting state.  A thread can be put
+	into the wait state with a call to the wait() function.
+	</p>
+	<p>The following sections of commented code explain the main elements of the Server process and
+	how the Server is started and stopped.
+	</p>
+	<h2>Changes to the KCDWebServer Class</h2>
+	<h3>Make the Web Server Runnable (KCDWebServer class)</h3>
+<p>Alter the class defintion to be:</p>
+<div id="prediv">
+	<pre class="code">public class KCDWebServer implements Runnable{
+	</pre>
+</div>
+<h3>Adding new properties (KCDWebServer class)</h3>
+<p>These properties can be added to the KCDWebserver class, immediately below the portNumber and
+docRoot properties under the class definition itself.
+</p>
+<div id="prediv">
+	<pre class="code">	// alter the serverStatus property so that it can be accessed by all instances 
+	// of a server class
+	private static volatile boolean serverStatus;
+	// serverSocket is used to listen for incoming requests on the network
+	private ServerSocket serverSocket; 
+	// the request property is used to store the incoming request as it is read from
+	// the input stream, we impose a 2K limit
+	StringBuffer request = new StringBuffer(2048);
+	</pre>
+	</div>
+	<h3>The Server Algorithm (KCDWebServer class)</h3>
+	<p class="code">
+	</p><div id="prediv">
+	<pre class="code">public void run()
+{
+	while (true)  //Set up the continuous loop
+	{
+		// create the socket, input and output stream objects
+		Socket socket = null;
+		InputStream input = null;
+		OutputStream output = null;
+		try
+		{
+			//This identifies a section of code that is synchronised with other
+			// sections of code for Thread management purposes
+			synchronized(this) 
+			{
+				//While the server is turned off, enter the wait state
+				while (getStatus() == false) 
+				{
+				  	// this code will effectively halt the server at this point
+				  	// until the serverStatus is set to true. When the user 
+					// brings the Server back Up a call to Notify() will 'wake' 
+					// the server at this point and exit this loop.
+				  	wait();
+				}
+			}
+		}
+		  // it is possible that an exception may occur, if so catch this and
+		// output the exception message
+		catch (InterruptedException e)
+		{
+		  System.out.println(e.getMessage());
+		}
+		// If we get to this point, then the server is On and has been woken
+		// from the wait state.  So, begin listening for incoming messages.
+		try 
+		{
+			// The accept() method in the socket class listens for an 
+			// incoming socket connection.
+			socket = serverSocket.accept();
+			// If we get to this point then the accept() method has returned a value.
+			// This can be done in one of two ways, either a message has arrived at the
+			// socket in question, or the server has been turned off, causing it to enter
+			// the wait state once again (closing the socket down in the process). So we
+			// should check to see if server is still active, as the accept may have
+			// returned because the port has been closed, in which case there will be no
+			// message to process.
+			if (getStatus()==true)
+			{
+				// Server is still Up, so a message must have been received.
+				// Set up the incoming and the outgoing data streams
+				input = socket.getInputStream();
+				output = socket.getOutputStream();
+				// For testing purposes at this stage, simply echo the request to the 
+				// system output stream.
+				// Read a set of characters from the socket into a byte buffer and then
+				// transfer to a string buffer.
+				int i;
+				byte[] buffer = new byte[2048];
+				try 
+				{
+					// Read the data coming in on the socket into a buffer
+					i = input.read(buffer);
+					for (int j=0; j&lt;i; j++) 
+					{
+							//copy the data to a 	string buffer to make manipulation easier
+							request.append((char) buffer	[j]);
+					}
+					// At this stage we simple output the received data to the standard 
+					// output stream.  As the server develops we will Parse the 
+					//incoming message here and find and return the requested resource.
+					System.out.println(request.toString());
+					// Output to message area for testing purposes
+					owner.setStatusMessage(request.toString());
+				}
+				catch (IOException e) 
+				{
+					e.printStackTrace();
+					i = -1;
+				}
+			 }
+			 // Close the socket after each Request
+			 socket.close();
+		}
+		catch (Exception e) 
+		{
+	  		// Exception can be thrown legally if socket has been closed whilst accept() 
+	  		// is open i.e. if server has been stopped by the user.
+	  		// If this isn't the case then print the stacktrace
+	  		if (getStatus()==false)
+	  		{
+				 System.out.println(e.getMessage());
+	  		}
+			else
+			{
+				e.printStackTrace();
+			}
+			continue;
+		}
+		// The loop will now re-start and the server will continue
+		// to listen and respond.
+	}
+}
+	</pre>
+	</div>
+	<p></p>
+	<h3>Starting the Server (KCDWebServer class)</h3>
+	<div id="prediv">
+	<pre class="code">public synchronized void startServer(KCDWSGui owningUI,int port,String docroot)
+{
+	// Set the server operating parameters passed in from GUI
+	setOwner(owningUI);
+	setPort(port);
+	setDocRoot(docroot);
+	String message = new String(); //used for status messages
+	message = "Starting server on port "+Integer.toString(port)+"...";
+	owner.setStatusMessage(message);
+	// Start the server, or at least try to...Open the SocketServer on the specified port
+	try 
+	{
+		serverSocket =  new ServerSocket(port, 1,InetAddress.getByName("127.0.0.1"));
+	}
+	catch (IOException e) 
+	{
+		System.out.println(e.getMessage());
+		e.printStackTrace();
+		// Serious problem so quit the server entirely
+		System.exit(1);
+	}
+	// Set the server status to true, then wake the run() thread by notifying the wait()
+	// state.
+	this.serverStatus = true;
+	serverNotify();
+}
+	</pre>
+	</div>
+	<h3>Stopping the Server (KCDWebServer class)</h3>
+	<div id="prediv">
+	<pre class="code">public void stopServer()
+{
+	// Flag to the system that the server has been requested to stop
+	// this will prevent an Exception being reported by the 
+	// Accept method of the socket when it exits due to the socket being closed.
+	serverStatus = false;
+	// Close the socket down
+	try
+	{
+		serverSocket.close();
+	}
+	catch(IOException e)
+	{ 
+		System.out.println(e.getMessage());
+		e.printStackTrace();
+		// Serious problem so quit Server entirely
+		System.exit(1);
+	}
+}
+	</pre>
+	</div>
+	<h3>The notify() Method (KCDWebServer class)</h3>
+	<div id="prediv">
+	<pre class="code">private synchronized void serverNotify() 
+{ 
+	// The notify() method allows the server to be interrupted and stopped whilst it is 	//
+	listening on the 
+	// active port. If this methof were not synchronised then the server would have to 	//
+	respond to one final HTTP request before it would actually stop. 
+	notify(); 
+}
+	</pre>	
+	</div>
+<h3>Changes to the KCDWSGui Class</h3>
+<h3>Add New Properties.</h3>
+<p>Add a new property after the current properties immediately below the class definition:
+</p>
+	<div id="prediv">
+	<pre class="code">boolean firstStart;
+	</pre>	
+	</div>
+<h3>Set up the Thread for the Server class</h3>
+<p>In the KCDWSGui() constructor method, add the following code after the myHttpServer = new
+KCDWebServer(); line.
+</p>
+<div id="prediv">
+	<pre class="code">	myThread = new Thread(myHttpServer);
+	myThread.start();
+	</pre>	
+	</div>
+<p>Add the following line at the end of the constructor method, this simply outputs to the console
+that the server has started.</p>
+<div id="prediv">
+<pre class="code">	System.out.println("KCD Web Server up and running!");
+</pre>
+</div>
+	<h3>Testing the server at this stage</h3>
+	<p><img src="./A Simple Java Based Web Server_files/webserver0.2.1_testing.png" alt="Testing the Web Server Interface" width="435" height="350" class="imgfloatright">At this point we should have a server process that
+	can be started and stopped on a specific port.  This process should be able to read whatever is sent
+	to it but simply echo it to the console from which the server process was started.  We can test that
+	this works by starting the server and connecting to it using a console client such as telnet or even
+	through a browser. Figure 2 shows the Servers' status message area outputting an entire HTTP request
+	originating from a web browser.  The Web Browser is displaying a blank page because the server at
+	this point is not replying with anything.  Using the status message area like for testing purposes
+	is a quick and easy way to see what is happening with the system.  It would be usual for a Web
+	Server to save a compressed version of all requests into a log file.  This can be analysed to find
+	out user habits and usage for a particular web site.
+	</p>
+	<p>Further tests that can be done at this stage are to:</p>
+	<ol>
+		<li>check that the server can be stopped;</li>
+		<li>check that the server can be restarted after being stopped;</li>
+		<li>check that the port number can be changed;</li>
+		<li>check that the server is not still listening after the GUI has been closed down;</li>
+		<li>check that the console output matches whatever has been sent form the client
+		application.</li>
+	</ol>
+	<p>The code for this version of the Web Server can be <a href="http://kcd.sytes.net/simplewebserver/KCDWebServer0.2.1.tar.gz">downloaded</a> from the companion website. 
+        <br>
+        <br>
+      </p>
+<h2>Step Two - Recognising a HTTP Request (Version 0.2.2)</h2>
+<p>Now that we have a server that can listen to a specified port, we need to be able to process the
+messages that it may receive.  The message will be sent to the server as plain text and will
+therefore need to be parsed to extract the various elements expected in a typical HTTP request.
+Parsing is the process of transforming data from one format to another, in this case from plain text
+into the constituent parts of a HTTP Request.</p>
+<p>
+The code in the Server class does not need to change much at this stage, in fact it will be reduced
+in size.  Instead a new class will be written, a request class, which can be used to parse the
+incoming messages and store the constituent elements of the request.  This class will be called the
+KCDHTTPRequest class.</p>
+<p>
+As in previous stages the code for this version is available on the companion website as
+version0.2.2, however some of the key elements of the code will be discussed here to explain the
+processing involved.</p>
+<h3>Changes to KCDWebServer class</h3>
+<p>As stated above, the code in the main server class at this stage is actually cut back.  The code
+from Version0.2.1 that was used to extract and echo the request from the client is removed and put
+inside the new KCDHTTPRequest class.  The revised run() method is shown below and the amended code
+is shown in bold.  As well as these amendments, the declaration of the request variable has
+changed.  It was, in Version0.2.1, defined in run() as a StringBuffer but is now defined as an
+instance of the new class KCDHTTPRequest inside the run() method.
+</p>
+<div id="prediv">
+<pre class="code">public void run()
+{
+	// Continuous loop waiting for a request
+   while (true) 
+   {
+		// create the socket, input and output stream objects
+      Socket socket = null;
+      InputStream input = null;
+      OutputStream output = null;
+      try
+      {
+      	synchronized(this)
+         {
+				while (getStatus() == false)
+				{
+					// this code will effectively halt the server at this point
+					// until the serverStatus is set to true (i.e. Bring the Server Up)
+					wait();
+				}
+			}
+      }
+      catch (InterruptedException e)
+		{
+			System.out.println(e.getMessage());
+		}
+		try 
+		{
+			// accept() listens for an incoming socket connection
+			socket = serverSocket.accept();
+			// check to see if server is still active, as accept may have
+			// returned because the port has been closed
+			if (getStatus()==true)
+			{
+				input = socket.getInputStream();
+				output = socket.getOutputStream();
+<strong>
+				// Pass the input stream to the HTTP Object and parse it
+				KCDHTTPRequest request = new KCDHTTPRequest(input);
+				// Parse the entire request, this method returns and error code
+				int parsecode = request.parseEntireRequest();
+				if (parsecode&gt;0)
+				{
+					owner.setStatusMessage(request.getErrorMessage()+"\n");
+				}
+				else
+				{
+					//Continue and process the HTTP Request.
+					// For testing purposes in Version 0.2.2, simply output the request
+					owner.setStatusMessage(request.getHTTPRequest()+"\n");
+				}
+</strong>
+			}
+			// Close the socket
+			socket.close();
+		}
+		catch (Exception e) 
+		{
+			// Exception thrown legally if socket has been closed whilst accept() is open
+			// i.e. if server has been stopped by the user.
+			// if this isn't the case then print the stacktrace
+			if (getStatus()==false)
+			{
+				System.out.println(e.getMessage());
+			}
+			else
+			{
+				e.printStackTrace();
+			}
+			continue;
+		}
+		// if all is OK, then the loop re-starts and the server will continue
+		// to listen and respond.
+	}
+}
+</pre>
+</div>
+<p>
+This revised code now creates and instance of the new class, KCDHTTPRequest and then passes the
+input stream directly to it.  This class is then responsible for parsing the request, and after
+doing so it will return an error code.  A value of 0 means that there were no errors and the request
+was formatted correctly, a value other than 0 means that an error has occurred in parsing, this
+would more than likely be due to an incorrectly formatted HTTP request.  In the event of an error
+occurring the server is asked to return a corresponding error message, which is then output to the
+status message area.  In a real implementation of the protocol this would be logged in a log file
+and may even trigger an alert of some description as given that HTTP requests should be coming from
+standardised browsers, errors in request format would signify a non-standard client being used or a
+hacking attempt being made. In the event of no error being reported, the request can be processed,
+this will be explored in Version0.2.3.
+</p>
+<h3>Create a new class called KCDHTTPRequest</h3>
+<p>File --&gt; New --&gt; Java Class<br>
+Class name = KCDHTTPRequest</p>
+<p>
+Import the following libraries - immediately prior to the class definition.</p>
+<div id="prediv">
+<pre class="code">import java.io.*;
+</pre>
+</div>
+<p>Create properties as below (inside the class definition but before the KCDHTTPRequest class constructor)</p>
+<div id="prediv">
+<pre class="code">	private String HTTPRequest;
+	InputStream input;
+	StringBuffer request = new StringBuffer(2048);
+	String requestMethod;
+	String requestURI;
+	String requestProtocol;
+	String requestHostname;
+	int errorcode = 0;
+</pre>
+</div>
+<p>Then add the code segments below to this new class.</p>
+<h3>Parsing the Initial request in the KCDHTTPRequest class</h3>
+<p>As stated previously, the parsing method is now inside the KCDHTTPRequest class and is pretty
+much the code from the Server class in version0.2.1 that read the request from the input stream and
+echoed it back.</p>
+<div id="prediv">
+<pre class="code">private void parse() 
+{
+	// Read a set of characters from the socket
+	// i.e. extract the HTTP request from the socket
+	int i;
+	byte[] buffer = new byte[2048];
+	String returnString;
+	try 
+	{
+		i = input.read(buffer);
+	}
+	catch (IOException e) 
+	{
+		e.printStackTrace();
+		i = -1;
+	}
+	for (int j=0; j<i; j++)="" {="" request.append((char)="" buffer[j]);="" }="" httprequest="request.toString();" write="" the="" request="" in="" its="" entire="" form="" to="" standard="" output="" stream="" usually="" console="" window.="" if="" a="" log="" file="" were="" be="" kept="" this="" code="" could="" replaced="" with="" append="" file.="" that="" way,="" complete="" record="" of="" all="" requests="" made="" server="" (apache="" does="" this).="" then="" used="" analysis="" traffic="" or="" identification="" problems.="" system.out.println(request.tostring());="" <="" pre="">
+</i;></pre></div>
+<p>This parse method is called from the class constructor as shown below:</p>
+<div id="prediv">
+<pre class="code">public KCDHTTPRequest(InputStream in)
+{
+	//The constructor simply gets passed the message stream from the Server
+	// and stores this in a local variable for Parsing and processing
+	input = in;
+	parse();
+}
+</pre>
+</div>
+<p>The parsing at this stage is simply reading the characters from the input stream, no processing
+is carried out, this is performed in the method parseEntireRequest() called from the server class.
+The parseEntire Request method extracts the various components of a typical HTTP request.  As this
+is not a full implementation of the HTTP protocol and only a demonstration, this method is very
+simplified, but it provides an example of the Request can be checked against the protocol and
+elements identified.
+</p>
+<div id="prediv">
+<pre class="code">public int parseEntireRequest()
+{
+	String requestString = request.toString();
+	// Strip out the Request Method
+	int index1, index2;
+	// Locate the first Space in Request
+	index1 = requestString.indexOf(' '); 
+	if (index1 != -1 &amp;&amp; index1&gt;0) 
+	{
+		// Extract substring containing request method, read up to first space
+		setMethod(requestString.substring(0,index1)); 
+		// Locate second space in request, signifies the end of the requested resource
+		index2 = requestString.indexOf(' ', index1 + 1);
+		if (index2 &gt; index1)
+		{
+			// Extract substring containing URI
+			setURI(requestString.substring(index1 + 1, index2)); 
+			index1 = index2+1;
+			// Locate first CRLF
+			index2 = requestString.indexOf("\r\n", index1); 
+			if (index2 &gt; index1)
+			{
+				// Extract substring containing Protocol
+				setProtocol(requestString.substring(index1,index2)); 
+				index1 = index2+1;
+				// Locate Second CRLF
+				index2 = requestString.indexOf("\r\n", index1+1); 
+				if (index2 &gt; index1)
+				{
+					// Extract substring containing Hostname and Port
+					setHost(requestString.substring(index1+1,index2)); 
+				}
+				else
+				{
+					errorcode = 4; // Error in extracting Hostname and Port
+				}
+			}
+			else
+			{
+				errorcode = 3; // Error in extracting Protocol Information
+			}
+		}
+		else
+		{
+			errorcode = 2; // Error extracting URI from Request
+		}
+	}
+	else
+	{
+		errorcode = 1; //Could not extract Request Method
+	}
+	return errorcode; 
+}
+</pre>
+</div>
+<h3>Other required methods (KCDHTTPRequest class)</h3>
+<p>The remaining code below is required to supply the public interface to the new class and to handle the error codes
+produced by the parsing of the HTTP Request.</p>
+<div id="prediv">
+<pre class="code">	public InputStream getInput()
+	{
+		// Get the input stream back (for debugging or logging purposes)
+		return input;
+	}
+	public String getHTTPRequest()
+	{
+		return HTTPRequest;
+	}
+	public String getErrorMessage()
+	{
+		String errormessage;
+		switch(errorcode)
+		{
+			case 1:
+				errormessage="Parse Error 01 - Could not extract request Method";
+				break;
+			case 2:
+				errormessage="Parse Error 02 - Error extracting URI from Request";
+				break;
+			case 3:
+				errormessage="Parse Error 03 - Error extracting Protocol from Request";
+				break;
+			case 4:
+				errormessage="Parse Error 04 - Error extracting hostname and port";
+				break;
+			default:
+				errormessage="Parse Error 00 - Unkn own Error";
+				break;
+		}
+		return errormessage;
+	}
+
+	public String getRequest()
+	{
+		return request.toString();
+	}
+	private void setMethod(String method)
+	{
+		requestMethod = method;
+	}
+	public String getMethod()
+	{
+		return requestMethod;
+	}
+	private void setURI(String uriin)
+	{
+		requestURI = uriin;
+	}
+	public String getURI()
+	{
+		return requestURI;
+	}
+	private void setProtocol(String protin)
+	{
+		requestProtocol = protin;
+	}
+	public String getProtocol()
+	{
+		return requestProtocol;
+	}
+	private void setHost(String hostin)
+	{
+		requestHostname = hostin;
+	}
+	public String getHost()
+	{
+		return requestHostname;
+	}
+</pre>
+</div>	
+<h3>Testing Version 0.2.2</h3>
+<p>The code for this version of the Web Server can be <a href="http://kcd.sytes.net/simplewebserver/KCDWebServer0.2.2.tar.gz">downloaded</a> from the companion website. </p>
+<p>At this stage we should now have a basic server that can correctly recognise a HTTP Request or
+report an appropriate error message if this is not the case.  Logically therefore the testing at
+this stage should be based around trying to get the server to incorrectly report either an error or
+a valid HHTP request recognition message.  The server still does no processing of the HTTP request
+but if the request is identified as being valid it will output the entire request to the status
+message area as per version 0.2.2.  In the event of an error being identified then an appropriate
+error message should be output to the status area.</p>
+<p>For testing purposes the list below shows the error messages that the server should be able to
+identify and report.
+</p><ol><li>errorcode = 1; //Could not extract Request Method</li>
+<li>errorcode = 2; // Error extracting URI from Request</li>
+<li>errorcode = 3; // Error in extracting Protocol Information</li>
+<li>errorcode = 4; // Error in extracting Hostname and Port</li>
+</ol>
+<p></p>
+<p>To test that these error messages report correctly we need to devise some tests.</p>
+<h3>Testing for error code 1</h3>
+<p><img src="./A Simple Java Based Web Server_files/testing0.2.2_1.png" alt="testing server for request method recognition" width="600" height="300" class="imgfloatright">The first error is to identify the request method,
+at this point there is no check on whether a valid request method has been received, that will come
+in the next version.  The code simply extracts the first series of characters in the request,
+stopping at the first SPACE.  In the http protocol this portion of the request should be the request
+method.  To recognise a request with no Request method we therefore need to send an empty request or
+a request with no space before the request ends.  To do this the simplest method is to connect to
+the server using Telnet and perform the following tests.
+</p>
+<ol class="decimal">
+<li>Start the server and then open a command prompt and type telnet localhost 8080 to connect to the
+server.  You should be presented with a blank line at the terminal.  Simply press enter, this will
+send a message to the server, which in this case is blank.  The server should report error 1</li>
+<li>Repeat the process, but this time type some text (no spaces) and hit enter.  Again the server
+should report error 1</li>
+<li>Next try to convince the server that a Request Method has been sent by entering a space as the
+first character.  Again the server should report error 1</li>
+<li>Finally repeat the process and type some text followed by a space and hit enter, this time the
+server should report a different error, showing that the first few characters sent have been
+identified as the Request Method.</li>
+</ol>
+<p>Figure 3. shows the Server being tested for the correct recognition of the Request Method, the
+Telnet connections have been made from the command prompt (right hand window) and the Server has
+reported the appropriate error messages (left hand window).
+</p>
+<h3>Testing for error code 2</h3>
+<p><img src="./A Simple Java Based Web Server_files/testing0.2.2_2.png" alt="testing server for correctly recognising URI portion of a HTTP Request" width="600" height="300" class="imgfloatright">
+The next tests will check that the
+server correctly extracts the second part of a HTTP message, the URI.  This part is obviously
+crucial as this identifies the resource that the server is being asked to return to the client.  the
+URI is the second element of the HTTP request, it should be located immediately after the Request
+method and separated from the request method by a space character.  A space character terminates a
+URI, which is why you are not permitted to have spaces in URI's. You may have %20 in URI's and
+wondered what they are. %20 is the Hexadecimal code for the ASCII space character (decimal 32), and
+replaces any spaces is a URI.  A client should automatically convert any spaces in a URI to %20 and
+the server can then decode these back at the other end.</p>
+<p>In the following tests the word [enter] signifies the pressing of the enter key, this text should
+not be entered into the Telnet connections.  To test the server for error code 2 we need to devise
+some test s similar in context to those for error 1 but with a valid Request Method forming the
+first part of the HTTP request.</p>
+<ol class="decimal">
+<li>Firstly let us test for no URI being entered, we need to send a correctly formatted Request
+Method followed by nothing!  Once again use Telnet to connect to the Server and send a GET request.
+telnet localhost 8080 [enter] GET [enter] note the space after the GET.  This is the test that was
+performed lastly for error code 1.  The server should report error 2, in other words it has
+correctly extracted the Request Method but has not found a URI.</li>
+<li>The second test is to simply enter two spaces after the Request method to try and convince the
+server that a URI has been entered.  The server should correctly recognise that there is nothing in
+between these two spaces and report error 2.</li>
+<li>The third test is to send a request for a resource but to not send a terminating space after the
+URI.  The server should again report error 2.</li>
+<li>The fourth test s to ensure that a URI can be extracted from the HTTP message, remember that we
+are not trying to validate the URI at this stage, that will be done later, but to simply recognise
+and extract the appropriate segments from the HTTP request.  For this test send a valid request,
+something like the following GET /test.html [enter] Note the final space after test.html.</li>
+</ol>
+<p>
+Figure 4. shows the Telnet sessions and the servers' responses in the status message area for tests
+described above.  The final test shows that the server has successfully extracted the Request Method
+and the URI portions of the HTTP Request.  The next element is to extract the protocol information
+from the Request; this states which version of the HTTP protocol the client making the request is
+using.</p>
+<h3>Testing for error code 3 and error code 4</h3>
+<p><img src="./A Simple Java Based Web Server_files/testing0.2.2_3.png" alt="Testing server from a browser" width="600" height="300" class="imgfloatright">At this point we can identify the request method and the URI that is being
+requested.  We haven't done any checking to see if either of these are valid, but we simply know how
+to extract them from the HTTP Request.  The next element of the HTTP request is the Protocol
+Version; this is in the format HTTP/x.x where x.x represents the version number (normally 1.1).
+This is then terminated with carriage return and linefeed characters.  This now presents us with a
+slight problem for testing.  in order to successfully test this we need to be able to send the
+Carriage return and Linefeed characters but without hitting the actual ENTER key (as this will
+terminate our communications with the Server and thereby send an incomplete message.  Telnet is not
+the ideal method to do this and special characters like Carriage returns and line-feeds can be sent
+using control characters and escape codes.  However this is becoming a little over-complicated for
+our needs, especially as this is only an example implementation of a HTTP Server.  At this point
+therefore we will have to resort to using a standard web browser to send the requests so we will
+test for errors 3 and 4 simultaneously.  Error 4 will be produced if the Host and Port Number cannot
+be extracted from the HTTP message.  The remainder of the HTTP Request sent from a typical browser
+will be ignored in this example implementation but it is worth examining to see what additional
+information a typical browser sends.  Given that we are now going to be using a browser to test the
+Server we would not expect incorrectly formatted HTTP Requests to be issued, therefore it is
+expected that the following tests work without reporting errors.</p>
+<ol class="decimal">
+<li>Start the server and then open a browser.  Change the URI in the browser to be
+http://localhost:8080/ and hit the enter key.  You should see the entire HTTP request printed out in
+the Server status area; the browser however will simply display a blank page, as nothing will be
+sent back from the Server just yet.</li>
+</ol>
+<p>Figure 5. shows the server being sent a request from a typical browser and the entire HTTP
+request is captured and echoed to the status message area.  It can be clearly seen that a great deal
+of information is sent with every single HTTP request, for our implementation however we are only
+using the bare essential elements of a HTTP request.
+</p>
+<h2>Step Three - Processing the HTTP Request (Version 0.2.3)</h2>
+<p>The next stage in the development process is to begin performing some validation upon the HTTP
+request to determine what resource has been requested, whether that resource exists and return
+either an error message or the requested resource back to the requesting client.  Remember that at
+this point we are simply dealing with static requests and will not be attempting to perform any
+processing of the contents of the requested resources, if they exist they will simply be read and
+sent to the client.  We will need a new class for this stage, a HTTP Response class.  Following
+previous naming conventions we will call this class KCDHTTPResponse.  An instance of this class can
+be created if and when a HTTP request has been accepted, i.e. passed the tests described in
+Version0.2.2.</p>
+<p>For static requests the KCDHTTPRequest object is fairly straightforward and is used to open and
+read the contents from a specific file (identified by the URI) and then echo this data back to the
+requesting client.  The method will also be responsible for identifying some of the common HTTP
+error messages such as 404: file not found or 501: Method not supported.</p>
+<h3>Changes to KCDWebServer class</h3>
+<p>The changes to the main server class are very minor at this stage. Rather than show the whole
+run() method as in the Version0.2.2 the following code is the amended section which is on the <span class="code">else</span> clause of the <span class="code">if (parsecode&gt;0)</span> clause.</p>
+<div id="prediv">
+<pre class="code">//Continue and process the HTTP Request.
+// For testing purposes in Version 0.2.2, simply output the request
+//owner.setStatusMessage(request.getHTTPRequest()+"\n");
+// Create a new KCdHTTPResponse object and set the output stream
+// and the owning server accordingly.
+KCDHTTPResponse response = new KCDHTTPResponse(output,this);
+// Read the request method to see if a GET, POST etc.
+if (request.getMethod().compareTo("GET")==0)
+{
+	// Request was a GET request, so pass to Response object for further processing
+	response.setRequest(request);
+}
+else
+{
+	// At this stage the server only handles GET requests, any otehr request therefore should
+	// return a 501 method not Supported error.
+	response.returnError(501);
+}
+</pre>
+</div>
+<p>As can be seen in the above code, the Server checks to see if the request method was a GET and if
+so it passes the request to the response object for further processing otherwise it reports an error
+message stating that the request method used is not supported.</p>
+<h3>The KCDHTTPResponse class</h3>
+<p>The response class is much simpler than the request class and for static resources it simply
+locates a file (by concatenating the webroot folder specified in the GUI and the requested URI to
+from a complete URI.  If the file exists its contents are echoed back to the client, if it does not
+exist then a 404 file not found is returned.</p>
+<div id="prediv">
+<pre class="code">package kcdwebserver;
+import java.io.*;
+/**
+ *
+ *  @author Charles Dobson
+ */
+public class KCDHTTPResponse
+{
+	private static final int BUFFER_SIZE = 1024;
+	OutputStream output;
+	KCDHTTPRequest request;
+	KCDWebServer owner;
+	public KCDHTTPResponse(OutputStream output,KCDWebServer owningServer) 
+	{
+		//Set the output stream so the reponse object knows where to send its output.
+		this.output = output;
+		owner = owningServer;
+	}
+	public void setRequest(KCDHTTPRequest request)
+	{
+		this.request = request;
+		try
+		{
+			int responsecode = sendStaticResource();
+			if (responsecode!=0)
+			{
+				// an error occurred in the resource request, output appropriate error message
+				returnError(responsecode);
+			}
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+	}
+	public int sendStaticResource() throws IOException 
+	{
+		// Set up the standard return code, 0 if processed OK.
+		// Any other value means an error has occurred.
+		int returncode = 0;
+		byte[] bytes        = new byte[BUFFER_SIZE];
+		FileInputStream fis = null;
+		try 
+		{
+			File requestedfile  = new File(owner.getDocRoot(), request.getURI());
+			if (requestedfile.exists()) 
+			{
+				fis    = new FileInputStream(requestedfile);
+				int ch = fis.read(bytes, 0, BUFFER_SIZE);
+				while (ch != -1) 
+				{
+					output.write(bytes, 0, ch);
+					ch = fis.read(bytes, 0, BUFFER_SIZE);
+				}
+			}
+			else 
+			{
+				// file not found
+				returncode = 404;
+			}
+		}
+		catch (Exception e) 
+		{
+			// thrown if cannot instantiate a File object
+			System.out.println(e.toString() );
+		}
+		finally 
+		{
+			if (fis != null)
+			fis.close();
+		}
+		return returncode;
+	}
+		
+	public void returnError(int errornum) throws Exception
+	{
+		String errorNumber;
+		String errorDetail;
+		switch (errornum)
+		{
+			case 404:
+				errorNumber = "HTTP/1.1 404 File Not Found\r\n";
+				errorDetail = "&lt;h1&gt;KCDWebServer is reporting an error with your
+				request.&lt;/h1&gt;&lt;h2&gt;Error 404 File Not Found.&lt;/h2&gt;";
+				break;
+			case 501:
+				errorNumber = "HTTP/1.1 501 Method Not Supported\r\n";
+				errorDetail = "&lt;h1&gt;KCDWebServer is reporting an error with your
+				request..&lt;/h1&gt;&lt;h2&gt;Error 501 - Requested Method is not supported by this HTTP
+				Server.&lt;/h2&gt;";
+				break;
+			default:
+				errorNumber = "HTTP/1.1 Unknown Error Number\r\n";
+				errorDetail = "&lt;h1&gt;KCDWebServer is reporting an error with your
+				request.&lt;/h1&gt;&lt;h2&gt;Sorry, Server has encountered an unexpected
+				error.&lt;/h2&gt;";
+				break;
+		}
+		String errorMessage = errorNumber +
+		"Content-Type: text/html\r\n" +
+		"Content-Length: " + errorDetail.length() + "\r\n" +
+		"\r\n" + errorDetail;
+		output.write(errorMessage.getBytes());
+	}
+}
+</pre>
+</div>
+<h3>Testing Version0.2.3</h3>
+<p>The code for this version of the Web Server can be <a href="http://kcd.sytes.net/simplewebserver/KCDWebServer0.2.3.tar.gz">downloaded</a> from the companion website. 
+</p>
+<p>To test this version of the browser we can do several things, we can check to see if a simple URI
+such as /index.htm works.  We can check if more complicated URI's with folders and sub-folders work,
+we can check to ensure that only GET requests are processed and we can check to ensure that URI's
+that do not exist are reported correctly.
+</p>
+<ol class="decimal">
+<li>Firstly there needs to be some sample files that can be retrieved and these need to be located
+in the correct folder.  When the Web Server first starts up the default location for the webroot
+folder is shown in the GUI interface.  Either locate some html files in this folder or adjust the
+webroot to point to a location where your html files are located.   Once you have done this then you
+can start the server and try to access one of the files from your browser using the URI
+http://localhost:8080/index.htm (or whatever you have named your sample files).  Hopefully your
+browser should display the page you have requested as shown in Figure 6.</li>
+<img src="./A Simple Java Based Web Server_files/testing0.2.3_1.png" alt="Test to see if server working">
+<li>The second test will be to request a more web page that has other links within it, for example
+an image file.  Images have to be retrieved via additional HTTP requests so this will test that the
+web server is ready to serve subsequent requests as soon as the first request has completed.  Figure
+7. shows the browser successfully rendering as expected and in this case the image file itself was
+included in a separate subdirectory which therefore test the third condition identified earlier, to
+test that sub-folders are accessible.</li>
+<img src="./A Simple Java Based Web Server_files/testing0.2.3_2.png" alt="Test to see if server working">
+<li>A 3rd test that can be done is to check that the server correctly responds to file not found
+occurrences.  This is easily tested by requesting a resource, which does not exist as shown in
+Figure 8.</li>
+<img src="./A Simple Java Based Web Server_files/testing0.2.3_3.png" alt="Test to see if server working">
+<li>The final test for this stage of development is to ensure that non-GET requests are reported
+with the correct response; in this case a 501 method not supported response.  To do this we need to
+write a simple html page that has a form on it that is submitted using the POST method.  Figure 9
+shows two screen shots, the first is the page with the form on it and the second is the response
+from the server.</li>
+<img src="./A Simple Java Based Web Server_files/testing0.2.3_4.png" alt="Test to see if server working">
+</ol>
+<h2>Part Two - Closing Comments</h2>
+<p>We now have a basic HTTP Server that can correctly recognise and serve GET requests for static
+resources.  Whilst it is functional it is by no means robust and is not meant for anything other
+than educational purposes.  As stated at the outset, maximum understanding will be obtained by
+following the tutorial in detail, downloading the various versions in their NetBeans format and
+studying each stage in the development process.  By doing this you will also gain an understanding
+where various elements processing take place and where additions to the code may need to be added.
+</p>
+<h1>Part Three - Server Side Scripting</h1>
+<p>The next step in the development of the Web Server is to enable some sort of Server Side
+Scripting to enable dynamic page generation and web application development.  Most modern Web
+Servers have modules built especially to deal with this sort of processing, the ISAPI DLL for IIS
+and mod_php or mod_perl for example for Apache.  These modules enable the server to handle the
+processing of dynamic requests internally, thereby maintaining control of what resources can be
+accessed and keeping digital assets secure.  An earlier and less secure method is to use the Common
+Gateway Interchange (CGI) method to effectively call and pass data between the web server and an
+external process. If the external process that is called is either an executable file or a script
+file then this enables an external program to execute as a result of a web page request.  This
+method obviously has some major security implications and care must be taken to prevent 'dangerous'
+files or commands from being executed.
+As this is simply an example implementation of a web server for educational purposes there is no
+need to ensure that the server is entirely secure or multi-functional.  It will be sufficient to
+handle a single method of dynamic page generation and to keep things as simple and open as possible
+the PHP language will be supported.</p>
+<h2>Step One  - Recognising PHP requests (Version 0.3.1)</h2>
+<p>The first stage in this process is to recognise when a PHP page is requested.  There are two
+basic approaches to this:</p>
+<ol><li>look for pages being requested from a specific location or directory.  This method is known
+as either an Alias (Apache) or a Virtual Directory (IIS)</li>
+<li>identify PHP pages through the use of the .php file extension</li></ol>
+<p>Either approach would work but the first approach would mean that all PHP files would have to
+located in the same folder structure, restricting the flexibility of web development.  The second
+approach will simply require that the resource being requested in the HTTP header is examined and
+the file extension identified and checked.  If the file extension is .php then we can send the
+resulting resource through the PHP_CGI process for parsing and processing.</p>
+<p>We can deal with much of the processing when the HTTPRequest is being parsed.  There are a few
+things we need to check for and set if present, namely the file extension and the contents of a
+query string.  The query string is the name used for a set of data passed to a web server from a
+html form in a GET request.  The query string is encoded by the browser into the URI before it is
+sent to the server for processing.  As the HTTP request header has a very specific format, care has
+to be taken not to affect how this is processed.  Spaces and carriage return characters play a
+significant role in the structure of a HTTP Request and therefore cannot appear as data in a query
+string.  To avoid this problem a browser will use URL encoding techniques to ensure that any odd
+characters such as space, carriage returns, quotation marks, mathematical symbols etc. are encoded
+to avoid being mistaken as part of the structure of the HTTP Request.  URL encoding results in such
+characters being prefixed with a % sign and then followed immediately by a 2-digit hexadecimal value
+that represents the ASCII byte code for the character concerned.  %20 for example is decoded as a
+SPACE (Ascii character 32 --&gt; hexadecimal 20).  If a query string exists it immediately follows the
+requested resource name and is identified by a ? character.  Data is then passed in as a series of
+name-value pairs separated by + signs and terminated by a space character.  This is illustrated in
+the example below whereby two fields from a HTML form, name and name2 are passed to the page
+test.php.  These fields have the values value and value 2 respectively.
+</p><div id="prediv"><pre class="code">GET /test.php?name=value+name2=value2</pre></div>
+<h3>Changes to the KCDHTTPRequest Class</h3>
+<p>We need to be able to store the file extension of the requested resource and the query string, if one exists.  For
+this we need to add two more String variables to the KCDHTTPRequest class as shownsbelow in bold-italics.</p>
+<div id="prediv">
+<pre class="code">public class KCDHTTPRequest
+{
+	InputStream input;
+	String HTTPRequest;
+	StringBuffer request = new StringBuffer(2048);
+	String requestMethod;
+	String requestURI;
+	String requestProtocol;
+	String requestHostname;
+	String queryString;
+	String requestExtension;
+	int errorcode = 0;</pre>
+</div>
+<p>Next we need to write the code to parse the requested resource to determine what the file extension is and whether or
+not there is a query string present.</p>
+<div id="prediv"><pre class="code">private void setURI(String uriin)
+{
+  // Parse URI to find out such things as the requested resource, whether it is
+  // a .php request, whether there is some GET data in the URL
+  // requestURI = uriin;
+  // First find out if there is some GET data in the URL
+  int index1 = 0;
+  int index2 = 0;
+  int endofextension=0;
+  index2=uriin.indexOf('?',index1);
+  if (index2 &gt; index1) // a query string appears to exist
+  {
+    endofextension=index2;
+    System.out.println("A ? found in URI");
+    requestURI = uriin.substring(index1, index2);
+    // extract queryString from uri
+    queryString = uriin.substring(index2+1,uriin.length());
+  }
+  else
+  {
+    // No request String so URI is whole string and there is no QueryString
+    requestURI=uriin;
+    queryString="";
+    endofextension=uriin.length();
+  }
+  // Examine requestURI to identify the file extension
+  index1=index2 = 0;
+  index2=uriin.indexOf('.',index1);
+  if (index2&gt;index1) // a filename file extension separator exists
+  {
+    // is it in the right place, i.e. before the query string if one is present
+    if (endofextension&gt;index2+1)
+    {
+      requestExtension=uriin.substring(index2+1,endofextension);
+      System.out.println("The requested resource has a file extension of "+requestExtension);
+    }
+    else
+    {
+      errorcode=5;
+    }
+  }
+  else
+  {
+    System.out.println("There does not seem to be a file extension on the requested resource");
+  }
+}</pre></div>
+<p>This code looks for a couple of key characters in the request URI that was extracted by the main parsing method.  The
+first thing to determine is whether or not there is a query string after the requested URI.  If there is there will be a
+? character present, the remainder of the URI string will then be the entire set of name value pairs.  If there is no ?
+Character then there is no query string.</p>
+<p>The second check is to look for the . Character that is used to separate the file name from the file extension.  The
+next step is then dependent upon whether or not there is a query string.  If a query string exists then the file
+extension will be the characters contained between the . And the / characters.  If there is no query string then the
+file extension will be formed from all of the characters from the . To the end of the URI string.</p>
+<p>You will notice that we have added a new errorcode in this parsing process.  We therefore need to add this to the
+method that reports the errors to the GUI interface.  Add a new clause to the switch statement in the getErrorMessage
+method as shown here.</p>
+<div id="prediv"><pre class="code">case 5:
+  errormessage="Parse Error 05 - Malformed URL";
+  break;</pre></div>
+<p>We also need to create a new method to report errors and remove the error returning directly from the
+parseEntireRequest method.  Change the parseEntireRequest method from public int to public void and comment out the
+return errorcode statement at the end of the method.  Then add the following method to return errorcodes directly upon
+request.</p>
+<div id="prediv"><pre class="code">case 5:
+  errormessage="Parse Error 05 - Malfomed URL";
+  break;</pre></div>
+<p>
+The final thing we need to do at this stage is to provide a couple of methods to get the values thatvwe have just
+extracted, the requested file extension and the query string, if present.  Add thevfollowing methods immediately after
+the getURI() method.</p>
+<div id="prediv"><pre class="code">public String getRequestExtension()
+{
+  return requestExtension;
+}
+public String getqueryString()
+{
+  return queryString;
+}</pre></div>
+<h3>Changes to the KCDWebServer Class</h3>
+<p>We have altered how errors are detected and reported when parsing HTTP Requests so we need to adjust the code in the
+main web server class to account for this.  Find the code in bold below and comment out and add the next two lines.
+This code simply uses a method to report the errors in parsing rather then the single parseEntireRequest method.</p>
+<div id="prediv"><pre class="code">// Parse the entire request, this method returns an error code
+<strong>//int parsecode = request.parseEntireRequest();</strong>
+request.parseEntireRequest();
+int parsecode = request.checkForError();</pre></div>
+<h3>Testing Version0.3.1</h3>
+<p>The code for this <a href="http://kcd.sytes.net/simplewebserver/KCDWebServer0.3.1.tar.gz">version of the Web1Server</a> can be
+downloaded from the companion website. 
+To test this version of the browser we can simply monitor the output to the console window in Netbeans when we run the
+program, look for the output that recognises the file extension and whether or not a '?' has been found in the url.  We
+need to check several things by trying different URL's from the browser.
+We need to check the following:
+</p><ol><li>that file extensions are recognised properly, if they exist and that this is still the case, with or without a
+query string being present</li>
+<li>that the query string is recognised and extracted properly and that a null query string (? followed by no
+characters) does not cause a server crash.</li></ol><p></p>
+<h2>Step Two - Connect to PHP to enable Server Side Scripting (Version 0.3.2)</h2>
+<p>We have now written the code to extract and store a query string from a HTTP GET request and also written code
+to)recognise requests for PHP resources.  Next we need to ensure that we can connect to and execute PHP scripts.  There
+are)a couple of ways in which this could be accomplished.</p>
+<ol><li>Connect to PHP using the CGI protocol, effectively running PHP as an externalpprocessing</li>
+<li>Write a module for our server that interacts directly with the PHP libraries and loads them whencexecuted</li></ol>
+<p>To keep things as simple as possible we will connect to PHP using the CGI protocol.  The CGIeprotocol defines how
+to&gt;communicate data between a web server and an external application (in ourecase php-cgi).  This will enable us to
+send&gt;the query string extracted by the server through to theePHP process that we will execute from Java.  Our PHP
+scripts&gt;will then be able to work as normal,ereading query string values and processing output accordingly.</p>
+<p>To test that the connection works we will simply try to call and execute a PHP script, once thatris functioning
+weycan then concentrate on passing across the query string as defined by the CGIrprotocol.</p>
+<h3>Changes to the KCDHTTPRequest Class</h3>
+<p>One of the first things we need to do is to be able to get the filename of the requested resource from the
+URI submitted by the browser.  This is just a simple case of stripping off the first '/' from the URI.  This can then
+be retrieved from the HTTP request in a function call.   Whilst we are making changes to the HTTP Request class we can
+also add in the code necessary to determine if a request has been made for a dynamic resource so that the HTTP Response
+class knows whether or not to attempt to call an external process such as PHP. Add the following code to
+the KCDHTTPRequestclass.</p>
+<p>Firstly define a new boolean variable at the top of the class with the other properties.</p>
+<div id="prediv"><pre class="code">boolean phpRequest;</pre></div>
+<p>Next amend the setURI method as shown below in bold.</p>
+<div id="prediv"><pre class="code">if (endofextension&gt;index2+1)
+{
+	requestExtension=uriin.substring(index2+1,endofextension);
+	<strong>if (requestExtension.equals("php"))
+		phpRequest = true;</strong>
+	System.out.println("The requested resource has a file extension of "+requestExtension);
+}
+else
+{
+	errorcode=5;
+}</pre></div>
+<p>Then add the following two methods to enable other classes to query these new properties.</p>
+<div id="prediv"><pre class="code">public String getResource()
+{
+	// extract the resource from the URI - minus the opening /
+	String resource = getURI().substring(1,getURI().length());
+	return resource;
+}
+public boolean isPhpRequest()
+{
+	return phpRequest;
+}</pre></div>
+<p>The main changes will obviously be in the KCDHTTPResponse class as this class is responsible for creating
+the responses to send back to the requesting browser.  The process is quite simple, if the request that has just
+been processed is for a static request then return as normal.  If the request is for a dynamic resource then we need to
+build the response by calling an external scripting engine to process the request.  For now we will limit our server
+to dealing with PHP requests, but we could easily extend this to other scripting languages that support the CGI protocol
+by making similar changes to those shown above in the KCDHTTPRequest class.</p>
+<h3>Changes to the KCDHTTPResponse Class</h3>
+<p>The first change is to simply check for a dynamic or static request and call the
+appropriate method sendStaticResource() (already written) or sendDyanmicResource() (we will write this shortly). Make
+the following changes, highlighted in bold, to the setRequest method.</p>
+<div id="prediv"><pre class="code">public void setRequest(KCDHTTPRequest request)
+{
+	this.request = request;
+	try
+	{
+		int responsecode = 0;
+		<strong>// If this is a php request then process as a dynamic request, otherwise treat as ansestatic request
+		if (this.request.isPhpRequest())
+		{
+			responsecode = sendDynamicResource();
+		}
+		else
+		{
+			responsecode = sendStaticResource();
+		}</strong>
+		if (responsecode!=0)
+		{
+			// an error occurred in the resource request, output appropriate error message
+			returnError(responsecode);
+		}
+	}
+	catch(IOException e)
+	{
+		e.printStackTrace();
+		System.out.println(e.getMessage());
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+		System.out.println(e.getMessage());
+	}
+}</pre></div>
+<p>This change enables the Response class to detect whether or not a request has been made for a PHP resource and if
+so call the sendDynamicResource method instead of the sendStaticResource method. Next we need to write
+the sendDynamicResponse method.  Normally when processing a CGI request, the HTTP headers, particularly the MIME
+type information, is created in the CGI script.  This can then be pre-pended to the generated output so that the
+browser knows what information is being sent back. Most web servers will try to guess what the response type is if no
+HTTP header information is returned from the CGI process. As we are using PHP, which is normally handled via a
+server side module and not CGI we will write the HTTP header in the web server itself so that any PHP we write is the
+same as would be found on any typical web server installation.  It is at this point we realise that we have never
+actually written any HTTP headers back for successful static requests. Error conditions are catered for but successful
+requests simply get the file contents sent back to the browser with no HTTP Headers.  Now would be an appropriate time
+to add these into the application.</p>
+<p>The following code is the method that generates a Response OK HTTP header as a String which we can pre-pend to
+any output.</p>
+<div id="prediv"><pre class="code">private String createHeader()
+{
+    // Write the start http Response header
+    String header = "HTTP/1.1 200 OK\r\nContent-type: text/html\r\n";
+    return header;
+}</pre></div>
+<p>Before we forget, add the code into the sendStaticResource method to pre-pend this header before<sending out="" static<files.="" amend="" the="" sendstaticresource="" method="" as="" shown="" in="" bold.<="" p="">
+</sending></p><div id="prediv"><pre class="code">File requestedfile  = new File(owner.getDocRoot(),irequest.getURI());
+if (requestedfile.exists()) 
+{
+	<strong>String headerstring = createHeader();
+	headerstring=headerstring+"\r\n\r\n";
+	byte[] header = headerstring.getBytes();
+	output.write(header);</strong>
+	fis    = new FileInputStream(requestedfile);
+	int ch = fis.read(bytes, 0, BUFFER_SIZE);
+	while (ch != -1) 
+	{
+		output.write(bytes, 0, ch);
+		ch = fis.read(bytes, 0, BUFFER_SIZE);
+	}
+}
+else 
+{
+	// file not found
+	returncode = 404;
+}</pre></div>
+<p>The second line in bold above is the one that signals to the browser that the header has ended and that what
+is coming next is the HTTP response body, this is defined in the HTTP protocol.</p>
+<p>We can now put together the code to process PHP requests using CGI.  We need to execute an external application
+(the php-cgi executable file) but we need to be able to send it some data, for now just the name of the resource to
+execute but later on we will also send any query string name-value pairs.
+</p>
+<div id="prediv"><pre class="code">private String createCGIResponseHeader(String totalresponse)
+{
+    String header;
+    // create the basic header information
+    header = createHeader();
+    // Extract header elements from PHP CGI output
+    int index1 = totalresponse.indexOf('&lt;');
+    if (index1&gt;=0)
+    {
+	header = header + totalresponse.substring(0, index1);
+    }
+    else
+    {
+	header=totalresponse;
+    }
+    // Add on the end of header identification characters
+    header=header+"\r\n\r\n";
+    return header;
+}
+
+private String[] getEnv()
+{
+    String docroot = owner.getDocRoot();
+    String scriptFileName = "SCRIPT_FILENAME=" + docroot+"/"+request.getResource();
+    return env;
+}
+
+public int sendDynamicResource() throws IOException
+{
+  int errorcode = 0;
+  Runtime rt = Runtime.getRuntime();
+  Process p = rt.exec("php-cgi",getEnv());
+  InputStream is = p.getInputStream();
+  InputStreamReader isr = new InputStreamReader(is);
+  BufferedReader br = new BufferedReader(isr);
+  String totalresponse,nextline;
+  totalresponse = "";
+  // Wait for, and read, response from the php_cgi process
+  while ((nextline=br.readLine())!=null)
+  {
+    totalresponse = totalresponse + nextline + "\r\n";
+  }
+  br.close();
+  // Create the standard header for CGI responses
+  String header = createCGIResponseHeader(totalresponse);
+  // Remove cgi header information from the totalresponse, find the first &lt; of the response string
+  int index1 = totalresponse.indexOf('&lt;');
+  if (index1 &lt;0) index1=0;
+  totalresponse = totalresponse.substring(index1, totalresponse.length());
+  System.out.print(header);
+  System.out.print(totalresponse);
+  output.write(header.getBytes());
+  output.write(totalresponse.getBytes());
+  return errorcode;
+}</pre></div>
+<p>There are three methods here, sendDynamicrequest calling the other two. The first
+method, createCGIResponseHeader() attempts to construct a meaningful header for the HTTP response.  If it detects one in
+the output returned from the PHP process then this will be used otherwise it will create a standard header in the same
+way as for a static request. Before this can happen the PHP needs to be processed.  To do this we need to call an
+external executable file, in Java this is called a runtime.  Executing an external application using this runtime will
+cause a separate process to be started. Communications between the web server and the PHP process can occur in several
+ways.  Because the web server is actually responsible for invoking the php-cgi executable, it is actually attached via
+standard input and standard output streams.  We can attach an input stream reader in the web server to the php-cgi
+process to capture and process its output.  Similarly when it comes to processing POST requests we can attach an output
+stream writer to the php-cgi process to send it the HTTP Request body data.  The second way in which the two processes
+can communicate is via the shared environment space and environment variables defined therein.  The getEnv() method call
+in the runtime execution statement puts together a set of environment variables (as defined by the CGI protocol) to pass
+across important information. For now we will restrict this to simply the name of the resource that requires
+external processing --&gt; the .php file that has been requested by the browser.  In order to successfully find the
+resources, the PHP-CGI process will need to know the absolute path to the required file.</p>
+<h3>Testing Version 0.3.2</h3>
+<img class="imgfloatright" src="./A Simple Java Based Web Server_files/phpinfo_output.png" alt="Image showing output from phpinfo()" width="40%">
+<p>The code for this <a href="http://kcd.sytes.net/simplewebserver/KCDWebServer0.3.2.tar.gz">version of the Web(Server</a>
+can be downloaded from the companion website as version-0.3.2.tar.gz. 
+Testing this version is quite simple, we need to create a simple PHP file that will produce some output and then
+see if we can request that file via the Web Server and get the output produced from PHP.</p>
+<p>Firstly, create a simple php file, call it phptest.php (as below) and store it in the webrootfolder.</p>
+<div id="prediv"><pre class="code">&lt;html&gt;
+	&lt;head&gt;&lt;title&gt;A Simple PHP Test Page.&lt;/title&gt;&lt;/head&gt;
+	&lt;body&gt;
+		&lt;?php phpinfo()?&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+<p>Make sure the Web Server compiles OK then execute it, start the server as usual and then request the
+file phptest.php. Figure 10. shows an example of the output that you should see being generated by the php process.</p>
+<p>A second test we can do at this stage is to see what happens if we request a file that contains php but
+is not identified as such by its file extension.  Save the phptest.php file as phptest.notphp and then request this
+in the browser.  You should see a blank page in the browser window.  View source and you will see your entire source
+file as it was written, it is clear that it has not been processed as PHP.</p>
+<p>This is perhaps one weakness of scripting languages like PHP, if the web server does not recognise the file as
+being of a specific type (usually identified by file extension) then it will treat the file as  any other static
+resource.This means that files that are incorrectly named can be downloaded and your source code can be viewed.  This
+might very well contain important or sensitive information such as passwords for databases for example.  Some text
+editors, especially on Linux platforms, will save a copy of an edited file with the ~ following the file extension.
+This can lead to these files being accessible via URL probing.</p>
+<h2>Step Three - Accepting GET name-value pairs in the URL (Version 0.3.3)</h2>
+<p>The next step in this development is to allow the Web Server to accept a query string from a GET request and then
+pass this onto the scripting language for further processing.  A typical get request might have several
+name-value pairs of variables with their values in URL encoded form immediately following the URL, these are called the
+query string.  In order to provide this functionality we will need to deal with several things, firstly we would need to
+be able to identify the resource name and the query string as separate entities of the URL.  Secondly we
+need some mechanism of storing the query string information and then sending it to it the PHP process once invoked.
+The mechanism for doing this is different in POST and GET requests.  GET requests have this information encoded as part
+of the URL whereas POSTed requests have the information encoded as the body of the HTTP request.  GET requests have a
+limit (although not specifically defined anywhere) on the data that can be sent whereas POST requests do not.  This
+limit is not standard across browser and server implementations but is probably around 4000 characters.  As there
+is a relatively small limit to the length of a GET requests' URL (including the query string) we can store this
+information in a local environment variable that will be readable by the invoked processing resource (PHP-CGI in our
+case).  In the case of POSTed data this is just not practical and the data needs to be read from the input stream
+directly by the processing script itself, we will deal with this in a later version of the web server.</p>
+<h3>Changes to KCDHTTPResponse class</h3>
+<p>In Version 0.3.1 we made the changes necessary to separate out the requested resource from the query string
+if one is present.  This can be accessed by a call to the getQueryString() method of the KCDHTTPRequest class.
+Once retrieved we need to store the query sting in the environment variables as defined by the CGI protocol. These
+changes highlighted in bold can be made in the getEnv() method of the KCDHTTPResponse class as follows.</p>
+<div id="prediv"><pre class="code">private String[] getEnv()
+{
+  String docroot = owner.getDocRoot();
+  String scriptFileName = "SCRIPT_FILENAME=" + docroot+"/"+request.getResource();
+  <strong>String queryString = "QUERY_STRING=" + request.getQueryString();
+  String gatewayInterface="GATEWAY_INTERFACE=CGI/1.0";
+  String serverSoftware="SERVER_SOFTWARE=KCDWebServer/0.3.2";
+  String serverName= "SERVER_NAME=localhost";
+  String env[] = new String[5];
+  env[0]=scriptFileName;
+  env[1]=queryString;
+  env[2]=gatewayInterface;
+  env[3]=serverSoftware;
+  env[4]=serverName;</strong>
+  return env;
+}</pre></div>
+<h3>Testing Version 0.3.3</h3>
+<img src="./A Simple Java Based Web Server_files/testquerystring.png" alt="Output from testquerystring.php" width="40%" class="imgfloatright">
+<p>The code for this <a href="http://kcd.sytes.net/simplewebserver/KCDWebServer0.3.3.tar.gz">version of the Web Server</a> can be
+downloaded from the companion website as version-0.3.3.tar.gz. 
+We can test this version by sending some information in the URL of a request to the web
+server and writing an appropriate script to echo the name value pairs back to the browser. The following script will do
+exactly this, call it testquerystring.php.</p>
+<div id="prediv"><pre class="code">&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;This is a test page for my own Web Server&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;This is a heading&lt;/h1&gt;
+&lt;p&gt;This is some normal text in a typical html paragraph&lt;/p&gt;
+&lt;?php
+	$test=getenv('SERVER_SOFTWARE');
+ 	echo "&lt;p&gt;Server Software = ".$test ."&lt;/p&gt;\n";
+	$QUERY_STRING=getenv('QUERY_STRING');
+	echo "&lt;p&gt;Query String = ".$QUERY_STRING ."&lt;/p&gt;\n";
+	$test=getenv('SERVER_NAME');
+	echo "&lt;p&gt;Server name = ".$test ."&lt;/p&gt;\n";
+	$test=getenv('GATEWAY_INTERFACE');
+	echo "&lt;p&gt;GATEWAY_INTERFACE = ".$test ."&lt;/p&gt;\n";
+	if (strlen($QUERY_STRING)&gt;0)
+	{
+	 	echo "&lt;p&gt;Query String is set to something&lt;/p&gt;";
+ 	}
+ 	else
+ 	{
+ 		echo "&lt;p&gt;Query String is not set&lt;/p&gt;\n";
+ 	}
+ 	if (isset($_GET))
+	{
+		foreach($_GET as $variable =&gt; $value)
+		{
+			echo "Variable = ".$variable." and ";
+			echo "Value = ".$value."&lt;br /&gt;\n";
+		}
+ 	}
+ 	else
+ 	{
+ 		echo "&lt;p&gt;Get is not set&lt;/p&gt;";
+	}
+?&gt;
+&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div>
+<p>Save this file as testquerystring.php, start up the server (after making the changes to the getEnv()
+method as shown above) and then request the file along with some name-value pairs
+with a url like this:<strong>http://localhost:8080/testquerystring.php?variable1=value1&amp;variable2=value2</strong>. You
+should get a result like that shown in
+Figure 11.  
+</p>
+<p>You can pass any variables that you want between the web server and the php-cgi process, the CGI protocol
+simply defines some specific variables, with specific purposes.  Look up the CGI protocol (RFC3875) if you want a
+complete list and description of these.</p>
+<h2>Step Four - Recognising POST requests (Version 0.3.4)</h2>
+<p>We have already written methods to extract the query string from the GET request method.  Adding logic to determine
+if
+a POST request has been submitted is a relatively trivial task.  In the KCDWebServer class add / amend the following
+code in the run() method.  Changes / additions marked in bold.</p>
+<div id="prediv"><pre class="code">//Continue and process the HTTP Request.
+// For testing purposes in Version 0.2.2, simply output the request
+//owner.setStatusMessage(request.getHTTPRequest()+"\n");
+// Create a new KCdHTTPResponse object and set the output stream
+// and the owning server accordingly.
+KCDHTTPResponse response = new KCDHTTPResponse(output,this);
+// Read the request method to see if a GET, POST etc.
+if (request.getMethod().compareTo("GET")==0)
+{
+	// Request was a GET request, so pass to Response object for further processing
+	response.setRequest(request);
+}
+else
+{
+	// Read the request method to see if a GET, POST etc.
+	<strong>if (request.getMethod().compareTo("POST")==0)
+	{
+		// Request was a POST request, so pass to Response object for further processing
+		response.setRequest(request);
+	}
+	else
+	{
+		// At this stage the server only handles GET and POST requests, any other request thereforetReshould
+		// return a 501 method not Supported error.
+		response.returnError(501);
+	}</strong>
+}</pre></div>
+<p>Next we need to adjust the code that deals with the actual request.  In the
+KCDHTTPResponse class make the following changes (highlighted in bold) to the code contained in the try{} block of
+the setRequest method. This examines the request method to determine whether a GET or POST was used and then calls the
+method to process and send a dynamic resource with a type indicator.</p>
+<div id="prediv"><pre class="code">int responsecode = 0;
+// If this is a php request then process as a dynamic request, otherwise treat as a static request
+if (this.request.isPhpRequest())
+{
+	<strong>if (this.request.getMethod().compareTo("GET")==0)
+		responsecode = sendDynamicResource(0);
+	else
+		responsecode = sendDynamicResource(1);</strong>
+}
+else
+{
+	responsecode = sendStaticResource();
+}
+if (responsecode!=0)
+{
+	// an error occurred in the resource request, output appropriate error message
+	returnError(responsecode);
+}</pre></div>
+<p>We then need to amend the sendDynamicresource method to deal with this
+new processing requirement. In the KCDHTTPResponse class make the following changes (highlighted in bold)
+to the sendDynamicResource method.</p>
+<div id="prediv"><pre class="code"><strong>public int sendDynamicResource(int type) throws IOException</strong>
+{
+	int errorcode = 0;
+	Runtime rt = Runtime.getRuntime();
+	Process p = rt.exec("php-cgi",getEnv());
+	InputStream is = p.getInputStream();
+	InputStreamReader isr = new InputStreamReader(is);
+	BufferedReader br = new BufferedReader(isr);
+	String totalresponse,nextline;
+	totalresponse = "";
+	<strong>// Recognise and deal with POSTed data
+	if (type==1)
+	{
+		// POST request, so write POST data to PHP_CGI
+		System.out.println("Correctly identified a POST request");
+	}</strong>
+	// Wait for, and read, response from the php_cgi process
+	while ((nextline=br.readLine())!=null)
+	{
+		totalresponse = totalresponse + nextline + "\r\n";
+	}
+	br.close();
+	// Create the standard header for CGI responses
+	String header = createCGIResponseHeader(totalresponse);
+	// Remove cgi header information from the totalresponse, 
+	// find the first &lt; of the response string
+	int index1 = totalresponse.indexOf('&lt;');
+	if (index1 &lt;0) index1=0;
+	totalresponse = totalresponse.substring(index1, totalresponse.length());
+	System.out.print(header);
+	System.out.print(totalresponse);
+	output.write(header.getBytes());
+	output.write(totalresponse.getBytes());
+	return errorcode;
+}</pre></div>
+<h3>Testing Version 0.3.4</h3>
+<p>The code for this <a href="http://kcd.sytes.net/simplewebserver/KCDWebServer0.3.4.tar.gz">version of
+the Web Server</a> can be downloaded from the companion website as version-0.3.4.tar.gz. 
+We have made very few changes here to the Server so testing is pretty straight forward.  All we
+need to do is put together a basic HTML page with a from that contains a POST Method.  We can write a dummy file to send
+to
+the form which later on we can adjust to work with the POSTed data.</p>
+<p>Firstly, write a basic html page containing a form, something like the following will
+be fine,call it post_test.htm and store it in your webroot folder.</p>
+<div id="prediv"><pre class="code">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0iStrict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt; 
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"Dlang="en"&gt; 
+
+&lt;head&gt; 
+	&lt;title&gt;KC Dobson Test Page&lt;/title&gt; 
+	&lt;meta http-equiv="content-type" content="text/html;charset=utf-8" /&gt; 
+	&lt;meta name="generator" content="Bluefish 1.0.7"/&gt; 
+&lt;/head&gt; 
+
+&lt;body&gt; 
+    &lt;h1&gt;Fourth test, page with a POSTed form&lt;/h1&gt; 
+    &lt;p&gt;This page has a simple form that is POSTed to the Server.  The server should 
+    respond with a 501: Method Not Supported error.&lt;/p&gt; 
+    &lt;form name="test" method="post" action="post_test.php"&gt; 
+        &lt;input type="submit" name="submit" value="submit"&gt; 
+    &lt;/form&gt; 
+&lt;/body&gt; 
+&lt;/html&gt;</pre></div>
+<p>Then write the php file to send the form data to (it won't do anything yet), call itgpost_test.php
+and<store<itminlthe webroot="" folder.<="" p="">
+</store<itminlthe></p><div id="prediv"><pre class="code">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt; 
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"Dlang="en"&gt; 
+
+&lt;head&gt; 
+	&lt;title&gt;KC Dobson Test Page&lt;/title&gt; 
+	&lt;meta http-equiv="content-type" content="text/html;charset=utf-8" /&gt; 
+	&lt;meta name="generator" content="Bluefish 1.0.7"/&gt; 
+&lt;/head&gt; 
+
+&lt;body&gt; 
+	&lt;p&gt;nothing to report yet&lt;/p&gt; 
+&lt;/body&gt; 
+&lt;/html&gt;</pre></div>
+<p>Start up the server and load up the post_test.htm file and hit the submit button.  You
+should get the Response page loaded OK but what we need to check is that the PHP request has been correctly identified.
+Have a look at the console window for the "Correctly identified a POST request" message.  If you see this a couple
+of lines before the HTTP/1.1 200 OK message then the changes are working OK.</p>
+<p>Finally we need to make sure that GET requests are still processed OK.  Re run the test from Version 0.3.3 or simply enter a URL like the following
+<strong>http://localhost:8080/testquerystring.php?var1=value1</strong></p>
+<h2>Step Five - POST Requests (version 0.3.5)</h2>
+<p>In order to deal with POSTed data we need to be able to send data from the server to the php-cgi process once it has been invoked.  For GET requests this achieved 
+simply by using the environment variables. For POST requests the environment variable space may prove inadequate, it makes more sense to send the data across as a 
+stream of data, a byte stream.  This is easier than it sounds, all processes that run on a computer have a standard input and an output stream. These streams can be 
+any input or output device and they can be linked up so that the output from one process becomes the input to another process. </p> 
+<p>To send the POSTed data we need to firstly know how much data there is to be read from the Web Servers input stream (coming from the browser), Once we know 
+this we can then read those bytes from the Web Servers input stream and output it to the input stream of the php-cgi process that we have executed externally. The php-cgi process 
+can then read the data from its input stream, although it does need to know how much data to read. When data is POSTed from a browser, the amount of data sent in the
+ Request Body is sent as the HTTP Header field Content-length.  This can be extracted at the server and used to control how much data to expect and read from the inputs tream 
+ from the browser.  To deal with this we need to make a few changes to the KCDHTTPRequest class.</p>
+ <p>There are many other fields that can be sent in a HTTP request header, these should each be sent on their own linea(separated by '/r/n' characters).  
+ An empty line in the request header signifies the end of the HTTP request header fields.   Any data after this point is the content of a POST request method and should only be read
+ if a POST method has been specified in the request.  The amount of data that does follow this empty line will be identified in the header field content-length.</p>
+<p>Given that the number and order of request header fields can vary some mechanism to store and access them accordinge to their name/meaning would be useful. 
+ An associative array is ideal for this task with the field name being used as the key to access the value stored in the array.  Currently our server is very basic and only deals with a simple 
+ HTTP GET request, processing only a minimal number of header fields.  To be more flexible and to be able to extract successfully the content-length to enable POST data to be read 
+ we need to identify and extract all of the header fields in the request.  We therefore need to make some significant changes to the KCDHTTPRequestclass.</p>
+<p>Firstly we need to split the request into separate lines to be able to identify the header fields easily. The first line should contain the request method, the resource name and 
+the protocol and these are currently dealt with by the parseEntireRequest method.  To be more appropriate this should be renamed to be the parseFirstLinemethod. The parseEntireRequest
+ method can then be a container method that processes the first line and then any other header lines.</p>
+<p>Rename the parseEntireRequest() method parseFirstLine()</p>
+<p>Then create a new parseEntireRequest() method that simply calls parseFirstLine() as shown below. Test your server to make sure it still functions as expected.</p>
+<div id="prediv"><pre class="code">public void parseEntireRequest()
+{
+	parseFirstLine();
+}</pre></div>
+<p>Next we should split the entire request into separate lines for further processing, we can then pass the first line to the parseFirstlinemethod and subsequent lines to a 
+new method for identifying and dealing with other header fields as required.
+Modify the parseEntireRequest method as follows.</p>
+<div id="prediv"><pre class="code">public void parseEntireRequest()
+{
+	String requestElements[] = request.toString().split ("\r\n");
+	int numlines = requestElements.length;
+	parseFirstLine(requestElements[0]);
+}</pre></div>
+<p>Then modify the method declaration for parseFirstLine to accept a String parameter as follows:</p>
+<div id="prediv"><pre class="code">	public void parseFirstLine(String requestString)</pre></div>
+<p>When we wrote the server originally we had some code in the original parseEntireRequest method (now the parseFirstLine method) to read a couple of
+ standard header fields, the protocol and the hostname.  As these are on separate lines they will no longer be in the first line so we need to remove the
+ processing from the parseFirstline() method as follows --&gt; remove the lines highlighted in bold.</p>
+<div id="prediv"><pre class="code">public void parseFirstLine(String requestString)
+{
+	//String requestString = request.toString();
+	// Strip out the Request Method
+	int index1, index2;
+	// Locate the first Space in Request
+	index1 = requestString.indexOf(' '); 
+	if (index1 != -1 &amp;&amp; index1&gt;0) 
+	{
+		// Extract substring containing request method, read up to first space
+		setMethod(requestString.substring(0,index1)); 
+		// Locate second space in request, signifies the end of the requested resource
+		index2 = requestString.indexOf(' ', index1 + 1);
+		if (index2 &gt; index1+1)
+		{
+			// Extract substring containing URI
+			setURI(requestString.substring(index1 + 1, index2)); 
+			index1 = index2+1;
+			// Locate first CRLF
+			<strong>/*index2 = requestString.indexOf("\r\n", index1);
+			if (index2 &gt; index1)
+			{
+				// Extract substring containing Protocol
+				setProtocol(requestString.substring(index1,index2)); 
+				index1 = index2+1;
+				// Locate Second CRLF
+				index2 = requestString.indexOf("\r\n", index1+1); 
+				if (index2 &gt; index1)
+				{
+					// Extract substring containing Hostname and Port
+					setHost(requestString.substring(index1+1,index2)); 
+				}
+				else
+				{
+					errorcode = 4; // Error in extracting Hostname and Port
+				}
+			}
+			else
+			{
+				errorcode = 3; // Error in extracting Protocol Information
+			}*/</strong>
+		}
+		else
+		{
+			errorcode = 2; // Error extracting URI from Request
+		}
+	}
+	else
+	{
+		errorcode = 1; //Could not extract Request Method
+	}
+	//return errorcode;
+}</pre></div>
+<p>Now test that the server still works as previous.  If it does not then repeat the changes so far to make sure that you have done everything correctly. 
+ Once you get the server working as it was in version 0.3.4 then continue with the next set of changes.</p> 
+ <p>The next thing to do is to process any headers other than those already dealt with on the first line. This is best done by extracting the header fields and storing them in an associative array.  
+ A series of get methods can then be written to retrieve specific header fields (or a general get method which has a string value as a parameter to identify the.required field).
+To make use of an associative array we will create and use a hashmap array. To do this we need to import java.util.*; to the KCDHTTPRequest class and then create a property 
+called fieldmap.  Whilst we are making changes to the properties we should also create a String property that can be used to store the post data. Add these properties  to the other class 
+properties of the KCDHTTPRequest class.</p>
+<div id="prediv"><pre class="code">private Map fieldmap = new HashMap();
+private String postData;</pre></div>
+<p>We can now write the code to process the header lines and extract and store the various header fields and the POST data, if present.  Edit  the parseEntireRequest method and 
+add the lines shown in bold.</p>
+<div id="prediv"><pre class="code">public void parseEntireRequest()
+{
+	//Split the request into a series of substrings based upon CrLf charcters
+	String requestElements[] = request.toString().split ("\r\n");
+	int numlines = requestElements.length;
+	parseFirstLine(requestElements[0]);
+	<strong>// if more than one line on Request then process the remaining lines
+	if (numlines&gt;1)
+	{
+		// The Request Method, resource name and protocol should all be on the 
+		// first line of the http Request
+		// these have already been dealth with
+		// Parse remaining lines of the Request Header
+		for (int counter=1;counter&lt;numlines;counter++)
+		{
+			// Get the next line of data from the Request and parse it
+			String requestLine = requestElements[counter];
+			//System.out.println("counter = " + counter + "line="+requestLine);
+			try
+			{
+				parseHeaderLine(requestLine);
+			}catch(NullPointerException np){System.out.println("Caught Null Pointer");}
+		}
+	}
+	else
+	{
+		//Error the http request is empty!
+	}</strong>
+}
+</pre></div>
+<p>Next we need to write the parseHeaderLine method.</p>
+<div id="prediv"><pre class="code">private void parseHeaderLine(String requestString) throws NullPointerException
+{
+	// Get the header field from the string, identified by reading until a : encountered
+	int index1 = 0;
+	int index2 = requestString.indexOf(":", index1);
+	if (index2&gt;-1)
+	{
+		String field = requestString.substring(index1,index2+1);
+		// Then read whitespace from the : until the start of the value is reached
+		index1= index2+=2;
+		while (requestString.charAt(index1)==' '&amp;&amp; index1&lt;requestString.length())
+		{
+			index1++;
+		}
+		String value = requestString.substring(index1,requestString.length());
+		// Now move the field and value to associative array
+		fieldmap.put(field, value);
+	}
+	else
+	{
+		// No : in the header line therefore the data must be the POST data.
+		if (requestString.length()&gt;0)
+		{
+				postData +=requestString;
+		}
+		else
+		{
+				System.out.println("No field identifier on this header line?"+requestString);
+		}
+	}
+}</pre></div>
+<p>We also need to write a method to allow us to access individual header fields from inside and outside the class.</p>
+<div id="prediv"><pre class="code">public String getHeaderField(String fieldToGet)
+{
+	String value = new String("");
+	try
+	{
+		value = fieldmap.get(fieldToGet+":").toString();
+	}catch(NullPointerException e){System.out.println(e.getMessage());}
+	return value;
+}</pre></div>
+<p>A few steps back we removed the code to extract and store the HOST and the PROTOCOL header fields. We can now remove the get and set methods we wrote to 
+access these properties as we can now simply make a call to getHeaderField("Host") or getHeaderField("Protocol") if we want these values. Whilst we are in the KCDHTTPRequest 
+class we may as well write the method to retrieve the postData. This is stored in a private String property so we need to write a public method to access this data as follows:</p>
+<div id="prediv"><pre class="code">public String getPostData()
+{
+	return postData;
+}</pre></div>
+
+<p>That completed the changes to the KCDHTTPRequest class, now we can make the necessary changes to the KCDHTTPResponse class to make use of these new features. 
+ In the sendDynamicResource() method amend the code inside the if(type==1) condition as follows.</p>
+<div id="prediv"><pre class="code">if (type==1)
+{
+	// POST request, so write POST data to PHP_CGI
+	System.out.println("Correctly identified a POST request");
+	OutputStream out = p.getOutputStream();
+	OutputStreamWriter osw = new OutputStreamWriter(out);
+	BufferedWriter bw = new BufferedWriter(osw);
+	System.out.print("Writing the following data to output  stream: ");
+	System.out.println(request.getPostData());
+	// write the postData to the output stream attached to the php-cgi process.
+	bw.write(request.getPostData());
+	bw.flush();
+	// Close output stream
+	bw.close();
+}</pre></div>
+<p>We then need to send an additional environment variable to the php-cgi process, the content length. Amend the getEnv() method as follows (changes in bold).</p>
+<div id="prediv"><pre class="code">private String[] getEnv()
+{
+	//String resource = request.getURI().substring(1,request.getURI().length());
+	String docroot = owner.getDocRoot();
+	String scriptFileName = "SCRIPT_FILENAME=" + docroot+"/"+request.getResource.s);
+	//String scriptName = "SCRIPT_NAME=" + request.getResource();
+	String queryString = "QUERY_STRING=" + request.getQueryString();
+	//String sessionID="PHPSESSID"+request.getSessionID();
+	String serverSoftware="SERVER_SOFTWARE=KCDWebServer/0.3.2";
+	String serverName= "SERVER_NAME=localhost";
+	String gatewayInterface="GATEWAY_INTERFACE=CGI/1.0";
+	<strong>String contentLength="CONTENT_LENGTH="hostrequest.getHeaderField("Content-Length");
+	String env[] = new String[6];</strong>
+	env[0]=scriptFileName;
+	env[1]=queryString;
+	env[2]=gatewayInterface;
+	env[3]=serverSoftware;
+	env[4]=serverName;
+	<strong>env[5]=contentLength;</strong>
+	return env;
+}</pre></div>
+<p>Finally we need to consider how PHP deals with the incoming POST data.  Normally with php operating as a module of a web server like Apache or IIS the POST values are 
+already extracted and made accessible. When processing the data using php-cgi this should also happen, providing that the php-cgi process recognises the format in which the POST data 
+is encoded. For now we will manually extract the POST values in the php files, to do this we need to write and use a function in any php file that makes use of POST data.  
+Add the code below to a file called myfunctions.php</p>
+<div id="prediv"><pre class="code">&lt;?php
+function getPostData() 
+{ 
+	$fp = fopen('php://input', 'r'); 
+	// read up to a maximum of 4096 bytes from the input stream 
+	while($line = fgets($fp, 4096)) { $postin = $postin.$line;} 
+	$stageone = explode('&amp;',$postin); 
+	//create an associative array from this 
+	//echo $test . "&lt;br /&gt;"; 
+	//echo "blank line&lt;br /&gt;"; 
+	foreach($stageone as $variable =&gt; $value) 
+	{ 
+		$stagetwo = explode('=',$value); 
+		{ 
+			$poststr[$stagetwo[0]] = urldecode($stagetwo[1]); 
+		} 
+	} 
+ 	return $poststr; 
+} 
+?&gt;
+</pre></div>
+<h3>Testing Version 0.3.5</h3>
+<img src="./A Simple Java Based Web Server_files/post_test01.png" alt="Output from post_test.php" width="40%" class="imgfloatright">
+<p>The code for this <a href="http://kcd.sytes.net/simplewebserver/KCDWebServer0.3.5.tar.gz">version of the WebServer</a> can be downloaded from the companion website as version-0.3.5.tar.gz. 
+Now we need to write add a couple of fields to our HTML form and write some PHP to process the POSTed form data. Update post_test.htm add add a couple of fields to the form.</p>
+	<div id="prediv"><pre class="code">  &lt;form name="test" method="post" action="post_test.php"&gt; 
+    &lt;input type="input" name="field1" /&gt; 
+    &lt;input type="input" name="field2" /&gt; 
+    &lt;input type="submit" name="submit" value="submit" /&gt; 
+  &lt;/form&gt;</pre></div>
+<p>Next amend post_test.php as follows, note the include statements at the top of the file, this brings in the function to read in the POST data from the input stream which is 
+then stored in the $_POST variable.</p>
+<div id="prediv"><pre class="code">&lt;?php 
+	include_once('myfunctions.php');	 
+	$_POST = getPostData(); 
+?&gt; 
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt; 
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"&gt; 
+
+&lt;head&gt; 
+	&lt;title&gt;KC Dobson Test Page&lt;/title&gt; 
+	&lt;meta http-equiv="content-type" content="text/html;charset=utf-8" /&gt; 
+	&lt;meta name="generator" content="Bluefish 1.0.7"/&gt; 
+&lt;/head&gt; 
+
+&lt;body&gt; 
+	&lt;p&gt;Test page to work with POST Data&lt;/p&gt; 
+	&lt;?php 
+		$field1 = $_POST['field1']; 
+		echo "Field 1 = ".$field1; 
+		echo "&lt;br /&gt;"; 
+		$field2 = $_POST['field2']; 
+		echo "Field 2 = ".$field2; 
+	?&gt; 
+&lt;/body&gt; 
+&lt;/html&gt;</pre></div>
+<p>Remember to create the myfunctions.php file as mentioned above and store this in your document root
+You should now be able to start the server and access the post_test.htm page.  Enter some data in the fields and hit the submit button.  You should see something like the following.</p>
+<h2>Step Six - Support for Sessions</h2>
+<p>The HTTP protocol is stateless which means that each independent request-response pair is exactly that, independent. This means that each request that is handled by the
+server has no knowledge of previous requests you might have made and what state your interaction might be in.  For static pages this is fine, each page is simply returned when requested.  
+For dynamic pages however it may be necessary to login for example. Each subsequent request for a page inside the login area must have some way of recognising whether or 
+not the request is valid - is the user logged in for example. If you had to manually re-enter your login data for every page that would be extremely annoying and impractical.</p>
+<p>Sessions are one way to provide this sense of state to applications.  The session handling is done by the CGI or Server Side Scripting process, not by the server.  
+The server simply passes the information that comes from the browser to the server and vice versa.</p>
+<p>To support sessions in our Web Server we need to know what data PHP needs to have sent to it and how it expects this data to arrive at the php-cgi process. 
+ Sessions can be handled in one of two ways - either by encoding some information into the URI as  a name/value pair or by using Cookies.  Using file based cookies is not a recommended approach 
+ as many users will turn these off, but using temporal browser based cookies ()which get deleted when the browser exits) are considered acceptable and normal practice.  
+ The browser will automatically return such a value if it has received one as part of a HTTP Response header. PHP needs a way to recognise which piece of data contains the 
+ Session Identifier.  The default name for this variable is PHPSESSID.  This can be changed in the appropriate php.ini file (the one associated with the php-cgi executable) to increase security, 
+ but only marginally as it is very easy to inspect the HTTP messages to determine what variable is being used to store this value.</p>
+<p>To use sessions in PHP they need to be initialised using the session_start(); method call. This checks to see if a value has been passed in from the browser for PHPSESSID 
+and if so whether this matches a currently live Session Identifier on the system.  If a match is made then the session variables stored in association with that Session identifier can be retrieved.  
+If no match exists then either a new session is created or the user will be kicked off the page and perhaps redirected back to a login page for example.</p>
+<p>To enable basic support for sessions we need to examine the HTTP header fields and look for a name value pair that contains 'PHPSESSID'  If found we can then extract this value and 
+pass it across to the php-cgi process in a standard method.  The php-cgi process will happily accept the PHPSESSID value as part of the query_string() or we can simply append it (if found) 
+to the query string value that is formed in the http_response object when we form the environment variables that we pass across to the php-cgi process.</p>
+<h3>Changes to the KCDHTTPResponse Class</h3>
+<p>We need to find and extract (if it exists) the PHPSESSID from the KCDHTTPRequest and append it to the Query String. If there already is a query string set then we need 
+to add an extra name value pair preceded by an &amp; character. If no query string is currently set then we can simply create our own from the PHPSESSID value that we have retrieved.</p>
+<p>Searching for the PHPSESSID can be performed in the KCDHTTPResponse class and made available through a public method getSessionID which returns a string.  We can then simply call that 
+function from when required and work with the corresponding returned data.</p>
+<p>Make the following changes to the KCDHTTPResponseget Env() method (highlighted in bold).</p>
+<div id="prediv"><pre class="code">private String[] getEnv() 
+{
+  //String resource = request.getURI().substring(1,request.getURI().length()); 
+  String docroot = owner.getDocRoot(); 
+  String scriptFileName = "SCRIPT_FILENAME=" + docroot+"/"+request.getResource(); 
+  //String scriptName = "SCRIPT_NAME=" + request.getResource(); 
+  String queryString = "QUERY_STRING=" + request.getQueryString(); 
+  <strong>String sessionID=request.getSessionID(); 
+  if (sessionID.length()&gt;0) 
+  { 
+	  if (queryString.length()&gt;13) 
+	  { 
+		  queryString=queryString+"&amp;"; 
+	  } 
+	  queryString=queryString+sessionID; 
+	  System.out.println("SESSION=" + sessionID); 
+  } </strong>
+  String serverSoftware="SERVER_SOFTWARE=KCDWebServer/0.3.5"; 
+  String serverName= "SERVER_NAME=localhost"; 
+  String gatewayInterface="GATEWAY_INTERFACE=CGI/1.0"; 
+  String contentType="CONTENT_TYPE=application/x-www-form-urlencoded"; 
+  String contentLength="CONTENT_LENGTH="+request.getHeaderField("Content-Length"); 
+  String env[] = new String[7]; 
+  env[0]=scriptFileName; 
+  env[1]=queryString; 
+  env[2]=gatewayInterface; 
+  env[3]=serverSoftware; 
+  env[4]=serverName; 
+  env[5]=contentType; 
+  env[6]=contentLength; 
+  return env; 
+}</pre></div>
+<h3>Changes to the KCDHTTPRequest class</h3>
+<p>Now we need to write the code to search for and extract the PHPSESSID value sent by the browser. This will normally be in a browser based cookie with a field name of Cookie
+ or perhaps Cookie. However it might also be sent as part of the URL or in another arbitrary field if using a non-standard browser.  Given that we have written a function that extracts 
+ and stores all header fields in an associated array called fieldmap we can easily look for the string PHPSESSID in any of the fields / values in this array.</p>
+<p>Add the following method to the KCDHTTPRequest class.</p>
+<div id="prediv"><pre class="code">public String getSessionID() 
+{ 
+  String returnval=""; 
+  boolean NotFound=true; 
+  Collection fieldvalues = fieldmap.values(); 
+  Iterator It = fieldvalues.iterator(); 
+  while (It.hasNext() &amp;&amp; NotFound) 
+  { 
+    String fieldval = (String)(It.next()); 
+    if (fieldval.contains("PHPSESSID")) 
+    { 
+      // found a field in the http header that contains the PHPSESSID value 
+      // extract it and quit the search 
+      returnval=fieldval; 
+      NotFound=false; 
+      System.out.println("Found PHPSESSID in: "+fieldval); 
+    } 
+  } 
+  return returnval; 
+}</pre></div>
+<p>This code gets the values from the HashMap associative array and stores them in a collection. We can use an Iterator to navigate a collection and search each 
+value in turn to see if it contains the string 'PHPSESSID'. If it does we can exit the search and return the value found.  If a match is never found then the method 
+will simply return an empty string.</p>
+<h3>Testing version 0.3.6</h3>
+<p>The code for this <a href="http://kcd.sytes.net/simplewebserver/KCDWebServer0.3.6.tar.gz">version of the Web Server</a> can be downloaded from the companion website as version-0.3.6.tar.gz. 
+This is not meant to be a secure and robust solution to the problem of session handling and will be full of security holes and problems.  However it does provide a simple implementation 
+that shows the basic principles of how Sessions are passed from Server to Browser and back again.</p>
+<p>To test this functionality we need to write a simple PHP page that uses sessions, something like the following code will do nicely, This code simply check to see if a session 
+already exists (does a PHPSESSID value - if present - match an active session on the server.  If a match is found then the session variable count is retrieved, incremented and output. 
+ If no session is found or if no value is found for the session variable counts then it is initiliased to 0.</p>
+<p>Enter the following code and store as session.php in the webroot folder.</p>
+<div id="prediv"><pre class="code">&lt;?php 
+	session_start(); 
+	if (!isset($_SESSION['count'])) 
+	{ 
+		$_SESSION['count'] = 0; 
+	} 
+	else 
+	{ 
+		$_SESSION['count']++; 
+	}	 
+?&gt; 
+&lt;html&gt; 
+	&lt;head&gt; 
+		&lt;title&gt;This is a page to see if sessions will work with my CGI server?&lt;/title&gt; 
+	&lt;/head&gt; 
+	&lt;body&gt; 
+	&lt;p&gt;The counter is now &lt;?php echo $_SESSION['count'];?&gt;&lt;/p&gt; 
+	&lt;p&gt;This paragraph contains an image &lt;img src="snapshot1.png" width="200" height="100" /&gt;&lt;/p&gt; 
+	&lt;/body&gt; 
+&lt;/html&gt;</pre></div>
+<p>Start your server and then request the session.php page.  You should see a page like that shown below returned.</p>
+<img src="./A Simple Java Based Web Server_files/with_sessions01.png" alt="Showing Sessions Working, first Page call" width="654" height="285">
+<p>Request the page a second time or refresh the browser and you should see the counter increment in values of 1.</p>
+<img src="./A Simple Java Based Web Server_files/with_sessions02.png" alt="Sessions, page second call with incremented counter value." width="654" height="285">
+<p>Open up a different browser and request the page again and you should see that value returns to 0 but then increments as before. 
+ Switch bask to the original browser and refresh that page and you will see that the browsers are maintaining their own session values.</p>
+<h2>Part Three - Closing Comments</h2>
+<p>We now have a basic HTTP Server that can correctly recognise and serve GET and POST requests for static and dynamic resources and also provides support for PHP sessions. 
+Whilst it is functional it is by no means robust and is not meant for anything other than educational purposes. As stated at the outset, maximum understanding will be obtained by 
+following the tutorial in detail, downloading the various versions in their NetBeans format and studying each stage in the development process. By doing this you will also 
+gain an understanding where various elements of processing take place and where additions to the code may need to be added. </p>
+<p>If you have followed this tutorial through to this stage you will hopefully have learned a great deal about the HTTP protocol and how the web works.  You could increase this learning still 
+further by enhancing the server to provide support for more error messages.  Perhaps updating and expanding the user interface to enable more customisation to take place and 
+settings to be adjusted.</p>
+<p><a href="http://kcd.sytes.net/articles/">Back to kcd.sytes.net Articles Index</a></p>
+</div>
+  
+
+</body></html>
