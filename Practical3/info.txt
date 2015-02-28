@@ -1,2 +1,0 @@
-This is just a folder to contain the source files for COS 332 Practical 3.
-
