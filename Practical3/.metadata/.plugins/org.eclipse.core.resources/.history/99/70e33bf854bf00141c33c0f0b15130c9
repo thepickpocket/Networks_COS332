@@ -1,0 +1,6 @@
+
+public class HttpResponse {
+	public HttpResponse(OutputStream output, Server server){
+		
+	}
+}

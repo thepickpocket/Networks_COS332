@@ -1,0 +1,17 @@
+
+public class Server implements Runnable{
+	int port = 8080;
+	
+	public Server(int chosenPort){
+		this.port = chosenPort;
+	}
+	
+	public static void main(){
+		
+	}
+
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+}

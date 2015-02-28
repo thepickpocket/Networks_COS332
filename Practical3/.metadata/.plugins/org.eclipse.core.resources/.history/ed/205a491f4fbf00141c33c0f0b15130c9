@@ -1,0 +1,6 @@
+
+public class HttpRequests {
+	public HttpRequests(InputStream input){
+		
+	}
+}

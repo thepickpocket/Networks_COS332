@@ -1,0 +1,53 @@
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+
+public class HttpResponse {
+	
+	private static final int BUFFER_SIZE = 1024;
+	OutputStream output;
+	HttpRequests request;
+	Server owner; //Note: Verander na server
+	
+	public HttpResponse(OutputStream output, Server serverIncoming){
+		this.output = output;
+		owner = serverIncoming;
+	}
+	
+	public void setRequest(HttpRequests theRequest){
+		this.request = theRequest;
+		try{
+			int responseCode = sendStaticResource();
+			if (responseCode != 0){
+				returnError(responseCode);
+			}
+		}
+		catch(IOException e){
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public int sendStaticResource throws IOException(){
+		int returnCode = 0;
+		byte[] bytes = new byte[BUFFER_SIZE];
+		FileInputStream file = null;
+		try{
+			File requestedFile = new File(owner.getDocumentRoot(), request.getURI());
+		}
+		catch(Exception e){
+			System.out.println(e.toString());
+		}
+		finally{
+			if (file != null){
+				file.close();
+			}
+		}
+		return returnCode;
+	}
+}

@@ -1,0 +1,43 @@
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
+public class Server implements Runnable{
+	
+	private static volatile boolean serverStatus = true;
+	private ServerSocket serverSocket;
+	StringBuffer request = new StringBuffer(2048);
+	
+	public static void main(String args[]) throws Exception{
+
+	}
+	
+	public void run(){
+		while (true){
+			Socket socket = null;
+			InputStream input = null;
+			OutputStream output = null;
+			try{
+				synchronized(this){
+					while (serverStatus == false){
+						wait();
+					}
+				}
+			}
+			catch(InterruptedException e){
+				e.printStackTrace();
+			}
+			
+			try{
+				if (serverStatus == true){
+					input = socket.getInputStream();
+					output = socket.getOutputStream();
+					HttpRequests request = new HttpRequests(input);
+					int parseCode = request.parseEntireRequest();
+				}
+			}
+			catch(){
+			}
+		}
+	}
+}

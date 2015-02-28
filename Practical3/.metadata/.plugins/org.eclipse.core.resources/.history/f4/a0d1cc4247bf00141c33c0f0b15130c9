@@ -1,0 +1,15 @@
+
+public class Server implements Runnable{
+	public Server(int port){
+		
+	}
+	
+	public static void main(){
+		
+	}
+
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+}

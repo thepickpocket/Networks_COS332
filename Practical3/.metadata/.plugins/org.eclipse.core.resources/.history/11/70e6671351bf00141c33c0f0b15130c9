@@ -1,0 +1,34 @@
+import java.io.IOException;
+import java.io.InputStream;
+
+
+public class HttpRequests {
+	
+	private String httpRequest;
+	InputStream input;
+	StringBuffer request = new StringBuffer(2048);
+	String requestURI;
+	String requestMethod;
+	String requestProtocol;
+	String requestHostname;
+	int errorCode = 0;
+	
+	public HttpRequests(InputStream theInput){
+		this.input = theInput;
+		parse();
+	}
+	
+	private void parse(){
+		int i;
+		byte[] buffer = new byte[2048];
+		String returnString;
+		
+		try{
+			i = input.read(buffer);
+		}
+		catch(IOException e){
+			e.printStackTrace();
+			i = -1;
+		}
+	}
+}

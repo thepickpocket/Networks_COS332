@@ -1,0 +1,15 @@
+import java.io.OutputStream;
+
+
+public class HttpResponse {
+	
+	private static final int BUFFER_SIZE = 1024;
+	OutputStream output;
+	HttpRequests request;
+	Server owner; //Note: Verander na server
+	
+	public HttpResponse(OutputStream output, Server serverIncoming){
+		this.output = output;
+		owner = serverIncoming;
+	}
+}

@@ -1,0 +1,10 @@
+
+public class Server {
+	public static Server(int port){
+		
+	}
+	
+	public static void main(){
+		
+	}
+}

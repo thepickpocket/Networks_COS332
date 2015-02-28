@@ -1,0 +1,57 @@
+import java.io.IOException;
+import java.io.InputStream;
+
+
+public class HttpRequests {
+	
+	private String httpRequest;
+	InputStream input;
+	StringBuffer request = new StringBuffer(2048);
+	String requestURI;
+	String requestMethod;
+	String requestProtocol;
+	String requestHostname;
+	int errorCode = 0;
+	
+	public HttpRequests(InputStream theInput){
+		this.input = theInput;
+		parse();
+	}
+	
+	private void parse(){
+		int i;
+		byte[] buffer = new byte[2048];
+		String returnString;
+		
+		try{
+			i = input.read(buffer);
+		}
+		catch(IOException e){
+			e.printStackTrace();
+			i = -1;
+		}
+		
+		for(int j = 0; j < i; j++){
+			request.append((char) buffer[j]);
+		}
+		
+		System.out.println(request.toString());
+		owner.setStatusMessage(request.toString());
+	}
+	
+	public int parseEntireRequest(){
+		String requestString = request.toString();
+		int index1 = requestString.indexOf(' ');
+		int index2;
+		
+		if (index1 != -1 && index1 > 0){
+			setMethod(requestString.substring(0, index1));
+			index2 = requestString.indexOf(' ', index1 + 1);
+			if (index2 > index1){
+				setURI(requestString.substring(index1 + 1, index2));
+			}
+		}
+		
+		return 1;
+	}
+}
