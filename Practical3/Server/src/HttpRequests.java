@@ -12,7 +12,7 @@ public class HttpRequests {
 	String requestProtocol;
 	String requestHostname;
 	int errorCode = 0;
-	static Server owner; //Note: Verander na server
+	//static Server owner; //Note: Verander na server
 	
 	public HttpRequests(InputStream theInput){
 		this.input = theInput;
@@ -35,9 +35,13 @@ public class HttpRequests {
 		for(int j = 0; j < i; j++){
 			request.append((char) buffer[j]);
 		}
-		
+		httpRequest = request.toString();
 		System.out.println(request.toString());
-		owner.setStatusMessage(request.toString());
+		//owner.setStatusMessage(request.toString());
+	}
+	
+	public String getHttpRequest(){
+		return httpRequest;
 	}
 	
 	public int parseEntireRequest(){
@@ -80,10 +84,6 @@ public class HttpRequests {
 	
 	public InputStream getInput(){
 		return input;
-	}
-	
-	public String getHttpRequest(){
-		return httpRequest;
 	}
 	
 	public String getErrorMessage(){

@@ -4,58 +4,15 @@ import java.util.*;
 
 public class Server implements Runnable{
 	
-	private static volatile boolean serverStatus = true;
+	private static volatile boolean serverStatus;
 	private ServerSocket serverSocket;
 	StringBuffer request = new StringBuffer(2048);
 	String statusMessage;
 	String docRoot;
-	int port;
+	static int port;
 	
-	public synchronized void startServer(int port, String docRoot){
-		//setOwner();
-		this.port = port;
-		setDocRoot(docRoot);
-		String message = new String();
-		message = "Starting server on port " + Integer.toString(port);
-		try{
-			serverSocket = new ServerSocket(port, 1, InetAddress.getByName("127.0.0.1"));
-		}
-		catch(IOException e){
-			e.printStackTrace(); System.exit(1);
-		}
-		
-		this.serverStatus = true;
-		serverNotify();
-	}
-	
-	private synchronized void serverNotify() {
-		notify();
-	}
-	
-	public void stopServer(){
-		try{
-			serverStatus = false;
-			serverSocket.close();
-		}
-		catch(IOException e){
-			e.printStackTrace(); System.exit(1);
-		}
-	}
-
-	public static void main(String args[]) throws Exception{
-
-	}
-	
-	public void setDocRoot(String theRoot){
-		docRoot = theRoot;
-	}
-	
-	public String getDocRoot(){
-		return docRoot;
-	}
-	
-	public void setStatusMessage(String message){
-		statusMessage = message;
+	public Server(){
+		serverStatus = false;
 	}
 	
 	public void run(){
@@ -63,6 +20,7 @@ public class Server implements Runnable{
 			Socket socket = null;
 			InputStream input = null;
 			OutputStream output = null;
+			
 			try{
 				synchronized(this){
 					while (serverStatus == false){
@@ -71,7 +29,7 @@ public class Server implements Runnable{
 				}
 			}
 			catch(InterruptedException e){
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
 			
 			try{
@@ -110,5 +68,67 @@ public class Server implements Runnable{
 				continue;
 			}
 		}
+	}
+	
+	public void setPort(int portN){
+		port = portN;
+	}
+	
+	public int getPort(){
+		return port;
+	}
+	
+	private void setDocRoot(String theRoot){
+		docRoot = theRoot;
+	}
+	
+	public String getDocRoot(){
+		return docRoot;
+	}
+	
+	public synchronized void startServer(int port, String docRoot){
+		//setOwner();
+		setPort(port);
+		setDocRoot(docRoot);
+		String message = new String();
+		message = "Starting server on port " + Integer.toString(port);
+		try{
+			serverSocket = new ServerSocket(port, 1, InetAddress.getByName("127.0.0.1"));
+		}
+		catch(IOException e){
+			e.printStackTrace(); 
+			System.exit(1);
+		}
+		
+		this.serverStatus = true;
+		serverNotify();
+	}
+	
+	public void stopServer(){
+		try{
+			serverStatus = false;
+			serverSocket.close();
+		}
+		catch(IOException e){
+			e.printStackTrace(); 
+			System.exit(1);
+		}
+	}
+	
+	private synchronized void serverNotify() {
+		notify();
+	}
+
+	public static void main(String args[]) throws Exception{
+		if (args.length > 0){
+			port = Integer.parseInt(args[0]);
+		}
+		
+		Server serve = new Server();
+		serve.startServer(port, "index.html");
+	}
+	
+	public void setStatusMessage(String message){
+		statusMessage = message;
 	}
 }

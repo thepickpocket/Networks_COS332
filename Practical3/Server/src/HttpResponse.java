@@ -43,7 +43,7 @@ public class HttpResponse {
 		byte[] bytes = new byte[BUFFER_SIZE];
 		FileInputStream file = null;
 		try{
-			File requestedFile = new File(/*owner.getDocRoot()*/"index.html", request.getURI());
+			File requestedFile = new File("index.html", request.getURI());
 			if (requestedFile.exists()){
 				file = new FileInputStream(requestedFile);
 				int ch = file.read(bytes, 0, BUFFER_SIZE);
