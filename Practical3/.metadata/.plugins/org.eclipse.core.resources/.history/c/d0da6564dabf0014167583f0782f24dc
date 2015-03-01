@@ -1,0 +1,141 @@
+import java.io.IOException;
+import java.io.InputStream;
+
+
+public class HttpRequests {
+	
+	private String httpRequest;
+	InputStream input;
+	StringBuffer request = new StringBuffer(2048);
+	String requestURI;
+	String requestMethod;
+	String requestProtocol;
+	String requestHostname;
+	int errorCode = 0;
+	//static Server owner; //Note: Verander na server
+	
+	public HttpRequests(InputStream theInput){
+		this.input = theInput;
+		parse();
+	}
+	
+	private void parse(){
+		int i;
+		byte[] buffer = new byte[2048];
+		String returnString;
+		
+		try{
+			i = input.read(buffer);
+		}
+		catch(IOException e){
+			e.printStackTrace();
+			i = -1;
+		}
+		
+		for(int j = 0; j < i; j++){
+			request.append((char) buffer[j]);
+		}
+		httpRequest = request.toString();
+		System.out.println(request.toString());
+		//owner.setStatusMessage(request.toString());
+	}
+	
+	public int parseEntireRequest(){
+		String requestString = request.toString();
+		int index1 = requestString.indexOf(' ');
+		int index2;
+		
+		if (index1 != -1 && index1 > 0){
+			setMethod(requestString.substring(0, index1));
+			index2 = requestString.indexOf(' ', index1 + 1);
+			if (index2 > index1){
+				setURI(requestString.substring(index1 + 1, index2));
+				index1 = index2 + 1;
+				index2 = requestString.indexOf("\r\n", index1 + 1);
+				if (index2 > index1){
+					setProtocol(requestString.substring(index1, index2));
+					index1 = index2 + 1;
+					index2 = requestString.indexOf("\r\n", index1 + 1);
+					if (index2 > index1){
+						setHost(requestString.substring(index1 + 1, index2));
+					}
+					else{
+						errorCode = 4; //Error in constructing host name and port
+					}
+				}
+				else{
+					errorCode = 3; //Error in constructing protocol info.
+				}
+			}
+			else{
+				errorCode = 2; //Error in extracting uri
+			}
+		}
+		else{
+			errorCode = 1; //Could not extract request method.
+		}
+		
+		return errorCode;
+	}
+	
+	public InputStream getInput(){
+		return input;
+	}
+	
+	public String getHttpRequest(){
+		return httpRequest;
+	}
+	
+	public String getErrorMessage(){
+		String error;
+		switch (errorCode){
+		case 1 : 	error = "Error 01 - Could not extract HTTP Request Method.";
+					break;
+		case 2 :	error = "Error 02 - Could not extract URI (Uniform Resource Identifier)";
+					break;
+		case 3 : 	error = "Error 03 - Could not extract Protocol from request.";
+					break;
+		case 4 : 	error = "Error 04 - Could not extract hostname and port";
+					break;
+		default: 	error = "Unknown Error.";
+					break;
+		}
+		return error;
+	}
+	
+	public String getRequest(){
+		return request.toString();
+	}
+	
+	public void setMethod(String method){
+		requestMethod = method;
+	}
+	
+	public String getMethod(){
+		return requestMethod;
+	}
+	
+	private void setURI(String uri){
+		requestURI = uri;
+	}
+	
+	public String getURI(){
+		return requestURI;
+	}
+	
+	private void setProtocol(String protocol){
+		requestProtocol = protocol;
+	}
+	
+	public String getProtocol(){
+		return requestProtocol;
+	}
+	
+	private void setHost(String host){
+		requestHostname = host;
+	}
+	
+	public String getHost(){
+		return requestHostname;
+	}
+}
