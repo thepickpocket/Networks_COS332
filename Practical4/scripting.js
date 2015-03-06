@@ -1,21 +1,74 @@
 $(document).ready(function(){
 	$("#popupForSearch").hide();
-})
+	$("#popupForEdit").hide();
+	$("#popupForInsert").hide();
+	$("#popupForDelete").hide();
+});
 
-function searchSplash(){
-	console.log("Searching Screen initiated.");
-	$("#popupForSearch").show();
-	$("#popupForSearch").dialog();
-}
+$(function() {
+	$( "#popupForSearch" ).dialog({
+	autoOpen: false,
+	show: {
+		effect: "blind",
+		duration: 1000
+	},
+	hide: {
+		effect: "blind",
+		duration: 1000
+	}
+	});
+	$( "#search" ).click(function() {
+	$( "#popupForSearch" ).dialog( "open" );
+	});
+});
 
-function editSplash(){
-	console.log("Editing Screen initiated.");
-}
+$(function() {
+	$( "#popupForEdit" ).dialog({
+	autoOpen: false,
+	show: {
+		effect: "blind",
+		duration: 1000
+	},
+	hide: {
+		effect: "blind",
+		duration: 1000
+	}
+	});
+	$( "#edit" ).click(function() {
+	$( "#popupForEdit" ).dialog( "open" );
+	});
+});
 
-function deleteSplash(){
-	console.log("Deletion Screen initiated.");
-}
+$(function() {
+	$( "#popupForInsert" ).dialog({
+	autoOpen: false,
+	show: {
+		effect: "blind",
+		duration: 1000
+	},
+	hide: {
+		effect: "blind",
+		duration: 1000
+	}
+	});
+	$( "#insert" ).click(function() {
+	$( "#popupForInsert" ).dialog( "open" );
+	});
+});
 
-function insertSplash(){
-	console.log("Insertion Screen initiated.");
-}
+$(function() {
+	$( "#popupForDelete" ).dialog({
+	autoOpen: false,
+	show: {
+		effect: "blind",
+		duration: 1000
+	},
+	hide: {
+		effect: "blind",
+		duration: 1000
+	}
+	});
+	$( "#delete" ).click(function() {
+	$( "#popupForDelete" ).dialog( "open" );
+	});
+});

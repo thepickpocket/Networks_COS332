@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<link rel="stylesheet" type="text/css" href="styling.css"/>
 		<script type="text/javascript" src="jquery-1.11.2.min.js"></script>
-		<script type="text/javascript" src="jquery-ui.min.js"></script>
+		<script type="text/javascript" src="jquery-ui-1.11.3.custom/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="scripting.js"></script>
 	</head>
 
@@ -16,10 +16,10 @@
 		<div class="Main">
 			<div class="functionality">
 				<!--add buttons to throw splash of input forms for CRUD-->
-				<button onclick="searchSplash()">Search</button>
-				<button onclick="editSplash()">Edit</button>
-				<button onclick="insertSplash()">Insert</button>
-				<button onclick="deleteSplash()">Delete</button>
+				<button id="search">Search</button>
+				<button id="edit">Edit</button>
+				<button id="insert">Insert</button>
+				<button id="delete">Delete</button>
 			</div>
 			<div class="UserInteraction">
 				<textarea rows="30" cols="60" style="text-align: center;"readonly>
@@ -30,8 +30,42 @@ Vivian Laura-Lee Venter			012 345 6789
 				</textarea>
 			</div>
 		</div>
-		<div id="popupForSearch">
-			hello bithces!!
+		<div id="popupForSearch" class="popups">
+			<form method="GET" action="http://127.0.0.1">
+				<h1>Searching for a contact</h1>
+				<h3>Name of Contact: <input type="text" placeholder="Jane Doe"></input></h3><br />
+				<input type="submit" value="Submit now" />
+				<input type="reset" value="Clear Now" />
+			</form>
+		</div>
+
+		<div id="popupForEdit" class="popups">
+			<form onsubmit="" method="GET">
+				<h1>Editing a Contact</h1>
+				<h3>Name of Contact: <input type="text" placeholder="Jane Doe"></input></h3><br />
+				<h3>New Contact Number: <input type="text" placeholder="012 345 6789"></input></h3><br />
+				<input type="submit" value="Submit now" />
+				<input type="reset" value="Clear Now" />
+			</form>
+		</div>
+
+		<div id="popupForInsert" class="popups">
+			<form onsubmit="" method="GET">
+				<h1>Inserting a new contact</h1>
+				<h3>Name of New Contact: <input type="text" placeholder="Jane Doe"></input></h3><br />
+				<h3>New Contact Number: <input type="text" placeholder="012 345 6789"></input></h3><br />
+				<input type="submit" value="Submit now" />
+				<input type="reset" value="Clear Now" />
+			</form>
+		</div>
+
+		<div id="popupForDelete" class="popups">
+			<form onsubmit="" method="GET">
+				<h1>Deleting a contact</h1>
+				<h3>Contact name to delete: <input type="text" placeholder="Jane Doe"></input></h3>
+				<input type="submit" value="Submit now" />
+				<input type="reset" value="Clear Now" />
+			</form>
 		</div>
 	</body>
 </html>
