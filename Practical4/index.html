@@ -31,16 +31,16 @@ Vivian Laura-Lee Venter			012 345 6789
 			</div>
 		</div>
 		<div id="popupForSearch" class="popups">
-			<form method="GET" action="http://127.0.0.1">
+			<form method="GET" action="http://127.0.0.1:8080/">
 				<h1>Searching for a contact</h1>
-				<h3>Name of Contact: <input type="text" placeholder="Jane Doe"></input></h3><br />
+				<h3>Name of Contact: <input id="name" type="text" placeholder="Jane Doe"></input></h3><br />
 				<input type="submit" value="Submit now" />
 				<input type="reset" value="Clear Now" />
 			</form>
 		</div>
 
 		<div id="popupForEdit" class="popups">
-			<form onsubmit="" method="GET">
+			<form method="GET" action="http://127.0.0.1:8080/">
 				<h1>Editing a Contact</h1>
 				<h3>Name of Contact: <input type="text" placeholder="Jane Doe"></input></h3><br />
 				<h3>New Contact Number: <input type="text" placeholder="012 345 6789"></input></h3><br />
@@ -50,7 +50,7 @@ Vivian Laura-Lee Venter			012 345 6789
 		</div>
 
 		<div id="popupForInsert" class="popups">
-			<form onsubmit="" method="GET">
+			<form method="GET" action="http://127.0.0.1:8080/">
 				<h1>Inserting a new contact</h1>
 				<h3>Name of New Contact: <input type="text" placeholder="Jane Doe"></input></h3><br />
 				<h3>New Contact Number: <input type="text" placeholder="012 345 6789"></input></h3><br />
@@ -60,7 +60,7 @@ Vivian Laura-Lee Venter			012 345 6789
 		</div>
 
 		<div id="popupForDelete" class="popups">
-			<form onsubmit="" method="GET">
+			<form method="GET" action="http://127.0.0.1:8080/">
 				<h1>Deleting a contact</h1>
 				<h3>Contact name to delete: <input type="text" placeholder="Jane Doe"></input></h3>
 				<input type="submit" value="Submit now" />
