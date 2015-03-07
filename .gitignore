@@ -2,3 +2,4 @@
 *.resources
 *.prefs
 *.metadata
+*.class
