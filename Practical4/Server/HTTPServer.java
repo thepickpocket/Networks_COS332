@@ -40,7 +40,7 @@ public class HTTPServer extends Thread{
 				System.out.println("REQUEST:  "+requestString);
 				
 				String tokenizerString = requestString;
-	
+				if (!tokenizerString.equals("")){
 				StringTokenizer tokenizer = new StringTokenizer(tokenizerString);
 				String Method = tokenizer.nextToken();
 				String Query = tokenizer.nextToken();
@@ -99,6 +99,7 @@ public class HTTPServer extends Thread{
 				}
 				else 
 					sendResponse(404, "<b>HTTP_Server could not resolve request... <br> The Requested HTTP Method not supported .... </b>", false);
+				}
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
