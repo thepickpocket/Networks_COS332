@@ -73,7 +73,7 @@ public class HTTPServer extends Thread{
 						
 						String d_line = getDisplayLine();
 						String d_ans = getAnswer();
-						String c1 = constructTopPart(d_line,d_ans);
+						String c1 = constructTopPart("Temporary");
 						String c2 = constructBottomPart();
 						
 						String fileContent = c1 + c2;
@@ -276,28 +276,36 @@ public class HTTPServer extends Thread{
 	}
 	
 	public static String constructBottomPart(){
-		String content = "<button class=\"num1div\" onClick=\"location.href='http://127.0.0.1:8080/val=1'\" type=\"submit\" formmethod=\"get\"> 1 </button> " +
-        "<button class=\"num2div\" onClick=\"location.href='http://127.0.0.1:8080/val=2'\" type=\"submit\" formmethod=\"get\"> 2 </button>" +
-        "<button class=\"num3div\" onClick=\"location.href='http://127.0.0.1:8080/val=3'\" type=\"submit\" formmethod=\"get\"> 3 </button>" +
-        "<button class=\"plusdiv\" onClick=\"location.href='http://127.0.0.1:8080/op=+'\" type=\"submit\" formmethod=\"get\"> + </button>" +
-        "<br>" +
-		"<button class=\"num4div\" onClick=\"location.href='http://127.0.0.1:8080/val=4'\" type=\"submit\" formmethod=\"get\"> 4 </button>" +
-        "<button class=\"num5div\" onClick=\"location.href='http://127.0.0.1:8080/val=5'\" type=\"submit\" formmethod=\"get\"> 5 </button>" +
-        "<button class=\"num6div\" onClick=\"location.href='http://127.0.0.1:8080/val=6'\" type=\"submit\" formmethod=\"get\"> 6 </button>" +
-        "<button class=\"minusdiv\" onClick=\"location.href='http://127.0.0.1:8080/op=-'\" type=\"submit\" formmethod=\"get\"> - </button>" +
-        "<br>" +
-		"<button class=\"num7div\" onClick=\"location.href='http://127.0.0.1:8080/val=7'\" type=\"submit\" formmethod=\"get\"> 7 </button>" +
-        "<button class=\"num8div\" onClick=\"location.href='http://127.0.0.1:8080/val=8'\" type=\"submit\" formmethod=\"get\"> 8 </button>" +
-        "<button class=\"num9div\" onClick=\"location.href='http://127.0.0.1:8080/val=9'\" type=\"submit\" formmethod=\"get\"> 9 </button>" +
-        "<button class=\"multdiv\" onClick=\"location.href='http://127.0.0.1:8080/op=x'\" type=\"submit\" formmethod=\"get\"> x </button>" +
-        "<br>" +
-		"<button class=\"num0div\" onClick=\"location.href='http://127.0.0.1:8080/val=0'\" type=\"submit\" formmethod=\"get\"> 0 </button>" +
-        "<button class=\"equaldiv\" onClick=\"location.href='http://127.0.0.1:8080/op=equal'\" type=\"submit\" formmethod=\"get\"> = </button> " +
-		"<button class=\"clrdiv\" onClick=\"location.href='http://127.0.0.1:8080'\" type=\"submit\" formmethod=\"get\"> CLR </button> " +
-        "<button class=\"dividediv\" onClick=\"location.href='http://127.0.0.1:8080/op=divide'\" type=\"submit\" formmethod=\"get\"> &divide; </button>" +
-		"</div>" +
-		"</body>" +
-		"</html>";
+		String content = "<div id=\"popupForSearch\" class=\"popups\">" +
+		"<form method=\"GET\" action=\"http://127.0.0.1:8080/method=s\">" +
+		"<h1>Searching for a contact</h1>"+
+		"<h3>Name of Contact: <input name=\"name\" type=\"text\" placeholder=\"Jane Doe\"></input></h3><br />"+
+		"<input type=\"submit\" value=\"Submit now\" />"+
+		"<input type=\"reset\" value=\"Clear Now\" />" +
+		"</form></div>" +
+		"<div id=\"popupForEdit\" class=\"popups\">" +
+		"<form method=\"GET\" action=\"http://127.0.0.1:8080/method=e\">" +
+		"<h1>Editing a Contact</h1>" +
+		"<h3>Name of Contact: <input name=\"name\" type=\"text\" placeholder=\"Jane Doe\"></input></h3><br /> " +
+		"<h3>New Contact Number: <input name=\"number\" type=\"text\" placeholder=\"012 345 6789\"></input></h3><br /> " +
+		"<input type=\"submit\" value=\"Submit now\" />" +
+		"<input type=\"reset\" value=\"Clear Now\" />" +
+		"</form></div>" +
+		"<div id=\"popupForInsert\" class=\"popups\">" +
+		"<form method=\"GET\" action=\"http://127.0.0.1:8080/method=i\">" +
+		"<h1>Inserting a new contact</h1>" +
+		"<h3>Name of New Contact: <input name=\"name\" type=\"text\" placeholder=\"Jane Doe\"></input></h3><br /> " +
+		"<h3>New Contact Number: <input name=\"number\" type=\"text\" placeholder=\"012 345 6789\"></input></h3><br /> " +
+		"<input type=\"submit\" value=\"Submit now\" />" +
+		"<input type=\"reset\" value=\"Clear Now\" />" +
+		"</form></div>" +
+		"<div id=\"popupForDelete\" class=\"popups\">" +
+		"<form method=\"GET\" action=\"http://127.0.0.1:8080/method=d\">" +
+		"<h1>Deleting a contact</h1>" +
+		"<h3>Contact name to delete: <input name=\"name\" type=\"text\" placeholder=\"Jane Doe\"></input></h3>" +
+		"<input type=\"submit\" value=\"Submit now\" /> "+ 
+		"<input type=\"reset\" value=\"Clear Now\" />" +
+		"</form></div></body></html>";
 		
 		return content;
 	}
@@ -311,7 +319,7 @@ public class HTTPServer extends Thread{
 		contactNumbers.clear();
 		displayAnswer = "0";
 		displayLine = "";
-		String c1 = constructTopPart("---","0");
+		String c1 = constructTopPart("---");
 		String c2 = constructBottomPart();
 		String fileContent = c1 + c2;
 		FileWriter out = new FileWriter("index.html", false);
