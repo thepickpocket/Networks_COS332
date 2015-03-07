@@ -72,14 +72,10 @@ public class HTTPServer extends Thread{
 
 						/*Read in strings to update display and then write everything to a html file called index.html*/
 						
-						String d_line = getDisplayLine();
-						String d_ans = getAnswer();
 						String c1 = constructTopPart("Temporary");
 						String c2 = constructBottomPart();
 						
 						String fileContent = c1 + c2;
-						
-						//System.out.println(fileContent);
 						
 						FileWriter out = new FileWriter(fileName, false);
 						BufferedWriter b = new BufferedWriter(out);
@@ -109,94 +105,6 @@ public class HTTPServer extends Thread{
 		}
 		
 		System.out.println("----------------------------------------------------------------------------------------\n");
-	}
-
-	private void computePreliminary() {
-		compute();
-	}
-
-	private void compute() {
-		int v1 = 0, v2 = 0, ans = 0;
-		if (contactNumbers.get(0).equals("+")) {
-			
-			//System.out.println("IN METHOD compute: " + contactNumbers.get(0));
-			//v1 = contactNames.pop();
-			//v2 = contactNames.pop();
-			
-			//System.out.println("IN METHOD: compute" + v1 + "    " + v2);
-			
-			//ans = v1 + v2;
-			
-			//System.out.println("IN METHOD: compute" + ans);
-			
-			contactNumbers.remove(0);
-			setAnswer(ans);
-		}
-		else if (contactNumbers.get(0).equals("-")) {
-			//v1 = contactNames.pop();
-			//v2 = contactNames.pop();
-			
-			ans = v1 - v2;
-			contactNumbers.remove(0);
-			setAnswer(ans);
-		}
-		else if (contactNumbers.get(0).equals("x")) {
-			//v1 = contactNames.pop();
-			//v2 = contactNames.pop();
-			
-			ans = (v1 * v2);
-			contactNumbers.remove(0);
-			setAnswer(ans);
-		}
-		else if (contactNumbers.get(0).equals("/")) {
-			//v1 = contactNames.pop();
-			//v2 = contactNames.pop();
-			
-			//ans = (v1 / v2);
-			contactNumbers.remove(0);
-			setAnswer(ans);
-		}
-		else if (contactNumbers.get(0).equals("=")) {
-			//v1 = contactNames.pop();
-
-			//ans = v1;
-			contactNumbers.remove(0);
-			setAnswer(ans);
-		}
-	}
-
-	private void setAnswer(int ans) {
-		//contactNames.addLast(ans);
-		displayAnswer = Integer.toString(ans);
-		//System.out.println("IN METHOD: setAnswer" + getAnswer());
-	}
-
-	private void setDisplayLine(String value) {
-		String dummy = displayLine + value;
-		this.displayLine = dummy;
-	}
-
-	private String getAnswer() {
-		return displayAnswer;
-	}
-	
-	private boolean evaluate(String operator) {
-		
-		//System.out.println("IN METHOD: evaluate" + contactNames.size());
-		
-		if (operator.equals("equal"))
-		{
-			return true;
-		}
-		
-		if (contactNames.size() != 2) {  //only one operand available do not compute answer
-			return false;
-		}
-		else if (contactNames.size() == 2) { // two operand available can compute answer
-			return true;
-		}
-		
-		return false;
 	}
 
 	public void sendResponse (int statusCode, String response, boolean isFile) throws Exception {
@@ -311,11 +219,7 @@ public class HTTPServer extends Thread{
 		
 		return content;
 	}
-
-	private String getDisplayLine() {
-		return displayLine;
-	}
-
+	
 	private static String getList(){
 		String compiling = "NAME:					NUMBER:\n====================================================\n";
 		
