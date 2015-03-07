@@ -1,6 +1,6 @@
 /*
  * Vivian Venter (13238435) & Jason Evans (13032608)
- * COS 332 - Practical 3
+ * COS 332 - Practical 4
  * Collaboration
  */
 import java.io.*;
@@ -15,8 +15,9 @@ public class HTTPServer extends Thread{
 	static String displayAnswer = "0";
 	
 	Socket connectionClient = null;
-	static LinkedList<Integer> numbers = new LinkedList<Integer>();
-	static LinkedList<String> operators = new LinkedList<String>();
+	static String method = ""; //Describes what we will be doing with data entered CRUD
+	static LinkedList<Integer> contactNames = new LinkedList<Integer>(); //Saves all currently stored Contact names.
+	static LinkedList<String> contactNumbers = new LinkedList<String>(); //Saves all currently stored Contact contactNames
 	
 	BufferedReader inFromClient = null;
 	DataOutputStream outToClient = null;
@@ -44,35 +45,26 @@ public class HTTPServer extends Thread{
 				String Method = tokenizer.nextToken();
 				String Query = tokenizer.nextToken();
 	
-				//System.out.println("METHOD:  "+Method);
-				//System.out.println("QUERYSTRING:  "+Query);
-				//System.out.println("QUERYSTRING two :  "+ Query.substring(0, 5));
-				
-	
 				if (Method.equals("GET")) {  // GET Method used for http protocol
 					
-					if (Query.equals("/")) {  // The default home page which is calculator
+					if (Query.equals("/")) {  // The default home page
 						resetRootFile();
 						String fileName = Query.replaceFirst("/", "index.html");
 						fileName = URLDecoder.decode(fileName);
 						requestedFile(fileName);
 					} 
-					else if (Query.substring(0, 5).equals("/val=")) { // a digit was inserted
+					else if (Query.substring(0, 7).equals("/method=")) { // what will we be doing -> CRUD
 						
-						String value = Query.substring(5, 6);
-						int val = Integer.parseInt(value);
-						numbers.addLast(val); // put value in stack for operation
+						method = Query.substring(8, 9);
+						/*
+							method = d : DELETE
+							method = i : INSERT
+							method = e : EDIT
+							method = s : SEARCH
+						*/
 						
-						if (numbers.size() == 2)
-						{
-							computePreliminary();
-						}
-						
-						setDisplayLine(value); // set value in display line
-						
-						//System.out.println("-------------------------------------------"+
-						//		"127.0.0.1:8080/val= --------- " + (val+1) + " ------------------------------------");	
-						
+						System.out.println(method);
+
 						String newQ = "index.html";
 						String fileName = newQ;
 						fileName = URLDecoder.decode(fileName);
@@ -94,67 +86,6 @@ public class HTTPServer extends Thread{
 						b.close();
 						
 						requestedFile(fileName);
-					}
-					else if (Query.substring(0, 4).equals("/op=")) {
-
-						Boolean canEvaluate = false;
-						String newQ = "index.html";
-						String fileName = newQ;
-						fileName = URLDecoder.decode(fileName);
-						
-						String operator = Query.substring(4, Query.length());
-						
-						//System.out.println("-------------------------------------------"+
-						//		"127.0.0.1:8080/op= --------- " + operator  + " ------------------------------------");
-
-						if (operator.equals("+")) { // operator is plus
-							//System.out.println("IN METHOD----------------");
-							setDisplayLine(operator);
-							operators.addLast(operator);
-							//System.out.println("IN METHOD: " + operators.getLast());
-							canEvaluate = evaluate(operator);
-						}
-						else if (operator.equals("-")) { // operator is minus
-							setDisplayLine(operator);
-							operators.addLast(operator);
-							canEvaluate = evaluate(operator);
-						}
-						else if (operator.equals("divide")) { // operator is divide
-							setDisplayLine("/");
-							operators.addLast("/");
-							canEvaluate = evaluate(operator);
-						}
-						else if (operator.equals("x")) { // operator is multiply
-							setDisplayLine(operator);
-							operators.addLast(operator);
-							canEvaluate = evaluate(operator);
-						}
-						else if (operator.equals("equal")) { // operator is equal
-							operators.addLast("=");
-							canEvaluate = evaluate(operator);
-						}
-						
-						if (canEvaluate == true) {
-							compute();
-						}
-						
-						String d_line = getDisplayLine();
-						String d_ans = getAnswer();
-						String c1 = constructTopPart(d_line,d_ans);
-						String c2 = constructBottomPart();
-						
-						String fileContent = c1 + c2;
-						
-						//System.out.println(fileContent);
-						
-						FileWriter out = new FileWriter(fileName, false);
-						BufferedWriter b = new BufferedWriter(out);
-						b.write(fileContent);
-						b.close();
-						
-						
-						requestedFile(fileName);
-						
 					}
 					else { // will handle any other types of files to be fetched for example my images to display
 						String fileName = Query.replaceFirst("/", "");
@@ -185,11 +116,11 @@ public class HTTPServer extends Thread{
 
 	private void compute() {
 		int v1 = 0, v2 = 0, ans = 0;
-		if (operators.get(0).equals("+")) {
+		if (contactNumbers.get(0).equals("+")) {
 			
-			//System.out.println("IN METHOD compute: " + operators.get(0));
-			v1 = numbers.pop();
-			v2 = numbers.pop();
+			//System.out.println("IN METHOD compute: " + contactNumbers.get(0));
+			v1 = contactNames.pop();
+			v2 = contactNames.pop();
 			
 			//System.out.println("IN METHOD: compute" + v1 + "    " + v2);
 			
@@ -197,44 +128,44 @@ public class HTTPServer extends Thread{
 			
 			//System.out.println("IN METHOD: compute" + ans);
 			
-			operators.remove(0);
+			contactNumbers.remove(0);
 			setAnswer(ans);
 		}
-		else if (operators.get(0).equals("-")) {
-			v1 = numbers.pop();
-			v2 = numbers.pop();
+		else if (contactNumbers.get(0).equals("-")) {
+			v1 = contactNames.pop();
+			v2 = contactNames.pop();
 			
 			ans = v1 - v2;
-			operators.remove(0);
+			contactNumbers.remove(0);
 			setAnswer(ans);
 		}
-		else if (operators.get(0).equals("x")) {
-			v1 = numbers.pop();
-			v2 = numbers.pop();
+		else if (contactNumbers.get(0).equals("x")) {
+			v1 = contactNames.pop();
+			v2 = contactNames.pop();
 			
 			ans = (v1 * v2);
-			operators.remove(0);
+			contactNumbers.remove(0);
 			setAnswer(ans);
 		}
-		else if (operators.get(0).equals("/")) {
-			v1 = numbers.pop();
-			v2 = numbers.pop();
+		else if (contactNumbers.get(0).equals("/")) {
+			v1 = contactNames.pop();
+			v2 = contactNames.pop();
 			
 			ans = (v1 / v2);
-			operators.remove(0);
+			contactNumbers.remove(0);
 			setAnswer(ans);
 		}
-		else if (operators.get(0).equals("=")) {
-			v1 = numbers.pop();
+		else if (contactNumbers.get(0).equals("=")) {
+			v1 = contactNames.pop();
 
 			ans = v1;
-			operators.remove(0);
+			contactNumbers.remove(0);
 			setAnswer(ans);
 		}
 	}
 
 	private void setAnswer(int ans) {
-		numbers.addLast(ans);
+		contactNames.addLast(ans);
 		displayAnswer = Integer.toString(ans);
 		//System.out.println("IN METHOD: setAnswer" + getAnswer());
 	}
@@ -250,17 +181,17 @@ public class HTTPServer extends Thread{
 	
 	private boolean evaluate(String operator) {
 		
-		//System.out.println("IN METHOD: evaluate" + numbers.size());
+		//System.out.println("IN METHOD: evaluate" + contactNames.size());
 		
 		if (operator.equals("equal"))
 		{
 			return true;
 		}
 		
-		if (numbers.size() != 2) {  //only one operand available do not compute answer
+		if (contactNames.size() != 2) {  //only one operand available do not compute answer
 			return false;
 		}
-		else if (numbers.size() == 2) { // two operand available can compute answer
+		else if (contactNames.size() == 2) { // two operand available can compute answer
 			return true;
 		}
 		
@@ -363,8 +294,8 @@ public class HTTPServer extends Thread{
 	}
 	
 	private static void resetRootFile() throws IOException {
-		numbers.clear();
-		operators.clear();
+		contactNames.clear();
+		contactNumbers.clear();
 		displayAnswer = "0";
 		displayLine = "";
 		String c1 = constructTopPart("---","0");
