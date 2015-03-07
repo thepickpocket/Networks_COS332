@@ -16,7 +16,7 @@ public class HTTPServer extends Thread{
 	
 	Socket connectionClient = null;
 	static String method = ""; //Describes what we will be doing with data entered CRUD
-	static LinkedList<Integer> contactNames = new LinkedList<Integer>(); //Saves all currently stored Contact names.
+	static LinkedList<String> contactNames = new LinkedList<String>(); //Saves all currently stored Contact names.
 	static LinkedList<String> contactNumbers = new LinkedList<String>(); //Saves all currently stored Contact contactNames
 	
 	BufferedReader inFromClient = null;
@@ -63,7 +63,8 @@ public class HTTPServer extends Thread{
 							method = s : SEARCH
 						*/
 						
-						System.out.println(method);
+						System.out.println("Method is : " + method);
+						
 
 						String newQ = "index.html";
 						String fileName = newQ;
@@ -119,12 +120,12 @@ public class HTTPServer extends Thread{
 		if (contactNumbers.get(0).equals("+")) {
 			
 			//System.out.println("IN METHOD compute: " + contactNumbers.get(0));
-			v1 = contactNames.pop();
-			v2 = contactNames.pop();
+			//v1 = contactNames.pop();
+			//v2 = contactNames.pop();
 			
 			//System.out.println("IN METHOD: compute" + v1 + "    " + v2);
 			
-			ans = v1 + v2;
+			//ans = v1 + v2;
 			
 			//System.out.println("IN METHOD: compute" + ans);
 			
@@ -132,40 +133,40 @@ public class HTTPServer extends Thread{
 			setAnswer(ans);
 		}
 		else if (contactNumbers.get(0).equals("-")) {
-			v1 = contactNames.pop();
-			v2 = contactNames.pop();
+			//v1 = contactNames.pop();
+			//v2 = contactNames.pop();
 			
 			ans = v1 - v2;
 			contactNumbers.remove(0);
 			setAnswer(ans);
 		}
 		else if (contactNumbers.get(0).equals("x")) {
-			v1 = contactNames.pop();
-			v2 = contactNames.pop();
+			//v1 = contactNames.pop();
+			//v2 = contactNames.pop();
 			
 			ans = (v1 * v2);
 			contactNumbers.remove(0);
 			setAnswer(ans);
 		}
 		else if (contactNumbers.get(0).equals("/")) {
-			v1 = contactNames.pop();
-			v2 = contactNames.pop();
+			//v1 = contactNames.pop();
+			//v2 = contactNames.pop();
 			
-			ans = (v1 / v2);
+			//ans = (v1 / v2);
 			contactNumbers.remove(0);
 			setAnswer(ans);
 		}
 		else if (contactNumbers.get(0).equals("=")) {
-			v1 = contactNames.pop();
+			//v1 = contactNames.pop();
 
-			ans = v1;
+			//ans = v1;
 			contactNumbers.remove(0);
 			setAnswer(ans);
 		}
 	}
 
 	private void setAnswer(int ans) {
-		contactNames.addLast(ans);
+		//contactNames.addLast(ans);
 		displayAnswer = Integer.toString(ans);
 		//System.out.println("IN METHOD: setAnswer" + getAnswer());
 	}
@@ -248,11 +249,12 @@ public class HTTPServer extends Thread{
 	}
 	
 	public static String constructTopPart(String list) {
+		String theList = getList();
 		String content = 
 		" <!DOCTYPE html> " + 
 		"<html>" +
 		"<head> <meta charset=\"utf-8\"> <title>Personal Contact Book Database</title> <link href=\"styling.css\" rel=\"stylesheet\" type=\"text/css\"> "+
-		"<script type=\"text/javascript\" src=\"jquery-1.11.2.min.js\"><script>" +
+		"<script type=\"text/javascript\" src=\"jquery-1.11.2.min.js\"></script>" +
 		"<script type=\"text/javascript\" src=\"jquery-ui-1.11.3.custom/jquery-ui.min.js\"></script>" +
 		"<script type=\"text/javascript\" src=\"scripting.js\"></script>"+
 		"</head>"  +
@@ -269,7 +271,7 @@ public class HTTPServer extends Thread{
 		"<button id=\"delete\">Delete</button>"+
 		"</div><div class=\"UserInteraction\">"+
 		"<textarea rows=\"30\" cols=\"60\" style=\"text-align: center;\"readonly>"+
-		list + //THIS IS WHERE THE LIST OF CONTACTS WILL BE
+		theList + //THIS IS WHERE THE LIST OF CONTACTS WILL BE
 		"</textarea></div></div>";
 	
 		return content;
@@ -312,6 +314,24 @@ public class HTTPServer extends Thread{
 
 	private String getDisplayLine() {
 		return displayLine;
+	}
+
+	private static String getList(){
+		String compiling = "NAME:					NUMBER:\n====================================================\n";
+		
+		//Testing to see if there are any contacts in our database.
+		if (contactNames.isEmpty() == true){
+			compiling = compiling + "There are currently no contacts in your database.";
+		}
+		else{
+			for (int i = 0; i < contactNames.size(); i++){
+				compiling += contactNames.get(i) + "\t\t\t" + contactNumbers.get(i);
+				if (!(i < contactNames.size()))
+					compiling += '\n'; //Adds a newline to all strings except the last line in the list
+			}
+		}
+		
+		return compiling;
 	}
 	
 	private static void resetRootFile() throws IOException {
