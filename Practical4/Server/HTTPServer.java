@@ -247,19 +247,32 @@ public class HTTPServer extends Thread{
 		file_istream.close();
 	}
 	
-	public static String constructTopPart(String GLOBAL_STRING, String GLOBAL_ANSWER) {
+	public static String constructTopPart(String list) {
 		String content = 
 		" <!DOCTYPE html> " + 
 		"<html>" +
-		"<head> <meta charset=\"utf-8\"> <title>Basic Calculator</title> <link href=\"styleCalc.css\" rel=\"stylesheet\" type=\"text/css\"> </head>"  +
+		"<head> <meta charset=\"utf-8\"> <title>Personal Contact Book Database</title> <link href=\"styling.css\" rel=\"stylesheet\" type=\"text/css\"> "+
+		"<script type=\"text/javascript\" src=\"jquery-1.11.2.min.js\"><script>" +
+		"<script type=\"text/javascript\" src=\"jquery-ui-1.11.3.custom/jquery-ui.min.js\"></script>" +
+		"<script type=\"text/javascript\" src=\"scripting.js\"></script>"+
+		"</head>"  +
 		"<body>" +
-		"<div class=\"mainDiv\">" +
-			"<div class=\"Digit_Display\">" + GLOBAL_STRING +
-				"<div class=\"Calculator_Display\">" + GLOBAL_ANSWER + "</div>" +
-			"</div>"
-			;
-			
-			return content;
+		"<div class=\"ApplicationNameBacking\">"+
+		"<h1>Personal Contact Book Database</h1>" +
+		"</div><br />"+
+		"<div class=\"Main\">" +
+		"<div class=\"functionality\">"+
+		"<!--add buttons to throw splash of input forms for CRUD-->"+
+		"<button id=\"search\">Search</button>"+
+		"<button id=\"edit\">Edit</button>"+
+		"<button id=\"insert\">Insert</button>"+
+		"<button id=\"delete\">Delete</button>"+
+		"</div><div class=\"UserInteraction\">"+
+		"<textarea rows=\"30\" cols=\"60\" style=\"text-align: center;\"readonly>"+
+		list + //THIS IS WHERE THE LIST OF CONTACTS WILL BE
+		"</textarea></div></div>";
+	
+		return content;
 	}
 	
 	public static String constructBottomPart(){

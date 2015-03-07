@@ -1,0 +1,48 @@
+body
+{
+	background-image: url("Images/backdrop.jpg");
+	--background-repeat: none;
+	background-size: cover;
+	background-repeat: none;
+}
+
+.ApplicationNameBacking
+{
+	color: white;
+	text-align: center;
+	text-decoration: underline;
+	text-shadow: 0px 0px 20px aqua;
+}
+
+.functionality
+{
+	text-align: center;
+}
+
+.functionality > button
+{
+	width: 100px;
+	height: 30px;
+	border-radius: 5px;
+	margin-bottom: 5%;
+	box-shadow: 0px 0px 20px aqua;
+}
+
+.UserInteraction
+{
+	text-align: center;
+}
+
+.UserInteraction > textarea
+{
+	box-shadow: 0px 0px 20px aqua;
+}
+
+.popups
+{
+	background-color: aqua;
+	box-shadow:  0px 0px 20px aqua;
+	width: 80%;
+	height: 75%;
+	padding: 20px;
+}
