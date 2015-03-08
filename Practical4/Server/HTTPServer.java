@@ -278,6 +278,17 @@ public class HTTPServer extends Thread{
 			return false;
 	}
 	
+	private static boolean editContact(String contactName, String newNumber){
+		//The functionality of this function is very limited. It can only update/edit the contact number, not the contact name itself.
+		if (contactNames.contains(contactName)){
+			int index = contactNames.indexOf(contactName);
+			contactNumbers.set(index, newNumber);
+			return true;
+		}
+		else
+			return false;
+	}
+	
 	private static void resetRootFile() throws IOException {
 		contactNames.clear();
 		contactNumbers.clear();
