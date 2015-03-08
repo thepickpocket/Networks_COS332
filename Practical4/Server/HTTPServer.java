@@ -258,11 +258,24 @@ public class HTTPServer extends Thread{
 	private static String searchContact(String searchName){
 		String searchResults = "";
 		if (contactNames.contains(searchName)){
+			//This search method will only get the first instance of that name.
+			//Meaning we will have a problem with multiple equal names with different numbers.
 			searchResults += contactNames.get(contactNames.indexOf(searchName)) + "\t\t\t" + contactNumbers.get(contactNames.indexOf(searchName));
 		}
 		else
 			searchResults = "No contact with the name " + searchName + " could be found.";
 		return searchResults;
+	}
+	
+	private static boolean deleteContact(String delName){
+		if (contactNames.contains(delName)){ //check if contact actually exist before deleteing
+			int indexAt = contactNames.indexOf(delName);
+			contactNames.remove(indexAt);
+			contactNumbers.remove(indexAt);
+			return true;
+		}
+		else
+			return false;
 	}
 	
 	private static void resetRootFile() throws IOException {
