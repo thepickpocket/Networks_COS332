@@ -239,6 +239,22 @@ public class HTTPServer extends Thread{
 		return compiling;
 	}
 	
+	private static boolean insertNewContact(String newName, String newNumber){
+		//Up to this point, we are only thinking about saving the data locally.
+		//No mode of persistance has yet been added.
+		if (contactNumbers.contains(newNumber)){//There already exists a contact with that number.
+			System.out.println("There already exist a contact with that number.");
+			return false;
+		}
+		else
+		{
+			contactNames.add(newName);
+			contactNumbers.add(newNumber);
+			System.out.println("Contact Number has been added successfully.");
+			return true;
+		}
+	}
+	
 	private static void resetRootFile() throws IOException {
 		contactNames.clear();
 		contactNumbers.clear();
