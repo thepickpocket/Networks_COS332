@@ -255,6 +255,16 @@ public class HTTPServer extends Thread{
 		}
 	}
 	
+	private static String searchContact(String searchName){
+		String searchResults = "";
+		if (contactNames.contains(searchName)){
+			searchResults += contactNames.get(contactNames.indexOf(searchName)) + "\t\t\t" + contactNumbers.get(contactNames.indexOf(searchName));
+		}
+		else
+			searchResults = "No contact with the name " + searchName + " could be found.";
+		return searchResults;
+	}
+	
 	private static void resetRootFile() throws IOException {
 		contactNames.clear();
 		contactNumbers.clear();
