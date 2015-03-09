@@ -13,6 +13,8 @@ public class HTTPServer extends Thread{
 	
 	static String displayLine = "";
 	static String displayAnswer = "0";
+	static String GLOBAL_Notification = "Personal Contact Book Database";
+	static String TITLE = "Personal Contact Book Database"; //for reset purposes
 	
 	Socket connectionClient = null;
 	static String method = ""; //Describes what we will be doing with data entered CRUD
@@ -86,6 +88,8 @@ public class HTTPServer extends Thread{
 							//System.out.println(theName + " == " + theNumber);
 							if (insertNewContact(theName, theNumber) == true)
 								System.out.println("Contact has been added successfully!");
+							
+							GLOBAL_Notification = "Notification: New Contact added successfully!";
 						}
 						else if (method.equals("e")){
 							String theName = "";
@@ -214,7 +218,7 @@ public class HTTPServer extends Thread{
 		"</head>"  +
 		"<body>" +
 		"<div class=\"ApplicationNameBacking\">"+
-		"<h1>Personal Contact Book Database</h1>" +
+		"<h1>" + GLOBAL_Notification + "</h1>" +
 		"</div><br />"+
 		"<div class=\"Main\">" +
 		"<div class=\"functionality\">"+
