@@ -53,14 +53,13 @@ public class HTTPServer extends Thread{
 				String Query = tokenizer.nextToken();
 	
 				if (Method.equals("GET")) {  // GET Method used for http protocol
-					
 					if (Query.equals("/")) {  // The default home page
 						resetRootFile();
 						String fileName = Query.replaceFirst("/", "index.html");
 						fileName = URLDecoder.decode(fileName);
 						requestedFile(fileName);
 					} 
-					else if (Query.substring(0, 7).equals("/method=")) { // what will we be doing -> CRUD
+					else if (Query.substring(0, 8).equals("/method=")) { // what will we be doing -> CRUD
 						
 						method = Query.substring(8, 9);
 						/*
@@ -71,6 +70,32 @@ public class HTTPServer extends Thread{
 						*/
 						
 						System.out.println("Method is : " + method);
+						if (method.equals("d")){
+							//String delName = Query.substring(,);
+						}
+						else if (method.equals("i")){
+							String theName = "";
+							String theNumber = "";
+							
+							int lastIndex = 14;
+							theName = Query.substring(lastIndex + 1, Query.indexOf('&'));
+							theName = theName.replace('+', ' ');
+							lastIndex = (Query.indexOf('&') + 7);
+							theNumber = Query.substring(lastIndex + 1);
+							theNumber = theNumber.replace('+', ' ');
+							//System.out.println(theName + " == " + theNumber);
+							if (insertNewContact(theName, theNumber) == true)
+								System.out.println("Contact has been added successfully!");
+						}
+						else if (method.equals("e")){
+							
+						}
+						else if (method.equals("s")){
+							
+						}
+						else{
+							//Random stuff that need to be done
+						}
 						
 
 						String newQ = "index.html";
@@ -238,7 +263,7 @@ public class HTTPServer extends Thread{
 		else{
 			for (int i = 0; i < contactNames.size(); i++){
 				compiling += contactNames.get(i) + "\t\t\t" + contactNumbers.get(i);
-				if (!(i < contactNames.size()))
+				if ((i < contactNames.size()))
 					compiling += '\n'; //Adds a newline to all strings except the last line in the list
 			}
 		}
