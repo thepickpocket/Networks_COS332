@@ -138,6 +138,7 @@ public class HTTPServer extends Thread{
 						}
 						else{
 							//Random stuff that need to be done
+							GLOBAL_Notification = "Notification: Something went terribly wrong.";
 						}
 						
 
