@@ -77,8 +77,18 @@ public class HTTPServer extends Thread{
 						
 						if (method.equals("d")){
 							int lastIndex = 14;
-							theName = Query.substring(lastIndex + 1, Query.indexOf('&'));
+							theName = Query.substring(Query.indexOf('=')+1);
+							theName = theName.substring(Query.indexOf('='));
 							theName = theName.replace('+', ' ');
+							System.out.println(theName);
+							
+							if (deleteContact(theName)){
+								completePersistance();
+								System.out.println("Contact has been removed successfully!");
+								GLOBAL_Notification = "Notification: Contact removed successfully!";
+							}
+							else
+								GLOBAL_Notification = "Notification: Could not find and/or remove contact.";
 							
 						}
 						else if (method.equals("i")){
@@ -92,9 +102,8 @@ public class HTTPServer extends Thread{
 							if (insertNewContact(theName, theNumber) == true){
 								completePersistance();
 								System.out.println("Contact has been added successfully!");
+								GLOBAL_Notification = "Notification: New Contact added successfully!";
 							}
-							
-							GLOBAL_Notification = "Notification: New Contact added successfully!";
 						}
 						else if (method.equals("e")){
 							int lastIndex = 14;
