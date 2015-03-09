@@ -88,7 +88,20 @@ public class HTTPServer extends Thread{
 								System.out.println("Contact has been added successfully!");
 						}
 						else if (method.equals("e")){
+							String theName = "";
+							String theNumber = "";
 							
+							int lastIndex = 14;
+							theName = Query.substring(lastIndex + 1, Query.indexOf('&'));
+							theName = theName.replace('+', ' ');
+							lastIndex = (Query.indexOf('&') + 7);
+							theNumber = Query.substring(lastIndex + 1);
+							theNumber = theNumber.replace('+', ' ');
+							
+							if (editContact(theName, theNumber) == true)
+								System.out.println("Contact has been updated successfully!");
+							else
+								System.out.println("Contact could not be found or updated.");
 						}
 						else if (method.equals("s")){
 							
