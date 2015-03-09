@@ -123,7 +123,18 @@ public class HTTPServer extends Thread{
 							}
 						}
 						else if (method.equals("s")){
+							int lastIndex = 14;
+							theName = Query.substring(Query.indexOf('=')+1);
+							theName = theName.substring(Query.indexOf('='));
+							theName = theName.replace('+', ' ');
+							//System.out.println(theName);
 							
+							if (contactNames.contains(theName)){
+								GLOBAL_Notification = "Result: " + theName + " ===>\t\t" + contactNumbers.get(contactNames.indexOf(theName)) ;
+							}
+							else{
+								GLOBAL_Notification = "Notification: Could not find any results.";
+							}
 						}
 						else{
 							//Random stuff that need to be done
