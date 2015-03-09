@@ -30,13 +30,13 @@ public class HTTPServer extends Thread{
 
 	@SuppressWarnings("deprecation")
 	public void run() {
-		try{
+		/*try{
 			readFromFile();
 		}
 		catch(IOException e)
 		{
 			e.printStackTrace();
-		}
+		}*/
 		
 		try { 
 				System.out.println("----------------------------------------------------------------------------------------");
@@ -72,13 +72,16 @@ public class HTTPServer extends Thread{
 						*/
 						
 						System.out.println("Method is : " + method);
+						String theName = "";
+						String theNumber = "";
+						
 						if (method.equals("d")){
-							//String delName = Query.substring(,);
+							int lastIndex = 14;
+							theName = Query.substring(lastIndex + 1, Query.indexOf('&'));
+							theName = theName.replace('+', ' ');
+							
 						}
 						else if (method.equals("i")){
-							String theName = "";
-							String theNumber = "";
-							
 							int lastIndex = 14;
 							theName = Query.substring(lastIndex + 1, Query.indexOf('&'));
 							theName = theName.replace('+', ' ');
@@ -86,15 +89,14 @@ public class HTTPServer extends Thread{
 							theNumber = Query.substring(lastIndex + 1);
 							theNumber = theNumber.replace('+', ' ');
 							//System.out.println(theName + " == " + theNumber);
-							if (insertNewContact(theName, theNumber) == true)
+							if (insertNewContact(theName, theNumber) == true){
+								completePersistance();
 								System.out.println("Contact has been added successfully!");
+							}
 							
 							GLOBAL_Notification = "Notification: New Contact added successfully!";
 						}
 						else if (method.equals("e")){
-							String theName = "";
-							String theNumber = "";
-							
 							int lastIndex = 14;
 							theName = Query.substring(lastIndex + 1, Query.indexOf('&'));
 							theName = theName.replace('+', ' ');
@@ -102,10 +104,14 @@ public class HTTPServer extends Thread{
 							theNumber = Query.substring(lastIndex + 1);
 							theNumber = theNumber.replace('+', ' ');
 							
-							if (editContact(theName, theNumber) == true)
+							if (editContact(theName, theNumber) == true){
 								System.out.println("Contact has been updated successfully!");
-							else
+								GLOBAL_Notification = "Notification: Contact has been updated successfully!";
+							}
+							else{
 								System.out.println("Contact could not be found or updated.");
+								GLOBAL_Notification = "Notification: Contact could not be found or updated.";
+							}
 						}
 						else if (method.equals("s")){
 							
@@ -341,7 +347,10 @@ public class HTTPServer extends Thread{
 	private static void completePersistance(){
 		String toFile = "";
 		for (int i = 0; i < contactNames.size(); i++){
-			toFile += contactNames.get(i) + ";" + contactNumbers.get(i) + "#\n";
+			toFile += contactNames.get(i) + ";" + contactNumbers.get(i) + "#";
+			if (i < contactNames.size()-1){
+				toFile += "\n";
+			}
 		}
 		
 		try{
@@ -373,6 +382,7 @@ public class HTTPServer extends Thread{
 			
 			while (dis.available() != 0){
 				aLine = dis.readLine();
+				//System.out.println(aLine);
 				//now we use the data to populate...
 				String name = aLine.substring(0, aLine.indexOf(';'));
 				contactNames.add(name);
@@ -395,9 +405,16 @@ public class HTTPServer extends Thread{
 	private static void resetRootFile() throws IOException {
 		contactNames.clear();
 		contactNumbers.clear();
-		displayAnswer = "0";
+		//displayAnswer = "0";
 		displayLine = "";
-		String c1 = constructTopPart("---");
+		try{
+			readFromFile();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+		String c1 = constructTopPart("");
 		String c2 = constructBottomPart();
 		String fileContent = c1 + c2;
 		FileWriter out = new FileWriter("index.html", false);
