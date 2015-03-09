@@ -28,7 +28,14 @@ public class HTTPServer extends Thread{
 
 	@SuppressWarnings("deprecation")
 	public void run() {
-
+		try{
+			readFromFile();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+		
 		try { 
 				System.out.println("----------------------------------------------------------------------------------------");
 				System.out.println( "Client connected: "+ connectionClient.getInetAddress() + " :: " + connectionClient.getPort());
@@ -287,6 +294,60 @@ public class HTTPServer extends Thread{
 		}
 		else
 			return false;
+	}
+	
+	private static void completePersistance(){
+		String toFile = "";
+		for (int i = 0; i < contactNames.size(); i++){
+			toFile += contactNames.get(i) + ";" + contactNumbers.get(i) + "#\n";
+		}
+		
+		try{
+			PrintWriter output = new PrintWriter("numbers.txt");
+			output.println(toFile);
+			output.close();
+		}
+		catch(FileNotFoundException e){
+			e.printStackTrace();
+			return;
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private static void readFromFile() throws IOException{
+		//This function simply populates the linked list with already existing contacts.
+		File theFile = new File("numbers.txt");
+		FileInputStream fis = null;
+		BufferedInputStream bis = null;
+		DataInputStream dis = null;
+		String aLine = "";
+		
+		try{
+			contactNames.clear();
+			contactNumbers.clear();
+			fis = new FileInputStream(theFile);
+			bis = new BufferedInputStream(fis);
+			dis = new DataInputStream(bis);
+			
+			while (dis.available() != 0){
+				aLine = dis.readLine();
+				//now we use the data to populate...
+				String name = aLine.substring(0, aLine.indexOf(';'));
+				contactNames.add(name);
+				String number = aLine.substring(aLine.indexOf(';') + 1, aLine.indexOf('#'));
+				contactNumbers.add(number);
+			}
+			
+			fis.close();
+			bis.close();
+			dis.close();
+		}
+		catch(FileNotFoundException e){
+			e.printStackTrace();
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 	
 	private static void resetRootFile() throws IOException {
