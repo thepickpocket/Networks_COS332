@@ -16,6 +16,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 
 public class AlarmInterface {
@@ -57,7 +59,7 @@ public class AlarmInterface {
 	protected void createContents() {
 		shell = new Shell();
 		shell.setSize(450, 382);
-		shell.setText("SWT Application");
+		shell.setText("Practic Alarms");
 		
 		Label lblPracticAlarmSystem = new Label(shell, SWT.NONE);
 		lblPracticAlarmSystem.setAlignment(SWT.CENTER);
@@ -104,6 +106,12 @@ public class AlarmInterface {
 		list.setBounds(10, 10, 406, 120);
 		
 		Button btnDisable = new Button(shell, SWT.NONE);
+		btnDisable.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				shell.dispose(); //Close the application
+			}
+		});
 		btnDisable.setBounds(174, 310, 95, 28);
 		btnDisable.setText("Disable");
 		
@@ -119,27 +127,37 @@ public class AlarmInterface {
 				theKey = Character.toUpperCase(theKey);
 				switch(theKey){
 					case 'F': 	alarmMessage = "Front Door Breached.";
+								list.add(alarmMessage);
+								completeAlarm();
 								break;
 					case 'W':	alarmMessage = "Windows have been Breached.";
+								list.add(alarmMessage);
+								completeAlarm();
 								break;
 					case 'O':	alarmMessage = "Outside Perimeter has been Breached";
+								list.add(alarmMessage);
+								completeAlarm();
 								break;
 					case 'B':	alarmMessage = "Back Door has been Breached.";
+								list.add(alarmMessage);
+								completeAlarm();
 								break;
 					case 'I':	alarmMessage = "Inside Perimeter has been Breached.";
+								list.add(alarmMessage);
+								completeAlarm();
 								break;
 					case 'P':	alarmMessage = "A panic alarm has been raised.";
+								list.add(alarmMessage);
+								completeAlarm();
 								break;
 				};
-				
-				list.add(alarmMessage);
-				completeAlarm();
 			}
 		});
 
 	}
 	
 	private void completeAlarm(){
-		
+		emailSystem mail = new emailSystem();
+		mail.sendEmail(alarmMessage);
 	}
 }
