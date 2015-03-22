@@ -3,3 +3,5 @@
 *.prefs
 *.metadata
 *.class
+.idea
+.recommenders
