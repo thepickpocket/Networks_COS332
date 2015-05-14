@@ -59,9 +59,9 @@ public class HTTPServer extends Thread{
 						fileName = URLDecoder.decode(fileName);
 						requestedFile(fileName);
 					}
-					else if ( /*Query.equals("/g")*/ Query.contains("/grid")) {  //Grid init (format : /grid=6x6&p=2)
-						gridSize = Integer.parseInt(Query.substring(6, Query.indexOf('x')));
-						puzzleNr = Integer.parseInt(Query.substring(Query.indexOf('p')+2,Query.length()));
+					else if ( /*Query.equals("/g")*/ Query.contains("/?Grid")) {  //Grid init (format : /?Grid=6x6&Game=Game+2)
+						gridSize = Integer.parseInt(Query.substring(7, Query.indexOf('x')));
+						puzzleNr = Integer.parseInt(Query.substring(Query.indexOf('+')+1,Query.length()));
 
 						System.out.println("Server setting the size of the grid to " + gridSize + " by " + gridSize);
 						System.out.println("Puzzle number is: " + puzzleNr);
@@ -243,7 +243,7 @@ public class HTTPServer extends Thread{
 		String line;
 		char ch;
 		int rowC = 0;
-		String gridFilename = "grid"+size+"_"+gridNr+".txt";
+		String gridFilename = "GameFiles/grid"+size+"_"+gridNr+".txt";
 		File gridFile = new File(gridFilename);
 		FileInputStream in = new FileInputStream(gridFile);
 		DataInputStream dis = new DataInputStream(in);
