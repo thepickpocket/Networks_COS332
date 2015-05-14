@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlElementDecl.GLOBAL;
 public class HTTPServer extends Thread{
 
 	static String GLOBAL_Notification = "";
+	static String WIN_Notification = "";
 
 	Socket connectionClient = null;
 	BufferedReader inFromClient = null;
@@ -22,6 +23,12 @@ public class HTTPServer extends Thread{
 	private char grid[][];
 	private static int gridSize = 0;
 	private static int puzzleNr = 0;
+	private int numberofA;
+	private int numberofB;
+	private int numberofC;
+	private int numberofD;
+	private int numberofE;
+	private int totalNumberOfBlocks;
 	public HTTPServer(Socket client) {
 		connectionClient = client;
 	}
@@ -61,8 +68,6 @@ public class HTTPServer extends Thread{
 
 						grid = new char[gridSize][gridSize];
 						initGrid(gridSize,puzzleNr);
-						//init grid
-						//display page with the grid of the correct size...
 					}
 					else if (Query.contains("/shoot")) { //Shoot a block (format: /shoot=0+5) means shoot block ar row 0 column 5
 						int row = Integer.parseInt(Query.substring(7,Query.indexOf('+')));
@@ -86,8 +91,34 @@ public class HTTPServer extends Thread{
 							if (block == '0') {
 								System.out.println("No Ship was shot!");
 								GLOBAL_Notification = "No Ship was shot! Try Again...";
-							} else { //this depends in what we will use to represent the ships.
 
+							} else {
+
+								//if the user shoots a block that is occupied by a block of ship A
+								if (block == 'A') {
+									shipAShot();
+								}
+								//if the user shoots a block that is occupied by a block of ship B
+								else if (block == 'B') {
+									shipBShot();
+								}
+								//if the user shoots a block that is occupied by a block of ship C
+								else if (block == 'C') {
+									shipCShot();
+								}
+								//if the user shoots a block that is occupied by a block of ship D
+								else if (block == 'D') {
+									shipDShot();
+								}
+								//if the user shoots a block that is occupied by a block of ship E
+								else if (block == 'E') {
+									shipEShot();
+								}
+
+							}
+
+							if (totalNumberOfBlocks == 0) {
+								WIN_Notification = "You have sunk all the ships! Congratulations!";
 							}
 						}
 					}
@@ -115,9 +146,99 @@ public class HTTPServer extends Thread{
 		System.out.println("----------------------------------------------------------------------------------------\n");
 	}
 
+	private void shipEShot() {
+		System.out.println("Ship E was shot!");
+		numberofE--;
+		totalNumberOfBlocks--;
+
+		if (numberofE == 0) {
+			GLOBAL_Notification = "Ship E was shot!\n Ship E has sunk!";
+		}
+		else {
+			GLOBAL_Notification = "Ship E was shot!\n Only " + numberofE + " blocks left for Ship E to sink!";
+		}
+	}
+
+	private void shipDShot() {
+		System.out.println("Ship D was shot!");
+		numberofD--;
+		totalNumberOfBlocks--;
+
+		if (numberofD == 0) {
+			GLOBAL_Notification = "Ship D was shot!\n Ship D has sunk!";
+		}
+		else {
+			GLOBAL_Notification = "Ship D was shot!\n Only " + numberofD + " blocks left for Ship D to sink!";
+		}
+	}
+
+	private void shipCShot() {
+		System.out.println("Ship C was shot!");
+		numberofC--;
+		totalNumberOfBlocks--;
+
+		if (numberofC == 0) {
+			GLOBAL_Notification = "Ship C was shot!\n Ship C has sunk!";
+		}
+		else {
+			GLOBAL_Notification = "Ship C was shot!\n Only " + numberofC + " blocks left for Ship C to sink!";
+		}
+	}
+
+	private void shipBShot() {
+		System.out.println("Ship B was shot!");
+		numberofB--;
+		totalNumberOfBlocks--;
+
+		if (numberofB == 0) {
+			GLOBAL_Notification = "Ship B was shot!\n Ship B has sunk!";
+		}
+		else {
+			GLOBAL_Notification = "Ship B was shot!\n Only " + numberofB + " blocks left for Ship B to sink!";
+		}
+	}
+
+	private void shipAShot() {
+		System.out.println("Ship A was shot!");
+		numberofA--;
+		totalNumberOfBlocks--;
+
+		if (numberofA == 0) {
+			GLOBAL_Notification = "Ship A was shot!\n Ship A has sunk!";
+		}
+		else {
+			GLOBAL_Notification = "Ship A was shot!\n Only " + numberofA + " blocks left for Ship A to sink!";
+		}
+	}
+
 	private void initGrid(int size, int gridNr) throws IOException {
 		// textfile will have naming convention: grid#+* where # is the grid size and * is the puzzle number
 		// for example: grid6_2 will be puzzle 2 for a grid of size 6x6
+
+		//Since each block will consist of a certain number of blocks, this is where we initialize the number of blocks per ship
+		if (size == 6) { // only 3 ships: A,B,C
+			numberofA = 5; // ship A will always have 5 blocks
+			numberofB = 2; // ship B will always have 2 blocks
+			numberofC = 6; // ship C will always have 6 blocks
+			numberofD = 0;
+			numberofE = 0;
+		}
+		else if (size == 8) { // only 4 ships: A,B,C,D
+			numberofA = 5; // ship A will always have 5 blocks
+			numberofB = 2; // ship B will always have 2 blocks
+			numberofC = 6; // ship C will always have 6 blocks
+			numberofD = 7; // ship D will always have 7 blocks
+			numberofE = 0;
+		}
+		else if (size == 10) { // only 5 ships: A,B,C,D,E
+			numberofA = 5; // ship A will always have 5 blocks
+			numberofB = 2; // ship B will always have 2 blocks
+			numberofC = 6; // ship C will always have 6 blocks
+			numberofD = 7; // ship D will always have 7 blocks
+			numberofE = 9; // ship E will always have 9 blocks
+		}
+
+		totalNumberOfBlocks = numberofA+numberofB+numberofC+numberofD+numberofE;
 
 		String line;
 		char ch;
