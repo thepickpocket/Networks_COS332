@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Battleship</title>
+
+    <!--Stylesheets-->
+    <link rel="stylesheet" href="Frameworks/Bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="Frameworks/font-awesome-4.3.0/css/font-awesome.min.css">
+
+    <!--Javascript-->
+    <script src="Frameworks/jquery-1.11.3.min.js"></script>
+    <script src="Frameworks/Bootstrap/js/bootstrap.min.js"></script>
+
+</head>
+<body style="background-image: url('Images/WorldMap.jpg'); background-size: cover;">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">
+                    <img src="Images/BattleShipLogo.png" class="img-rounded" alt="Battleships" width="145">
+                </a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="index.html"><span class="glyphicon glyphicon-home"></span>  Home</a></li>
+                    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-globe"></span>  Ship Information (Alpha)<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="ShipInformation/AircraftCarrier.html">Aircraft Carrier</a></li>
+                            <li><a href="ShipInformation/Battleship.html">Battleship</a></li>
+                            <li><a href="ShipInformation/Destroyer.html">Destroyer</a></li>
+                            <li><a href="ShipInformation/PatrolBoat.html">Patrol Boat</a></li>
+                            <li><a href="ShipInformation/Submarine.html">Submarine</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="help.html"><span class="glyphicon glyphicon-question-sign"></span>  Help</a></li>
+                    <li><a href="about.html"><span class="glyphicon glyphicon-info-sign"></span>  About Us</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4" style="background-color: rgba(0,0,0,0.65); margin-top: 10%;">
+                <!--Ask the user for input...-->
+                <div class="container-fluid">
+                    <form class="form-horizontal" role="form" method="get" onsubmit="#">
+                        <div class="form-group">
+                            <label class="control-label" for="name" style="color: white">Identifier:</label>
+                                <input type="text" class="form-control" id="name" placeholder="Enter your player name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gridSize" style="color: white">Size of grid:</label>
+                            <select name="Grid" class="form-control" id="gridSize" required>
+                                <option id="6">6x6</option>
+                                <option id="8">8x8</option>
+                                <option id="10">10x10</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="gameFile" style="color: white">Select Game:</label>
+                            <select name="Game" class="form-control" id="gameFile" required>
+                                <option>Game 1</option>
+                                <option>Game 2</option>
+                                <option>Game 3</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-8">
+                                <button type="submit" class="btn btn-default">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+</body>
+</html>
