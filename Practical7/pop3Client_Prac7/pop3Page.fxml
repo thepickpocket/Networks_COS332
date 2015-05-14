@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pop3Client_Prac7.Controller">
+   <children>
+      <Button fx:id="btnListEmails" layoutX="29.0" layoutY="24.0" mnemonicParsing="false" onAction="#listEmails" text="List Emails" />
+      <Button fx:id="btnDeleteEmails" layoutX="113.0" layoutY="24.0" mnemonicParsing="false" onAction="#DeleteEmails" text="Delete Selected Emails" />
+      <Button fx:id="btnQuit" layoutX="922.0" layoutY="24.0" mnemonicParsing="false" onAction="#QUIT" text="QUIT" />
+      <FlowPane fx:id="emailPane" layoutX="29.0" layoutY="68.0" prefHeight="306.0" prefWidth="944.0" prefWrapLength="600.0" />
+      <Label fx:id="lblErrorDel" layoutX="263.0" layoutY="28.0" prefHeight="17.0" prefWidth="228.0" textFill="RED" />
+      <Label layoutX="570.0" layoutY="15.0" text="POP3 Email Finder">
+         <font>
+            <Font name="Century Gothic Bold Italic" size="34.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

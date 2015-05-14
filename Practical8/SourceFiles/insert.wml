@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.2//EN"
+        "http://www.wapforum.org/DTD/wml12.dtd">
+<wml>
+    <card id="one" title="Insert Page">
+        <p>
+            <big><b>Insert Page</b></big>
+                Name: <input name="name" size="12" value=""/>
+                <br></br>
+                Telephone Number :  <input name="num" size="12" value=""/>
+                <br></br>
+                <anchor>
+                    <go method="get" href="">
+                        <postfield name="name" value="$(name)"/>
+                        <postfield name="num" value="$(num)"/>
+                    </go>
+                    Add
+                </anchor>
+            <br></br>
+            <a href="index.wml">Back</a>
+        </p>
+    </card>
+</wml>

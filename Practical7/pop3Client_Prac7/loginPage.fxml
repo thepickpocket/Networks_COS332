@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="240.0" prefWidth="327.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pop3Client_Prac7.Controller">
+   <children>
+      <TextField fx:id="txtUsername" layoutX="108.0" layoutY="75.0" onMouseClicked="#onChangeUsername" text="Prac7@india.com" />
+      <TextField fx:id="txtPassword" layoutX="108.0" layoutY="114.0" onMouseClicked="#onChangePassword" text="practical7pass" />
+      <Label layoutX="38.0" layoutY="79.0" text="Username:" />
+      <Label layoutX="39.0" layoutY="118.0" text="Password:" />
+      <Button fx:id="btnLogin" layoutX="108.0" layoutY="195.0" mnemonicParsing="false" onAction="#Login" prefHeight="25.0" prefWidth="104.0" text="Login" />
+      <Label layoutX="17.0" layoutY="14.0" text="POP3 Email Finder">
+         <font>
+            <Font name="Century Gothic Bold Italic" size="34.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblError" layoutX="108.0" layoutY="147.0" prefHeight="43.0" prefWidth="210.0" textFill="RED" />
+   </children>
+</AnchorPane>

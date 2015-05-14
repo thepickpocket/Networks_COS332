@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.2//EN"
+        "http://www.wapforum.org/DTD/wml12.dtd">
+<wml>
+    <card id="one" title="Delete Page">
+        <p>
+            <big><b>Delete Page</b></big>
+                Name: <input name="name" size="12" value=""/>
+                <br></br>
+                <anchor>
+                    <go method="get" href="">
+                        <postfield name="name" value="$(name)"/>
+                    </go>
+                    Delete
+                </anchor>
+            <br></br>
+            <a href="index.wml">Back</a>
+        </p>
+    </card>
+</wml>

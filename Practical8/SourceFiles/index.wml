@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.2//EN"
+"http://www.wapforum.org/DTD/wml12.dtd"><wml>
+    <card id="one" title="PhoneBook">
+        <p>
+            <big><b>Personal Contact Book Database</b></big>
+            <br></br>
+            <a href="search.wml">Search</a>
+            <br></br>
+            <a href="edit.wml">Edit</a>
+            <br></br>
+            <a href="delete.wml">Delete</a>
+            <br></br>
+            <a href="insert.wml">Insert</a>
+        </p>
+		<p>
+		<br></br>
+			<big><b>Database: </b></big>			<table columns="2" align="CC">
+				<tr>
+					<td>Vivian Venter</td>					<td>076 885 8888</td>				</tr>
+				<tr>
+					<td>Jason Evans</td>					<td>082 558 6363</td>				</tr>
+				<tr>
+					<td>Renette Ros</td>					<td>082 785 1748</td>				</tr>
+			</table>
+       </p>
+    </card>
+</wml>
