@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Battleship</title>
+
+    <!--Stylesheets-->
+    <link rel="stylesheet" href="Frameworks/Bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="Frameworks/font-awesome-4.3.0/css/font-awesome.min.css">
+
+    <!--Javascript-->
+    <script src="Frameworks/jquery-1.11.3.min.js"></script>
+    <script src="Frameworks/Bootstrap/js/bootstrap.min.js"></script>
+
+</head>
+<body style="background-image: url('Images/WorldMap.jpg'); background-size: cover;">
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="index.html">
+                <img src="Images/BattleShipLogo.png" class="img-rounded" alt="Battleships" width="145">
+            </a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="index.html"><span class="glyphicon glyphicon-home"></span>  Home</a></li>
+                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-globe"></span>  Ship Information (Alpha)<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="ShipInformation/AircraftCarrier.html">Aircraft Carrier</a></li>
+                        <li><a href="ShipInformation/Battleship.html">Battleship</a></li>
+                        <li><a href="ShipInformation/Destroyer.html">Destroyer</a></li>
+                        <li><a href="ShipInformation/PatrolBoat.html">Patrol Boat</a></li>
+                        <li><a href="ShipInformation/Submarine.html">Submarine</a></li>
+                    </ul>
+                </li>
+                <li><a href="help.html"><span class="glyphicon glyphicon-question-sign"></span>  Help</a></li>
+                <li><a href="about.html"><span class="glyphicon glyphicon-info-sign"></span>  About Us</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8" style="background-color: rgba(0,0,0,0.7); margin-top: 5%;">
+            <table class="table" style="color: white;">
+                <thead>
+                <tr>
+                    <th> </th>
+                    <th>A</th>
+                    <th>B</th>
+                    <th>C</th>
+                    <th>D</th>
+                    <th>E</th>
+                    <th>F</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>0</td>
+                    <td><button class="btn" onclick="location.href = 'game.html?button=A0';" formmethod="post" id="A0"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button> </button></td> <!--normal-->
+                    <td><button class="btn" onclick="#" formmethod="post" id="B0" disabled><i class="fa fa-ban fa-3x"></i> </button></td> <!--miss-->
+                    <td><button class="btn" onclick="#" formmethod="post" id="C0"><i class="fa fa-fire fa-3x" style="color: red"></i></button></td> <!--Hit-->
+                    <td><button class="btn" onclick="#" formmethod="post" id="D0"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="E0"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="F0"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="A1"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="B1"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="C1"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="D1"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="E1"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="F1"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="A2"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="B2"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="C2"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="D2"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="E2"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="F2"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="A3"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="B3"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="C3"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="D3"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="E3"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="F3"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="A4"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="B4"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="C4"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="D4"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="E4"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="F4"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="A5"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="B5"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="C5"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="D5"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="E5"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                    <td><button class="btn" onclick="#" formmethod="post" id="F5"><i class="fa fa-map-marker fa-3x" style="color: #269abc;"></i></button></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-3 col-md-offset-1" style="background-color: rgba(0,0,0,0.7); margin-top: 7.5%;">
+            <h3 style="color: white">Current Standings</h3>
+            <div class="container-fluid text-center">
+                <p style="color: white;" class="pull-left"><b>Hits:</b></p><p id="Hits" style="color: white;" class="text-right">0</p>
+                <p style="color: white;" class="pull-left"><b>Miss:</b></p><p id="Miss" style="color: white;" class="text-right">0</p>
+                <p style="color: white;" class="pull-left"><b>Total:</b></p><p id="Total" style="color: white;" class="text-right">0</p>
+                <p style="color: white;" class="pull-left"><b>Accuracy:</b></p><p id="Accuracy" style="color: white;" class="text-right">0</p>
+            </div>
+            <table class="table" style="color: white;">
+                <thead>
+                <tr>
+                    <th>Boat Name</th>
+                    <th>Length</th>
+                    <th>Destroyed</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Aircraft Carrier</td>
+                    <td>5</td>
+                    <td id="AircraftDestroyed">0</td>
+                </tr>
+                <tr>
+                    <td>Battleship</td>
+                    <td>5</td>
+                    <td id="BattleshipDestroyed">0</td>
+                </tr>
+                <tr>
+                    <td>Destroyer</td>
+                    <td>5</td>
+                    <td id="DestroyerDestroyed">0</td>
+                </tr>
+                <tr>
+                    <td>Patrol Boat</td>
+                    <td>2</td>
+                    <td id="PatrolDestroyed">0</td>
+                </tr>
+                <tr>
+                    <td>Submarine</td>
+                    <td>5</td>
+                    <td id="SubmarineDestroyed">0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
