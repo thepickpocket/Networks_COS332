@@ -17,7 +17,9 @@ public class BattleShip {
     private int numberofD;
     private int numberofE;
     private int totalNumberOfBlocks;
+
     private String tableBoatInfoContent = "";
+    static String GLOBAL_Notification = "";
 
     private static BattleShip instance = null;
 
@@ -110,7 +112,7 @@ public class BattleShip {
     }
 
     public String constructGameFile() {
-        return getGameFileHeader() + getGridContent() + getStatsContent() + getTableBoatInfoContent() + getGameFileFooter();
+        return getGameFileHeader() + getNotifications() + getGridContent() + getStatsContent() + getTableBoatInfoContent() + getGameFileFooter();
     }
 
     public char[][] getGrid() {
@@ -183,7 +185,16 @@ public class BattleShip {
         }
     }
 
-    public String shipEShot() {
+    public void won() {
+        GLOBAL_Notification = "You have sunk all the ships! Congratulations, You have Won!";
+    }
+
+    public void noBlockShot() {
+        System.out.println("No Ship was shot!");
+        GLOBAL_Notification = "No Ship was shot! Try Again...";
+    }
+
+    public void shipEShot() {
         System.out.println("Ship E was shot!");
         numberofE--;
         totalNumberOfBlocks--;
@@ -199,14 +210,14 @@ public class BattleShip {
         }
 
         if (numberofE == 0) {
-            return "Ship E was shot!\n Ship E has sunk!";
+            GLOBAL_Notification =  "Ship E was shot!\n Ship E has sunk!";
         }
         else {
-            return "Ship E was shot!\n Only " + numberofE + " blocks left for Ship E to sink!";
+            GLOBAL_Notification =  "Ship E was shot!\n Only " + numberofE + " blocks left for Ship E to sink!";
         }
     }
 
-    public String shipDShot() {
+    public void shipDShot() {
         System.out.println("Ship D was shot!");
         numberofD--;
         totalNumberOfBlocks--;
@@ -222,14 +233,14 @@ public class BattleShip {
         }
 
         if (numberofD == 0) {
-            return "Ship D was shot!\n Ship D has sunk!";
+            GLOBAL_Notification =  "Ship D was shot!\n Ship D has sunk!";
         }
         else {
-            return "Ship D was shot!\n Only " + numberofD + " blocks left for Ship D to sink!";
+            GLOBAL_Notification =  "Ship D was shot!\n Only " + numberofD + " blocks left for Ship D to sink!";
         }
     }
 
-    public String shipCShot() {
+    public void shipCShot() {
         System.out.println("Ship C was shot!");
         numberofC--;
         totalNumberOfBlocks--;
@@ -245,14 +256,14 @@ public class BattleShip {
         }
 
         if (numberofC == 0) {
-            return "Ship C was shot!\n Ship C has sunk!";
+            GLOBAL_Notification =  "Ship C was shot!\n Ship C has sunk!";
         }
         else {
-            return "Ship C was shot!\n Only " + numberofC + " blocks left for Ship C to sink!";
+            GLOBAL_Notification =  "Ship C was shot!\n Only " + numberofC + " blocks left for Ship C to sink!";
         }
     }
 
-    public String shipBShot() {
+    public void shipBShot() {
         System.out.println("Ship B was shot!");
         numberofB--;
         totalNumberOfBlocks--;
@@ -268,14 +279,14 @@ public class BattleShip {
         }
 
         if (numberofB == 0) {
-            return "Ship B was shot!\n Ship B has sunk!";
+            GLOBAL_Notification =  "Ship B was shot!\n Ship B has sunk!";
         }
         else {
-            return "Ship B was shot!\n Only " + numberofB + " blocks left for Ship B to sink!";
+            GLOBAL_Notification =  "Ship B was shot!\n Only " + numberofB + " blocks left for Ship B to sink!";
         }
     }
 
-    public String shipAShot() {
+    public void shipAShot() {
         System.out.println("Ship A was shot!");
         numberofA--;
         totalNumberOfBlocks--;
@@ -291,10 +302,10 @@ public class BattleShip {
         }
 
         if (numberofA == 0) {
-            return "Ship A was shot!\n Ship A has sunk!";
+            GLOBAL_Notification = "Ship A was shot!\n Ship A has sunk!";
         }
         else {
-            return "Ship A was shot!\n Only " + numberofA + " blocks left for Ship A to sink!";
+            GLOBAL_Notification = "Ship A was shot!\n Only " + numberofA + " blocks left for Ship A to sink!";
         }
 
     }
@@ -439,6 +450,17 @@ public class BattleShip {
                 "</html>";
     }
 
+    private String getNotifications() {
+        return "<div class=\"container-fluid text-center\" style=\"background-color: rgba(0,0,0,0.7)\">\n" +
+                "    <div id=\"notifications\">\n" +
+                "        <h2 style=\"color: white; text-shadow: 3px 1px 3px #09b6ff\">Notifications</h2>\n" +
+                "        <p style=\"color: white;\" id=\"message\">" +
+                            GLOBAL_Notification +
+                "        </p>\n" +
+                "    </div>\n" +
+                "</div>";
+    }
+
     private void setTableBoatInfoContent6() {
         setTableBoatInfoContent(                "<table class=\"table\" style=\"color: white;\">\n" +
                 "                <thead>\n" +
@@ -541,4 +563,5 @@ public class BattleShip {
                         "                </tbody>\n" +
                         "            </table>");
     }
+
 }

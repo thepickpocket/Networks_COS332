@@ -12,21 +12,19 @@ import javax.xml.bind.annotation.XmlElementDecl.GLOBAL;
 
 public class HTTPServer extends Thread{
 
-	static String GLOBAL_Notification = "";
-	static String WIN_Notification = "";
-
 	Socket connectionClient = null;
 	BufferedReader inFromClient = null;
 	DataOutputStream outToClient = null;
 
 	BattleShip game = null;
-	private HashMap<Character,Integer> map_Indexes = new HashMap();
+	private HashMap<Character,Integer> map_Indexes;
 
 	public HTTPServer(Socket client) {
 		connectionClient = client;
 
 		game = BattleShip.getInstance();
 
+		map_Indexes = new HashMap<>();
 		map_Indexes.put('A',0);
 		map_Indexes.put('B',1);
 		map_Indexes.put('C',2);
@@ -108,48 +106,43 @@ public class HTTPServer extends Thread{
 						char block = game.getBlock(row,col);
 
 						if (block == '0') {
-							System.out.println("No Ship was shot!");
-							GLOBAL_Notification = "No Ship was shot! Try Again...";
-
-						} else {
-
+							game.noBlockShot();
+						}
 							//if the user shoots a block that is occupied by a block of ship A
-							if (block == 'A') {
-								GLOBAL_Notification = game.shipAShot();
-							}
-							//if the user shoots a block that is occupied by a block of ship B
-							else if (block == 'B') {
-								GLOBAL_Notification = game.shipBShot();
-							}
-							//if the user shoots a block that is occupied by a block of ship C
-							else if (block == 'C') {
-								GLOBAL_Notification = game.shipCShot();
-							}
-							//if the user shoots a block that is occupied by a block of ship D
-							else if (block == 'D') {
-								GLOBAL_Notification = game.shipDShot();
-							}
-							//if the user shoots a block that is occupied by a block of ship E
-							else if (block == 'E') {
-								GLOBAL_Notification = game.shipEShot();
-							}
-
-							String fileName = "game.html";
-							fileName = URLDecoder.decode(fileName);
-
-							String fileContent = game.constructGameFile();
-
-							FileWriter out = new FileWriter(fileName, false);
-							BufferedWriter b = new BufferedWriter(out);
-							b.write(fileContent);
-							b.close();
-
-							requestedFile(fileName);
-
+						else if (block == 'A') {
+							game.shipAShot();
+						}
+						//if the user shoots a block that is occupied by a block of ship B
+						else if (block == 'B') {
+							game.shipBShot();
+						}
+						//if the user shoots a block that is occupied by a block of ship C
+						else if (block == 'C') {
+							game.shipCShot();
+						}
+						//if the user shoots a block that is occupied by a block of ship D
+						else if (block == 'D') {
+							game.shipDShot();
+						}
+						//if the user shoots a block that is occupied by a block of ship E
+						else if (block == 'E') {
+							game.shipEShot();
 						}
 
+						String fileName = "game.html";
+						fileName = URLDecoder.decode(fileName);
+
+						String fileContent = game.constructGameFile();
+
+						FileWriter out = new FileWriter(fileName, false);
+						BufferedWriter b = new BufferedWriter(out);
+						b.write(fileContent);
+						b.close();
+
+						requestedFile(fileName);
+
 						if (game.getTotalNumberOfBlocks() == 0) {
-							WIN_Notification = "You have sunk all the ships! Congratulations!";
+							game.won();
 						}
 					}
 					else { // will handle any other types of files to be fetched for example my images to display
