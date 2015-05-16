@@ -105,27 +105,27 @@ public class HTTPServer extends Thread{
 						char block = game.getBlock(row,col);
 
 						if (block == '0') {
-							game.noBlockShot();
+							game.noBlockShot(row,col);
 						}
-							//if the user shoots a block that is occupied by a block of ship A
+						//if the user shoots a block that is occupied by a block of ship A
 						else if (block == 'A') {
-							game.shipAShot();
+							game.shipAShot(row,col);
 						}
 						//if the user shoots a block that is occupied by a block of ship B
 						else if (block == 'B') {
-							game.shipBShot();
+							game.shipBShot(row,col);
 						}
 						//if the user shoots a block that is occupied by a block of ship C
 						else if (block == 'C') {
-							game.shipCShot();
+							game.shipCShot(row,col);
 						}
 						//if the user shoots a block that is occupied by a block of ship D
 						else if (block == 'D') {
-							game.shipDShot();
+							game.shipDShot(row,col);
 						}
 						//if the user shoots a block that is occupied by a block of ship E
 						else if (block == 'E') {
-							game.shipEShot();
+							game.shipEShot(row,col);
 						}
 
 						String fileName = "game.html";
