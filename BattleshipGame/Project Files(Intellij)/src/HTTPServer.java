@@ -29,8 +29,23 @@ public class HTTPServer extends Thread{
 	private int numberofD;
 	private int numberofE;
 	private int totalNumberOfBlocks;
+
+	private HashMap<Character,Integer> map_Indexes = new HashMap();
+
 	public HTTPServer(Socket client) {
 		connectionClient = client;
+
+		map_Indexes.put('A',0);
+		map_Indexes.put('B',1);
+		map_Indexes.put('C',2);
+		map_Indexes.put('D',3);
+		map_Indexes.put('E',4);
+		map_Indexes.put('F',5);
+		map_Indexes.put('G',6);
+		map_Indexes.put('H',7);
+		map_Indexes.put('I',8);
+		map_Indexes.put('J',9);
+		map_Indexes.put('L',10);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -67,11 +82,16 @@ public class HTTPServer extends Thread{
 						System.out.println("Puzzle number is: " + puzzleNr);
 
 						grid = new char[gridSize][gridSize];
-						initGrid(gridSize,puzzleNr);
+						initGrid(gridSize, puzzleNr);
+
+						String fileName = "game.html";
+						fileName = URLDecoder.decode(fileName);
+						requestedFile(fileName);
 					}
 					else if (Query.contains("/shoot")) { //Shoot a block (format: /shoot=0+5) means shoot block ar row 0 column 5
-						int row = Integer.parseInt(Query.substring(7,Query.indexOf('+')));
-						int col = Integer.parseInt(Query.substring(Query.indexOf('+')+1,Query.length()));
+						char rowC = Query.charAt(7);
+						int row = map_Indexes.get(rowC);
+						int col = Integer.parseInt(Query.substring(8,Query.length()));
 
 						if (row >= gridSize || row < 0) {
 							System.out.println("Incorrect row! Out of bounds...");
