@@ -19,7 +19,17 @@ public class BattleShip {
     private int totalNumberOfBlocks;
     private String tableBoatInfoContent = "";
 
-    public BattleShip() {
+    private static BattleShip instance = null;
+
+    public static BattleShip getInstance() {
+        if(instance == null) {
+            instance = new BattleShip();
+        }
+        return instance;
+    }
+
+    private BattleShip() {
+        System.out.println("Game Initialized!");
     }
 
     public void initializeGrid() throws IOException {
@@ -28,8 +38,10 @@ public class BattleShip {
         int size = getGridSize();
         int gridNr = getPuzzleNr();
 
+
         //Since each block will consist of a certain number of blocks, this is where we initialize the number of blocks per ship
         if (size == 6) { // only 3 ships: A,B,C
+            System.out.println("Initializing a grid of size 6");
             numberofA = 5; // ship A will always have 5 blocks
             numberofB = 2; // ship B will always have 2 blocks
             numberofC = 6; // ship C will always have 6 blocks
@@ -38,31 +50,32 @@ public class BattleShip {
 
             tableBoatInfoContent =
                     "<table class=\"table\" style=\"color: white;\">\n" +
-                            "                <thead>\n" +
-                            "                <tr>\n" +
-                            "                    <th>Boat Name</th>\n" +
-                            "                    <th>Length</th>\n" +
-                            "                    <th>Destroyed</th>\n" +
-                            "                </tr>\n" +
-                            "                </thead>\n" +
-                            "                <tbody>\n" +
-                            "                <tr>\n" +
-                            "                    <td>Aircraft Carrier</td>\n" +
-                            "                    <td>5</td>\n" +
-                            "                    <td id=\"AircraftDestroyed\">0</td>\n" +
-                            "                </tr>\n" +
-                            "                <tr>\n" +
-                            "                    <td>Battleship</td>\n" +
-                            "                    <td>5</td>\n" +
-                            "                    <td id=\"BattleshipDestroyed\">0</td>\n" +
-                            "                </tr>\n" +
-                            "                <tr>\n" +
-                            "                    <td>Destroyer</td>\n" +
-                            "                    <td>5</td>\n" +
-                            "                    <td id=\"DestroyerDestroyed\">0</td>\n" +
-                            "                </tr>\n" +
-                            "                </tbody>\n" +
-                            "            </table>";
+                    "                <thead>\n" +
+                    "                <tr>\n" +
+                    "                    <th>Boat Name</th>\n" +
+                    "                    <th>Length</th>\n" +
+                    "                    <th>Destroyed</th>\n" +
+                    "                </tr>\n" +
+                    "                </thead>\n" +
+                    "                <tbody>\n" +
+                    "                <tr>\n" +
+                    "                    <td>Aircraft Carrier</td>\n" +
+                    getNumberofA() +
+                    "                    <td id=\"AircraftDestroyed\">0</td>\n" +
+                    "                </tr>\n" +
+                    "                <tr>\n" +
+                    "                    <td>Battleship</td>\n" +
+                    getNumberofB() +
+                    "                    <td id=\"BattleshipDestroyed\">0</td>\n" +
+                    "                </tr>\n" +
+                    "                <tr>\n" +
+                    "                    <td>Destroyer</td>\n" +
+                    getNumberofC() +
+                    "                    <td id=\"DestroyerDestroyed\">0</td>\n" +
+                    "                </tr>\n" +
+                    "                </tbody>\n" +
+                    "            </table>";
+
         }
         else if (size == 8) { // only 4 ships: A,B,C,D
             numberofA = 5; // ship A will always have 5 blocks
@@ -118,6 +131,9 @@ public class BattleShip {
         }
     }
 
+    public String constructGameFile() {
+        return getGameFileHeader() + getGridContent() + getStatsContent() + getTableBoatInfoContent() + getGameFileFooter();
+    }
 
     public char[][] getGrid() {
         return grid;
@@ -143,40 +159,40 @@ public class BattleShip {
         BattleShip.puzzleNr = puzzleNr;
     }
 
-    public int getNumberofA() {
-        return numberofA;
+    public String getNumberofA() {
+        return "                    <td>"+ numberofA+"</td>\n";
     }
 
     public void setNumberofA(int numberofA) {
         this.numberofA = numberofA;
     }
 
-    public int getNumberofB() {
-        return numberofB;
+    public String getNumberofB() {
+        return "                    <td>"+ numberofB +"</td>\n";
     }
 
     public void setNumberofB(int numberofB) {
         this.numberofB = numberofB;
     }
 
-    public int getNumberofC() {
-        return numberofC;
+    public String getNumberofC() {
+        return "                    <td>"+ numberofC +"</td>\n";
     }
 
     public void setNumberofC(int numberofC) {
         this.numberofC = numberofC;
     }
 
-    public int getNumberofD() {
-        return numberofD;
+    public String getNumberofD() {
+        return "                    <td>"+ numberofD +"</td>\n";
     }
 
     public void setNumberofD(int numberofD) {
         this.numberofD = numberofD;
     }
 
-    public int getNumberofE() {
-        return numberofE;
+    public String getNumberofE() {
+        return "                    <td>"+ numberofE +"</td>\n";
     }
 
     public void setNumberofE(int numberofE) {
@@ -200,7 +216,13 @@ public class BattleShip {
     }
 
     public char getBlock(int a, int b) {
-        return grid[a][b];
+        if (getGrid() == null) {
+            System.out.println("Cannot access Grid!");
+            return '1';
+        }
+        else {
+            return grid[a][b];
+        }
     }
 
     public String shipEShot() {
@@ -266,5 +288,145 @@ public class BattleShip {
         else {
             return "Ship A was shot!\n Only " + numberofA + " blocks left for Ship A to sink!";
         }
+    }
+
+    private String getGameFileHeader() {
+        return "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head lang=\"en\">\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n" +
+                "    <title>Battleship</title>\n" +
+                "\n" +
+                "    <!--Stylesheets-->\n" +
+                "    <link rel=\"stylesheet\" href=\"Frameworks/Bootstrap/css/bootstrap.min.css\">\n" +
+                "    <link rel=\"stylesheet\" href=\"Frameworks/font-awesome-4.3.0/css/font-awesome.min.css\">\n" +
+                "\n" +
+                "    <!--Javascript-->\n" +
+                "    <script src=\"Frameworks/jquery-1.11.3.min.js\"></script>\n" +
+                "    <script src=\"Frameworks/Bootstrap/js/bootstrap.min.js\"></script>\n" +
+                "\n" +
+                "</head>\n" +
+                "<body style=\"background-image: url('Images/WorldMap.jpg'); background-size: cover;\">\n" +
+                "<nav class=\"navbar navbar-inverse\">\n" +
+                "    <div class=\"container-fluid\">\n" +
+                "        <div class=\"navbar-header\">\n" +
+                "            <a class=\"navbar-brand\" href=\"index.html\">\n" +
+                "                <img src=\"Images/BattleShipLogo.png\" class=\"img-rounded\" alt=\"Battleships\" width=\"145\">\n" +
+                "            </a>\n" +
+                "        </div>\n" +
+                "        <div>\n" +
+                "            <ul class=\"nav navbar-nav\">\n" +
+                "                <li class=\"active\"><a href=\"index.html\"><span class=\"glyphicon glyphicon-home\"></span>  Home</a></li>\n" +
+                "                <li class=\"dropdown\"><a class=\"dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\"><span class=\"glyphicon glyphicon-globe\"></span>  Ship Information (Alpha)<span class=\"caret\"></span></a>\n" +
+                "                    <ul class=\"dropdown-menu\">\n" +
+                "                        <li><a href=\"ShipInformation/AircraftCarrier.html\">Aircraft Carrier</a></li>\n" +
+                "                        <li><a href=\"ShipInformation/Battleship.html\">Battleship</a></li>\n" +
+                "                        <li><a href=\"ShipInformation/Destroyer.html\">Destroyer</a></li>\n" +
+                "                        <li><a href=\"ShipInformation/PatrolBoat.html\">Patrol Boat</a></li>\n" +
+                "                        <li><a href=\"ShipInformation/Submarine.html\">Submarine</a></li>\n" +
+                "                    </ul>\n" +
+                "                </li>\n" +
+                "                <li><a href=\"help.html\"><span class=\"glyphicon glyphicon-question-sign\"></span>  Help</a></li>\n" +
+                "                <li><a href=\"about.html\"><span class=\"glyphicon glyphicon-info-sign\"></span>  About Us</a></li>\n" +
+                "            </ul>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "</nav>";
+    }
+
+    private String getGridContent() {
+        return "<div class=\"container-fluid\">\n" +
+                "    <div class=\"row\">\n" +
+                "        <div class=\"col-md-8\" style=\"background-color: rgba(0,0,0,0.7); margin-top: 5%;\">\n" +
+                "            <table class=\"table\" style=\"color: white;\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th> </th>\n" +
+                "                    <th>A</th>\n" +
+                "                    <th>B</th>\n" +
+                "                    <th>C</th>\n" +
+                "                    <th>D</th>\n" +
+                "                    <th>E</th>\n" +
+                "                    <th>F</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <tr>\n" +
+                "                    <td>0</td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=A0';\" formmethod=\"get\" id=\"A0\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button> </button></td> <!--normal-->\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=B0';\" formmethod=\"get\" id=\"B0\" disabled><i class=\"fa fa-ban fa-3x\"></i> </button></td> <!--miss-->\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=C0';\" formmethod=\"get\" id=\"C0\"><i class=\"fa fa-fire fa-3x\" style=\"color: red\"></i></button></td> <!--Hit-->\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=D0';\" formmethod=\"get\" id=\"D0\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=E0';\" formmethod=\"get\" id=\"E0\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=F0';\" formmethod=\"get\" id=\"F0\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>1</td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=A1';\" formmethod=\"get\" id=\"A1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=B1';\" formmethod=\"get\" id=\"B1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=C1';\" formmethod=\"get\" id=\"C1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=D1';\" formmethod=\"get\" id=\"D1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=E1';\" formmethod=\"get\" id=\"E1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=F1';\" formmethod=\"get\" id=\"F1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>2</td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=A2';\" formmethod=\"get\" id=\"A2\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=B2';\" formmethod=\"get\" id=\"B2\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=C2';\" formmethod=\"get\" id=\"C2\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=D2';\" formmethod=\"get\" id=\"D2\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=E2';\" formmethod=\"get\" id=\"E2\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=F2';\" formmethod=\"get\" id=\"F2\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>3</td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=A3';\" formmethod=\"get\" id=\"A3\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=B3';\" formmethod=\"get\" id=\"B3\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=C3';\" formmethod=\"get\" id=\"C3\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=D3';\" formmethod=\"get\" id=\"D3\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=E3';\" formmethod=\"get\" id=\"E3\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=F3';\" formmethod=\"get\" id=\"F3\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>4</td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=A4';\" formmethod=\"get\" id=\"A4\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=B4';\" formmethod=\"get\" id=\"B4\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=C4';\" formmethod=\"get\" id=\"C4\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=D4';\" formmethod=\"get\" id=\"D4\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=E4';\" formmethod=\"get\" id=\"E4\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=F4';\" formmethod=\"get\" id=\"F4\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>5</td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=A5';\" formmethod=\"get\" id=\"A5\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=B5';\" formmethod=\"get\" id=\"B5\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=C5';\" formmethod=\"get\" id=\"C5\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=D5';\" formmethod=\"get\" id=\"D5\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=E5';\" formmethod=\"get\" id=\"E5\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=F5';\" formmethod=\"get\" id=\"F5\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                </tr>\n" +
+                "                </tbody>\n" +
+                "            </table>\n" +
+                "        </div>";
+    }
+
+    private  String getStatsContent() {
+        return "<div class=\"col-md-3 col-md-offset-1\" style=\"background-color: rgba(0,0,0,0.7); margin-top: 7.5%;\">\n" +
+                "            <h3 style=\"color: white\">Current Standings</h3>\n" +
+                "            <div class=\"container-fluid text-center\">\n" +
+                "                <p style=\"color: white;\" class=\"pull-left\"><b>Hits:</b></p><p id=\"Hits\" style=\"color: white;\" class=\"text-right\">0</p>\n" +
+                "                <p style=\"color: white;\" class=\"pull-left\"><b>Miss:</b></p><p id=\"Miss\" style=\"color: white;\" class=\"text-right\">0</p>\n" +
+                "                <p style=\"color: white;\" class=\"pull-left\"><b>Total:</b></p><p id=\"Total\" style=\"color: white;\" class=\"text-right\">0</p>\n" +
+                "                <p style=\"color: white;\" class=\"pull-left\"><b>Accuracy:</b></p><p id=\"Accuracy\" style=\"color: white;\" class=\"text-right\">0</p>\n" +
+                "            </div>";
+    }
+
+    private String getGameFileFooter() {
+        return " </div>\n" +
+                "    </div>\n" +
+                "</div>\n" +
+                "</body>\n" +
+                "</html>";
     }
 }
