@@ -411,7 +411,7 @@ public class BattleShip {
                 "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=D1';\" formmethod=\"get\" id=\"D1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
                 "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=E1';\" formmethod=\"get\" id=\"E1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
                 "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=F1';\" formmethod=\"get\" id=\"F1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
-                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=G1';\" formmethod=\"get\" id=\"G1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +                "                </tr>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=G1';\" formmethod=\"get\" id=\"G1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
                 "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=H1';\" formmethod=\"get\" id=\"H1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
                 "                <tr>\n" +
                 "                    <td>2</td>\n" +

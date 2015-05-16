@@ -24,7 +24,7 @@ public class HTTPServer extends Thread{
 
 		game = BattleShip.getInstance();
 
-		map_Indexes = new HashMap<>();
+		map_Indexes = new HashMap();
 		map_Indexes.put('A',0);
 		map_Indexes.put('B',1);
 		map_Indexes.put('C',2);
