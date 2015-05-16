@@ -356,6 +356,104 @@ public class BattleShip {
     }
 
     private String getGridContent() {
+        if (gridSize == 6) {
+            return getGridContent6();
+        }
+        else if (gridSize == 8) {
+            return getGridContent8();
+        }
+        else if (gridSize == 10) {
+            return getGridContent10();
+        }
+
+        return null;
+    }
+
+    private String getGridContent10() {
+        return null;
+    }
+
+    private String getGridContent8() {
+        return "<div class=\"container-fluid\">\n" +
+                "    <div class=\"row\">\n" +
+                "        <div class=\"col-md-8\" style=\"background-color: rgba(0,0,0,0.7); margin-top: 2.5%;\">\n" +
+                "            <table class=\"table\" style=\"color: white;\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th> </th>\n" +
+                "                    <th>A</th>\n" +
+                "                    <th>B</th>\n" +
+                "                    <th>C</th>\n" +
+                "                    <th>D</th>\n" +
+                "                    <th>E</th>\n" +
+                "                    <th>F</th>\n" +
+                "                    <th>G</th>\n" +
+                "                    <th>H</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <tr>\n" +
+                "                    <td>0</td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=A0';\" formmethod=\"get\" id=\"A0\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button> </button></td> <!--normal-->\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=B0';\" formmethod=\"get\" id=\"B0\" disabled><i class=\"fa fa-ban fa-3x\"></i> </button></td> <!--miss-->\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=C0';\" formmethod=\"get\" id=\"C0\"><i class=\"fa fa-fire fa-3x\" style=\"color: red\"></i></button></td> <!--Hit-->\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=D0';\" formmethod=\"get\" id=\"D0\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=E0';\" formmethod=\"get\" id=\"E0\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=F0';\" formmethod=\"get\" id=\"F0\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=G0';\" formmethod=\"get\" id=\"G0\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=H0';\" formmethod=\"get\" id=\"H0\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>1</td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=A1';\" formmethod=\"get\" id=\"A1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=B1';\" formmethod=\"get\" id=\"B1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=C1';\" formmethod=\"get\" id=\"C1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=D1';\" formmethod=\"get\" id=\"D1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=E1';\" formmethod=\"get\" id=\"E1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=F1';\" formmethod=\"get\" id=\"F1\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>2</td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=A2';\" formmethod=\"get\" id=\"A2\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=B2';\" formmethod=\"get\" id=\"B2\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=C2';\" formmethod=\"get\" id=\"C2\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=D2';\" formmethod=\"get\" id=\"D2\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=E2';\" formmethod=\"get\" id=\"E2\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=F2';\" formmethod=\"get\" id=\"F2\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>3</td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=A3';\" formmethod=\"get\" id=\"A3\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=B3';\" formmethod=\"get\" id=\"B3\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=C3';\" formmethod=\"get\" id=\"C3\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=D3';\" formmethod=\"get\" id=\"D3\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=E3';\" formmethod=\"get\" id=\"E3\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=F3';\" formmethod=\"get\" id=\"F3\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>4</td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=A4';\" formmethod=\"get\" id=\"A4\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=B4';\" formmethod=\"get\" id=\"B4\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=C4';\" formmethod=\"get\" id=\"C4\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=D4';\" formmethod=\"get\" id=\"D4\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=E4';\" formmethod=\"get\" id=\"E4\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=F4';\" formmethod=\"get\" id=\"F4\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>5</td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=A5';\" formmethod=\"get\" id=\"A5\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=B5';\" formmethod=\"get\" id=\"B5\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=C5';\" formmethod=\"get\" id=\"C5\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=D5';\" formmethod=\"get\" id=\"D5\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=E5';\" formmethod=\"get\" id=\"E5\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=F5';\" formmethod=\"get\" id=\"F5\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n" +
+                "                </tr>\n" +
+                "                </tbody>\n" +
+                "            </table>\n" +
+                "        </div>";
+    }
+
+    private String getGridContent6() {
         return "<div class=\"container-fluid\">\n" +
                 "    <div class=\"row\">\n" +
                 "        <div class=\"col-md-8\" style=\"background-color: rgba(0,0,0,0.7); margin-top: 5%;\">\n" +
@@ -563,5 +661,5 @@ public class BattleShip {
                         "                </tbody>\n" +
                         "            </table>");
     }
-
+    
 }
