@@ -17,3 +17,8 @@ H = 7
 I = 8
 J = 9
 
+Grid States:
+0 -> empty block
+A-E -> block occupied by ship
+1 -> block was clicked but no ship was hit (change icon to ban and disable)
+2 -> block was clicked but a ship was hit (change icon to flame and disable)
