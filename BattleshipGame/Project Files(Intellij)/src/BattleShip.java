@@ -47,34 +47,8 @@ public class BattleShip {
             numberofC = 6; // ship C will always have 6 blocks
             numberofD = 0;
             numberofE = 0;
+            setTableBoatInfoContent6();
 
-            tableBoatInfoContent =
-                    "<table class=\"table\" style=\"color: white;\">\n" +
-                    "                <thead>\n" +
-                    "                <tr>\n" +
-                    "                    <th>Boat Name</th>\n" +
-                    "                    <th>Length</th>\n" +
-                    "                    <th>Destroyed</th>\n" +
-                    "                </tr>\n" +
-                    "                </thead>\n" +
-                    "                <tbody>\n" +
-                    "                <tr>\n" +
-                    "                    <td>Aircraft Carrier</td>\n" +
-                                            getNumberofA() +
-                    "                    <td id=\"AircraftDestroyed\">0</td>\n" +
-                    "                </tr>\n" +
-                    "                <tr>\n" +
-                    "                    <td>Battleship</td>\n" +
-                                            getNumberofB() +
-                    "                    <td id=\"BattleshipDestroyed\">0</td>\n" +
-                    "                </tr>\n" +
-                    "                <tr>\n" +
-                    "                    <td>Destroyer</td>\n" +
-                                            getNumberofC() +
-                    "                    <td id=\"DestroyerDestroyed\">0</td>\n" +
-                    "                </tr>\n" +
-                    "                </tbody>\n" +
-                    "            </table>";
 
         }
         else if (size == 8) { // only 4 ships: A,B,C,D
@@ -83,40 +57,8 @@ public class BattleShip {
             numberofC = 6; // ship C will always have 6 blocks
             numberofD = 7; // ship D will always have 7 blocks
             numberofE = 0;
+            setTableBoatInfoContent8();
 
-
-            tableBoatInfoContent =
-                    "<table class=\"table\" style=\"color: white;\">\n" +
-                    "                <thead>\n" +
-                    "                <tr>\n" +
-                    "                    <th>Boat Name</th>\n" +
-                    "                    <th>Length</th>\n" +
-                    "                    <th>Destroyed</th>\n" +
-                    "                </tr>\n" +
-                    "                </thead>\n" +
-                    "                <tbody>\n" +
-                    "                <tr>\n" +
-                    "                    <td>Aircraft Carrier</td>\n" +
-                                            getNumberofA() +
-                    "                    <td id=\"AircraftDestroyed\">0</td>\n" +
-                    "                </tr>\n" +
-                    "                <tr>\n" +
-                    "                    <td>Battleship</td>\n" +
-                                            getNumberofB() +
-                    "                    <td id=\"BattleshipDestroyed\">0</td>\n" +
-                    "                </tr>\n" +
-                    "                <tr>\n" +
-                    "                    <td>Destroyer</td>\n" +
-                                            getNumberofC() +
-                    "                    <td id=\"DestroyerDestroyed\">0</td>\n" +
-                    "                </tr>\n" +
-                    "                <tr>\n" +
-                    "                    <td>Patrol Boat</td>\n" +
-                                            getNumberofD() +
-                    "                    <td id=\"PatrolDestroyed\">0</td>\n" +
-                    "                </tr>\n" +
-                    "                </tbody>\n" +
-                    "            </table>";
         }
         else if (size == 10) { // only 5 ships: A,B,C,D,E
             numberofA = 5; // ship A will always have 5 blocks
@@ -124,6 +66,8 @@ public class BattleShip {
             numberofC = 6; // ship C will always have 6 blocks
             numberofD = 7; // ship D will always have 7 blocks
             numberofE = 9; // ship E will always have 9 blocks
+            setTableBoatInfoContent10();
+
         }
 
         setTotalNumberOfBlocks(numberofA+numberofB+numberofC+numberofD+numberofE);
@@ -197,40 +141,20 @@ public class BattleShip {
         return "                    <td>"+ numberofA+"</td>\n";
     }
 
-    public void setNumberofA(int numberofA) {
-        this.numberofA = numberofA;
-    }
-
     public String getNumberofB() {
         return "                    <td>"+ numberofB +"</td>\n";
-    }
-
-    public void setNumberofB(int numberofB) {
-        this.numberofB = numberofB;
     }
 
     public String getNumberofC() {
         return "                    <td>"+ numberofC +"</td>\n";
     }
 
-    public void setNumberofC(int numberofC) {
-        this.numberofC = numberofC;
-    }
-
     public String getNumberofD() {
         return "                    <td>"+ numberofD +"</td>\n";
     }
 
-    public void setNumberofD(int numberofD) {
-        this.numberofD = numberofD;
-    }
-
     public String getNumberofE() {
         return "                    <td>"+ numberofE +"</td>\n";
-    }
-
-    public void setNumberofE(int numberofE) {
-        this.numberofE = numberofE;
     }
 
     public int getTotalNumberOfBlocks() {
@@ -264,6 +188,16 @@ public class BattleShip {
         numberofE--;
         totalNumberOfBlocks--;
 
+        if (gridSize == 6) {
+            setTableBoatInfoContent6();
+        }
+        else if (gridSize == 8) {
+            setTableBoatInfoContent8();
+        }
+        else if (gridSize == 10) {
+            setTableBoatInfoContent10();
+        }
+
         if (numberofE == 0) {
             return "Ship E was shot!\n Ship E has sunk!";
         }
@@ -276,6 +210,16 @@ public class BattleShip {
         System.out.println("Ship D was shot!");
         numberofD--;
         totalNumberOfBlocks--;
+
+        if (gridSize == 6) {
+            setTableBoatInfoContent6();
+        }
+        else if (gridSize == 8) {
+            setTableBoatInfoContent8();
+        }
+        else if (gridSize == 10) {
+            setTableBoatInfoContent10();
+        }
 
         if (numberofD == 0) {
             return "Ship D was shot!\n Ship D has sunk!";
@@ -290,6 +234,16 @@ public class BattleShip {
         numberofC--;
         totalNumberOfBlocks--;
 
+        if (gridSize == 6) {
+            setTableBoatInfoContent6();
+        }
+        else if (gridSize == 8) {
+            setTableBoatInfoContent8();
+        }
+        else if (gridSize == 10) {
+            setTableBoatInfoContent10();
+        }
+
         if (numberofC == 0) {
             return "Ship C was shot!\n Ship C has sunk!";
         }
@@ -302,6 +256,16 @@ public class BattleShip {
         System.out.println("Ship B was shot!");
         numberofB--;
         totalNumberOfBlocks--;
+
+        if (gridSize == 6) {
+            setTableBoatInfoContent6();
+        }
+        else if (gridSize == 8) {
+            setTableBoatInfoContent8();
+        }
+        else if (gridSize == 10) {
+            setTableBoatInfoContent10();
+        }
 
         if (numberofB == 0) {
             return "Ship B was shot!\n Ship B has sunk!";
@@ -316,12 +280,23 @@ public class BattleShip {
         numberofA--;
         totalNumberOfBlocks--;
 
+        if (gridSize == 6) {
+            setTableBoatInfoContent6();
+        }
+        else if (gridSize == 8) {
+            setTableBoatInfoContent8();
+        }
+        else if (gridSize == 10) {
+            setTableBoatInfoContent10();
+        }
+
         if (numberofA == 0) {
             return "Ship A was shot!\n Ship A has sunk!";
         }
         else {
             return "Ship A was shot!\n Only " + numberofA + " blocks left for Ship A to sink!";
         }
+
     }
 
     private String getGameFileHeader() {
@@ -462,5 +437,108 @@ public class BattleShip {
                 "</div>\n" +
                 "</body>\n" +
                 "</html>";
+    }
+
+    private void setTableBoatInfoContent6() {
+        setTableBoatInfoContent(                "<table class=\"table\" style=\"color: white;\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th>Boat Name</th>\n" +
+                "                    <th>Length</th>\n" +
+                "                    <th>Destroyed</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <tr>\n" +
+                "                    <td>Aircraft Carrier</td>\n" +
+                                        getNumberofA() +
+                "                    <td id=\"AircraftDestroyed\">0</td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>Battleship</td>\n" +
+                                        getNumberofB() +
+                "                    <td id=\"BattleshipDestroyed\">0</td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>Destroyer</td>\n" +
+                                        getNumberofC() +
+                "                    <td id=\"DestroyerDestroyed\">0</td>\n" +
+                "                </tr>\n" +
+                "                </tbody>\n" +
+                "            </table>");
+    }
+
+    private void setTableBoatInfoContent8() {
+        setTableBoatInfoContent( "<table class=\"table\" style=\"color: white;\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th>Boat Name</th>\n" +
+                "                    <th>Length</th>\n" +
+                "                    <th>Destroyed</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <tr>\n" +
+                "                    <td>Aircraft Carrier</td>\n" +
+                                        getNumberofA() +
+                "                    <td id=\"AircraftDestroyed\">0</td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>Battleship</td>\n" +
+                                        getNumberofB() +
+                "                    <td id=\"BattleshipDestroyed\">0</td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>Destroyer</td>\n" +
+                                        getNumberofC() +
+                "                    <td id=\"DestroyerDestroyed\">0</td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>Patrol Boat</td>\n" +
+                                        getNumberofD() +
+                "                    <td id=\"PatrolDestroyed\">0</td>\n" +
+                "                </tr>\n" +
+                "                </tbody>\n" +
+                "            </table>");
+    }
+
+    private void setTableBoatInfoContent10() {
+        setTableBoatInfoContent(tableBoatInfoContent =
+                "<table class=\"table\" style=\"color: white;\">\n" +
+                        "                <thead>\n" +
+                        "                <tr>\n" +
+                        "                    <th>Boat Name</th>\n" +
+                        "                    <th>Length</th>\n" +
+                        "                    <th>Destroyed</th>\n" +
+                        "                </tr>\n" +
+                        "                </thead>\n" +
+                        "                <tbody>\n" +
+                        "                <tr>\n" +
+                        "                    <td>Aircraft Carrier</td>\n" +
+                        getNumberofA() +
+                        "                    <td id=\"AircraftDestroyed\">0</td>\n" +
+                        "                </tr>\n" +
+                        "                <tr>\n" +
+                        "                    <td>Battleship</td>\n" +
+                        getNumberofB() +
+                        "                    <td id=\"BattleshipDestroyed\">0</td>\n" +
+                        "                </tr>\n" +
+                        "                <tr>\n" +
+                        "                    <td>Destroyer</td>\n" +
+                        getNumberofC() +
+                        "                    <td id=\"DestroyerDestroyed\">0</td>\n" +
+                        "                </tr>\n" +
+                        "                <tr>\n" +
+                        "                    <td>Patrol Boat</td>\n" +
+                        getNumberofD() +
+                        "                    <td id=\"PatrolDestroyed\">0</td>\n" +
+                        "                </tr>\n" +
+                        "                <tr>\n" +
+                        "                    <td>Submarine</td>\n" +
+                        getNumberofE() +
+                        "                    <td id=\"SubmarineDestroyed\">0</td>\n" +
+                        "                </tr>\n" +
+                        "                </tbody>\n" +
+                        "            </table>");
     }
 }
