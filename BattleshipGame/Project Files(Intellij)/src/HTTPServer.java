@@ -35,7 +35,6 @@ public class HTTPServer extends Thread{
 		map_Indexes.put('H',7);
 		map_Indexes.put('I', 8);
 		map_Indexes.put('J',9);
-		map_Indexes.put('K',10);
 	}
 
 	@SuppressWarnings("deprecation")
