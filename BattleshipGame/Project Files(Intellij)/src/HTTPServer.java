@@ -134,6 +134,18 @@ public class HTTPServer extends Thread{
 								GLOBAL_Notification = game.shipEShot();
 							}
 
+							String fileName = "game.html";
+							fileName = URLDecoder.decode(fileName);
+
+							String fileContent = game.constructGameFile();
+
+							FileWriter out = new FileWriter(fileName, false);
+							BufferedWriter b = new BufferedWriter(out);
+							b.write(fileContent);
+							b.close();
+
+							requestedFile(fileName);
+
 						}
 
 						if (game.getTotalNumberOfBlocks() == 0) {
