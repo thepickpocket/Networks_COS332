@@ -60,17 +60,17 @@ public class BattleShip {
                     "                <tbody>\n" +
                     "                <tr>\n" +
                     "                    <td>Aircraft Carrier</td>\n" +
-                    getNumberofA() +
+                                            getNumberofA() +
                     "                    <td id=\"AircraftDestroyed\">0</td>\n" +
                     "                </tr>\n" +
                     "                <tr>\n" +
                     "                    <td>Battleship</td>\n" +
-                    getNumberofB() +
+                                            getNumberofB() +
                     "                    <td id=\"BattleshipDestroyed\">0</td>\n" +
                     "                </tr>\n" +
                     "                <tr>\n" +
                     "                    <td>Destroyer</td>\n" +
-                    getNumberofC() +
+                                            getNumberofC() +
                     "                    <td id=\"DestroyerDestroyed\">0</td>\n" +
                     "                </tr>\n" +
                     "                </tbody>\n" +
@@ -83,6 +83,40 @@ public class BattleShip {
             numberofC = 6; // ship C will always have 6 blocks
             numberofD = 7; // ship D will always have 7 blocks
             numberofE = 0;
+
+
+            tableBoatInfoContent =
+                    "<table class=\"table\" style=\"color: white;\">\n" +
+                    "                <thead>\n" +
+                    "                <tr>\n" +
+                    "                    <th>Boat Name</th>\n" +
+                    "                    <th>Length</th>\n" +
+                    "                    <th>Destroyed</th>\n" +
+                    "                </tr>\n" +
+                    "                </thead>\n" +
+                    "                <tbody>\n" +
+                    "                <tr>\n" +
+                    "                    <td>Aircraft Carrier</td>\n" +
+                                            getNumberofA() +
+                    "                    <td id=\"AircraftDestroyed\">0</td>\n" +
+                    "                </tr>\n" +
+                    "                <tr>\n" +
+                    "                    <td>Battleship</td>\n" +
+                                            getNumberofB() +
+                    "                    <td id=\"BattleshipDestroyed\">0</td>\n" +
+                    "                </tr>\n" +
+                    "                <tr>\n" +
+                    "                    <td>Destroyer</td>\n" +
+                                            getNumberofC() +
+                    "                    <td id=\"DestroyerDestroyed\">0</td>\n" +
+                    "                </tr>\n" +
+                    "                <tr>\n" +
+                    "                    <td>Patrol Boat</td>\n" +
+                                            getNumberofD() +
+                    "                    <td id=\"PatrolDestroyed\">0</td>\n" +
+                    "                </tr>\n" +
+                    "                </tbody>\n" +
+                    "            </table>";
         }
         else if (size == 10) { // only 5 ships: A,B,C,D,E
             numberofA = 5; // ship A will always have 5 blocks
