@@ -24,7 +24,8 @@ public class HTTPServer extends Thread{
 
 	public HTTPServer(Socket client) {
 		connectionClient = client;
-		game = new BattleShip();
+
+		game = BattleShip.getInstance();
 
 		map_Indexes.put('A',0);
 		map_Indexes.put('B',1);
@@ -36,7 +37,7 @@ public class HTTPServer extends Thread{
 		map_Indexes.put('H',7);
 		map_Indexes.put('I', 8);
 		map_Indexes.put('J',9);
-		map_Indexes.put('L',10);
+		map_Indexes.put('K',10);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -67,7 +68,7 @@ public class HTTPServer extends Thread{
 					}
 					else if ( /*Query.equals("/g")*/ Query.contains("/?Grid")) {  //Grid init (format : /?Grid=6x6&Game=Game+2)
 						game.setGridSize(Integer.parseInt(Query.substring(7, Query.indexOf('x'))));
-						game.setPuzzleNr(Integer.parseInt(Query.substring(Query.indexOf('+')+1,Query.length())));
+						game.setPuzzleNr(Integer.parseInt(Query.substring(Query.indexOf('+') + 1, Query.length())));
 
 						System.out.println("Server setting the size of the grid to " + game.getGridSize() + " by " + game.getGridSize());
 						System.out.println("Puzzle number is: " + game.getPuzzleNr());
@@ -77,12 +78,20 @@ public class HTTPServer extends Thread{
 
 						String fileName = "game.html";
 						fileName = URLDecoder.decode(fileName);
+
+						String fileContent = game.constructGameFile();
+
+						FileWriter out = new FileWriter(fileName, false);
+						BufferedWriter b = new BufferedWriter(out);
+						b.write(fileContent);
+						b.close();
+
 						requestedFile(fileName);
 					}
 					else if (Query.contains("/shoot")) { //Shoot a block (format: /shoot=0+5) means shoot block ar row 0 column 5
-						char rowC = Query.charAt(7);
-						int row = map_Indexes.get(rowC);
-						int col = Integer.parseInt(Query.substring(8,Query.length()));
+						char colC = Query.charAt(7);
+						int col = map_Indexes.get(colC);
+						int row = Integer.parseInt(Query.substring(8,Query.length()));
 
 						if (row >= game.getGridSize() || row < 0) {
 							System.out.println("Incorrect row! Out of bounds...");
@@ -94,43 +103,41 @@ public class HTTPServer extends Thread{
 							return;
 						}
 
-						System.out.println("Block [" + row + "][" + col + "] was shot!");
+						System.out.println("Block [" + row + "][" + col + "] was shot!" );
 
-						if (game.getGrid() != null) {
-							char block = game.getBlock(row,col);
+						char block = game.getBlock(row,col);
 
-							if (block == '0') {
-								System.out.println("No Ship was shot!");
-								GLOBAL_Notification = "No Ship was shot! Try Again...";
+						if (block == '0') {
+							System.out.println("No Ship was shot!");
+							GLOBAL_Notification = "No Ship was shot! Try Again...";
 
-							} else {
+						} else {
 
-								//if the user shoots a block that is occupied by a block of ship A
-								if (block == 'A') {
-									GLOBAL_Notification = game.shipAShot();
-								}
-								//if the user shoots a block that is occupied by a block of ship B
-								else if (block == 'B') {
-									GLOBAL_Notification = game.shipBShot();
-								}
-								//if the user shoots a block that is occupied by a block of ship C
-								else if (block == 'C') {
-									GLOBAL_Notification = game.shipCShot();
-								}
-								//if the user shoots a block that is occupied by a block of ship D
-								else if (block == 'D') {
-									GLOBAL_Notification = game.shipDShot();
-								}
-								//if the user shoots a block that is occupied by a block of ship E
-								else if (block == 'E') {
-									GLOBAL_Notification = game.shipEShot();
-								}
-
+							//if the user shoots a block that is occupied by a block of ship A
+							if (block == 'A') {
+								GLOBAL_Notification = game.shipAShot();
+							}
+							//if the user shoots a block that is occupied by a block of ship B
+							else if (block == 'B') {
+								GLOBAL_Notification = game.shipBShot();
+							}
+							//if the user shoots a block that is occupied by a block of ship C
+							else if (block == 'C') {
+								GLOBAL_Notification = game.shipCShot();
+							}
+							//if the user shoots a block that is occupied by a block of ship D
+							else if (block == 'D') {
+								GLOBAL_Notification = game.shipDShot();
+							}
+							//if the user shoots a block that is occupied by a block of ship E
+							else if (block == 'E') {
+								GLOBAL_Notification = game.shipEShot();
 							}
 
-							if (game.getTotalNumberOfBlocks() == 0) {
-								WIN_Notification = "You have sunk all the ships! Congratulations!";
-							}
+						}
+
+						if (game.getTotalNumberOfBlocks() == 0) {
+							WIN_Notification = "You have sunk all the ships! Congratulations!";
 						}
 					}
 					else { // will handle any other types of files to be fetched for example my images to display
@@ -187,12 +194,15 @@ public class HTTPServer extends Thread{
 		outToClient.writeBytes(length);
 		outToClient.writeBytes("\r\n");
 
-		if (isFile) 
+		if (isFile) {
 			sendFile(file_istream, outToClient);
-		else 
+		}
+		else {
 			outToClient.writeBytes(response);
+		}
 
 		outToClient.close();
+
 	}
 
 	public void sendFile (FileInputStream file_istream, DataOutputStream out) throws Exception {
@@ -204,12 +214,6 @@ public class HTTPServer extends Thread{
 		}
 		
 		file_istream.close();
-	}
-	
-	public static String constructTopPart(String str) {
-		String content = "";
-
-		return content;
 	}
 	
 	private void requestedFile(String fn) throws Exception {
@@ -227,7 +231,6 @@ public class HTTPServer extends Thread{
 	}
 	
 	public static void main (String args[]) throws Exception {
-
 		ServerSocket Server = new ServerSocket (8080, 10, InetAddress.getByName("127.0.0.1"));
 		System.out.println("HTTP_Server Waiting for a client on port 8080...");
 		while(true) {
