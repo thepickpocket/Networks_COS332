@@ -18,6 +18,10 @@ public class BattleShip {
     private int numberofE;
     private int totalNumberOfBlocks;
 
+    private int hits = 0;
+    private int misses = 0;
+    private int totalShots = 0;
+
     static String GLOBAL_Notification = "";
 
     private static BattleShip instance = null;
@@ -113,7 +117,6 @@ public class BattleShip {
     }
 
     public String constructGameFile() {
-       // return getGameFileHeader() + getNotifications() + getGridContent() + getStatsContent() + getTableBoatInfoContent() + getGameFileFooter();
         return gc.constructGridContent(getGrid(),getGridSize());
     }
 
@@ -181,10 +184,25 @@ public class BattleShip {
 
     public void won() {
         GLOBAL_Notification = "You have sunk all the ships! Congratulations, You have Won!";
+        disableGrid();
+    }
+
+    private void disableGrid() {
+        for (int i = 0; i < gridSize; i++) {
+            for (int k = 0; k < gridSize; k++){
+                if (grid[i][k] == '0') {
+                    grid[i][k] = '1';
+                }
+            }
+        }
     }
 
     public void noBlockShot(int row, int col) {
         grid[row][col] = '1';
+
+        misses++;
+        totalShots++;
+
         System.out.println("No Ship was shot!");
         GLOBAL_Notification = "No Ship was shot! Try Again...";
     }
@@ -194,6 +212,8 @@ public class BattleShip {
         grid[row][col] = '2';
         numberofE--;
         totalNumberOfBlocks--;
+        hits++;
+        totalShots++;
 
         if (gridSize == 6) {
             gc.setTableBoatInfoContent6();
@@ -219,6 +239,9 @@ public class BattleShip {
         numberofD--;
         totalNumberOfBlocks--;
 
+        hits++;
+        totalShots++;
+
         if (gridSize == 6) {
             gc.setTableBoatInfoContent6();
         }
@@ -242,6 +265,9 @@ public class BattleShip {
         grid[row][col] = '2';
         numberofC--;
         totalNumberOfBlocks--;
+
+        hits++;
+        totalShots++;
 
         if (gridSize == 6) {
             gc.setTableBoatInfoContent6();
@@ -267,6 +293,9 @@ public class BattleShip {
         numberofB--;
         totalNumberOfBlocks--;
 
+        hits++;
+        totalShots++;
+
         if (gridSize == 6) {
             gc.setTableBoatInfoContent6();
         }
@@ -291,6 +320,9 @@ public class BattleShip {
         numberofA--;
         totalNumberOfBlocks--;
 
+        hits++;
+        totalShots++;
+
         if (gridSize == 6) {
             gc.setTableBoatInfoContent6();
         }
@@ -310,4 +342,22 @@ public class BattleShip {
 
     }
 
+    public int getHits() {
+        return hits;
+    }
+
+    public int getMisses() {
+        return misses;
+    }
+
+    public int getTotalShots() {
+        return totalShots;
+    }
+
+    public double getAccuracy() {
+        if (totalShots == 0) {
+            return 0.0;
+        }
+        return ( (hits*100)/totalShots );
+    }
 }

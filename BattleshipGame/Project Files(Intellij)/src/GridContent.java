@@ -111,7 +111,7 @@ public class GridContent {
                     content += "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot="+colC + i+"\"';\" formmethod=\"get\" id=\""+colC + i+"\" disabled><i class=\"fa fa-ban fa-3x\"></i> </button></td>\n";
                 }
                 else if (theGrid[i][k] == '2') {
-                    content +=  "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot="+colC + i+"';\" formmethod=\"get\" id=\""+colC + i+"\"><i class=\"fa fa-fire fa-3x\" style=\"color: red\"></i></button></td>\n";
+                    content +=  "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot="+colC + i+"';\" formmethod=\"get\" id=\""+colC + i+"\" disabled><i class=\"fa fa-fire fa-3x\" style=\"color: red\"></i></button></td>\n";
                 }
                 else {
                     content +=  "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot="+colC + i+"';\" formmethod=\"get\" id=\""+colC + i+"\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n";
@@ -145,10 +145,10 @@ public class GridContent {
         return "<div class=\"col-md-3 col-md-offset-1\" style=\"background-color: rgba(0,0,0,0.7); margin-top: 7.5%;\">\n" +
                 "            <h3 style=\"color: white\">Current Standings</h3>\n" +
                 "            <div class=\"container-fluid text-center\">\n" +
-                "                <p style=\"color: white;\" class=\"pull-left\"><b>Hits:</b></p><p id=\"Hits\" style=\"color: white;\" class=\"text-right\">0</p>\n" +
-                "                <p style=\"color: white;\" class=\"pull-left\"><b>Miss:</b></p><p id=\"Miss\" style=\"color: white;\" class=\"text-right\">0</p>\n" +
-                "                <p style=\"color: white;\" class=\"pull-left\"><b>Total:</b></p><p id=\"Total\" style=\"color: white;\" class=\"text-right\">0</p>\n" +
-                "                <p style=\"color: white;\" class=\"pull-left\"><b>Accuracy:</b></p><p id=\"Accuracy\" style=\"color: white;\" class=\"text-right\">0</p>\n" +
+                "                <p style=\"color: white;\" class=\"pull-left\"><b>Hits:</b></p><p id=\"Hits\" style=\"color: white;\" class=\"text-right\">"+game.getHits()+"</p>\n" +
+                "                <p style=\"color: white;\" class=\"pull-left\"><b>Miss:</b></p><p id=\"Miss\" style=\"color: white;\" class=\"text-right\">"+game.getMisses()+"</p>\n" +
+                "                <p style=\"color: white;\" class=\"pull-left\"><b>Total:</b></p><p id=\"Total\" style=\"color: white;\" class=\"text-right\">"+game.getTotalShots()+"</p>\n" +
+                "                <p style=\"color: white;\" class=\"pull-left\"><b>Accuracy:</b></p><p id=\"Accuracy\" style=\"color: white;\" class=\"text-right\">"+game.getAccuracy()+"</p>\n" +
                 "            </div>";
     }
 
@@ -182,59 +182,31 @@ public class GridContent {
                 "                <tbody>\n" +
                 "                <tr>\n" +
                 "                    <td>Aircraft Carrier</td>\n" +
+                "                    <td>5</td>\n" +
+                "                    <td id=\"AircraftDestroyed\">" +
                                         game.getNumberofA() +
-                "                    <td id=\"AircraftDestroyed\">0</td>\n" +
-                "                </tr>\n" +
+                "                    </td>\n" +
+                "                </tr>" +
                 "                <tr>\n" +
                 "                    <td>Battleship</td>\n" +
+                "                    <td>2</td>\n" +
+                "                    <td id=\"BattleshipDestroyed\">" +
                                         game.getNumberofB() +
-                "                    <td id=\"BattleshipDestroyed\">0</td>\n" +
-                "                </tr>\n" +
+                "                    </td>\n" +
+                "                </tr>" +
                 "                <tr>\n" +
                 "                    <td>Destroyer</td>\n" +
+                "                    <td>6</td>\n" +
+                "                    <td id=\"DestroyerDestroyed\">" +
                                         game.getNumberofC() +
-                "                    <td id=\"DestroyerDestroyed\">0</td>\n" +
-                "                </tr>\n" +
+                "                    </td>\n" +
+                "                </tr>" +
                 "                </tbody>\n" +
                 "            </table>");
     }
 
     public void setTableBoatInfoContent8() {
-        setTableBoatInfoContent( "<table class=\"table\" style=\"color: white;\">\n" +
-                "                <thead>\n" +
-                "                <tr>\n" +
-                "                    <th>Boat Name</th>\n" +
-                "                    <th>Length</th>\n" +
-                "                    <th>Destroyed</th>\n" +
-                "                </tr>\n" +
-                "                </thead>\n" +
-                "                <tbody>\n" +
-                "                <tr>\n" +
-                "                    <td>Aircraft Carrier</td>\n" +
-                                        game.getNumberofA() +
-                "                    <td id=\"AircraftDestroyed\">0</td>\n" +
-                "                </tr>\n" +
-                "                <tr>\n" +
-                "                    <td>Battleship</td>\n" +
-                                        game.getNumberofB() +
-                "                    <td id=\"BattleshipDestroyed\">0</td>\n" +
-                "                </tr>\n" +
-                "                <tr>\n" +
-                "                    <td>Destroyer</td>\n" +
-                                        game.getNumberofC() +
-                "                    <td id=\"DestroyerDestroyed\">0</td>\n" +
-                "                </tr>\n" +
-                "                <tr>\n" +
-                "                    <td>Patrol Boat</td>\n" +
-                                        game.getNumberofD() +
-                "                    <td id=\"PatrolDestroyed\">0</td>\n" +
-                "                </tr>\n" +
-                "                </tbody>\n" +
-                "            </table>");
-    }
-
-    public void setTableBoatInfoContent10() {
-        setTableBoatInfoContent(tableBoatInfoContent =
+        setTableBoatInfoContent(
                 "<table class=\"table\" style=\"color: white;\">\n" +
                         "                <thead>\n" +
                         "                <tr>\n" +
@@ -246,28 +218,82 @@ public class GridContent {
                         "                <tbody>\n" +
                         "                <tr>\n" +
                         "                    <td>Aircraft Carrier</td>\n" +
+                        "                    <td>5</td>\n" +
+                        "                    <td id=\"AircraftDestroyed\">" +
                                                 game.getNumberofA() +
-                        "                    <td id=\"AircraftDestroyed\">0</td>\n" +
-                        "                </tr>\n" +
+                        "                    </td>\n" +
+                        "                </tr>" +
                         "                <tr>\n" +
                         "                    <td>Battleship</td>\n" +
+                        "                    <td>2</td>\n" +
+                        "                    <td id=\"BattleshipDestroyed\">" +
                                                 game.getNumberofB() +
-                        "                    <td id=\"BattleshipDestroyed\">0</td>\n" +
-                        "                </tr>\n" +
+                        "                    </td>\n" +
+                        "                </tr>" +
                         "                <tr>\n" +
                         "                    <td>Destroyer</td>\n" +
+                        "                    <td>6</td>\n" +
+                        "                    <td id=\"DestroyerDestroyed\">" +
                                                 game.getNumberofC() +
-                        "                    <td id=\"DestroyerDestroyed\">0</td>\n" +
-                        "                </tr>\n" +
+                        "                    </td>\n" +
+                        "                </tr>" +
                         "                <tr>\n" +
                         "                    <td>Patrol Boat</td>\n" +
+                        "                    <td>7</td>\n" +
+                        "                    <td id=\"PatrolDestroyed\">" +
                                                 game.getNumberofD() +
-                        "                    <td id=\"PatrolDestroyed\">0</td>\n" +
+                        "                    </td>\n" +
+                        "                </tr>"+
+                        "                </tbody>\n" +
+                        "            </table>");
+
+    }
+
+    public void setTableBoatInfoContent10() {
+        setTableBoatInfoContent(
+                        "<table class=\"table\" style=\"color: white;\">\n" +
+                        "                <thead>\n" +
+                        "                <tr>\n" +
+                        "                    <th>Boat Name</th>\n" +
+                        "                    <th>Length</th>\n" +
+                        "                    <th>Destroyed</th>\n" +
                         "                </tr>\n" +
+                        "                </thead>\n" +
+                        "                <tbody>\n" +
+                        "                <tr>\n" +
+                        "                    <td>Aircraft Carrier</td>\n" +
+                        "                    <td>5</td>\n" +
+                        "                    <td id=\"AircraftDestroyed\">" +
+                                                game.getNumberofA() +
+                        "                    </td>\n" +
+                        "                </tr>" +
+                        "                <tr>\n" +
+                        "                    <td>Battleship</td>\n" +
+                        "                    <td>2</td>\n" +
+                        "                    <td id=\"BattleshipDestroyed\">" +
+                                                game.getNumberofB() +
+                        "                    </td>\n" +
+                        "                </tr>" +
+                        "                <tr>\n" +
+                        "                    <td>Destroyer</td>\n" +
+                        "                    <td>6</td>\n" +
+                        "                    <td id=\"DestroyerDestroyed\">" +
+                                                game.getNumberofC() +
+                        "                    </td>\n" +
+                        "                </tr>" +
+                        "                <tr>\n" +
+                        "                    <td>Patrol Boat</td>\n" +
+                        "                    <td>7</td>\n" +
+                        "                    <td id=\"PatrolDestroyed\">" +
+                                                game.getNumberofD() +
+                        "                    </td>\n" +
+                        "                </tr>"+
                         "                <tr>\n" +
                         "                    <td>Submarine</td>\n" +
+                        "                    <td>9</td>\n" +
+                        "                    <td id=\"SubmarineDestroyed\">" +
                                                 game.getNumberofE() +
-                        "                    <td id=\"SubmarineDestroyed\">0</td>\n" +
+                        "                    </td>\n" +
                         "                </tr>\n" +
                         "                </tbody>\n" +
                         "            </table>");

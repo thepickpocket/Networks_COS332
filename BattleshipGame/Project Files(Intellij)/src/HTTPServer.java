@@ -49,7 +49,11 @@ public class HTTPServer extends Thread{
 	
 				String requestString = inFromClient.readLine();
 				System.out.println("REQUEST:  "+requestString);
-				
+
+				if (requestString == null) {
+					return;
+				}
+
 				String tokenizerString = requestString;
 				if (!tokenizerString.equals("")){
 				StringTokenizer tokenizer = new StringTokenizer(tokenizerString);
@@ -128,6 +132,10 @@ public class HTTPServer extends Thread{
 							game.shipEShot(row,col);
 						}
 
+						if (game.getTotalNumberOfBlocks() == 0) {
+							game.won();
+						}
+
 						String fileName = "game.html";
 						fileName = URLDecoder.decode(fileName);
 
@@ -140,9 +148,6 @@ public class HTTPServer extends Thread{
 
 						requestedFile(fileName);
 
-						if (game.getTotalNumberOfBlocks() == 0) {
-							game.won();
-						}
 					}
 					else { // will handle any other types of files to be fetched for example my images to display
 						String fileName = Query.replaceFirst("/", "");
