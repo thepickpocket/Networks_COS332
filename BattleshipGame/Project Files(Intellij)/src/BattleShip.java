@@ -309,7 +309,7 @@ public class BattleShip {
                 "\n" +
                 "    <!--Stylesheets-->\n" +
                 "    <link rel=\"stylesheet\" href=\"Frameworks/Bootstrap/css/bootstrap.min.css\">\n" +
-                "    <link rel=\"stylesheet\" href=\"Frameworks/font-awesome-4.3.0/css/font-awesome.min.css\">\n" +
+                "    <link rel=\"stylesheet\" href=\"//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css\">\n" +
                 "\n" +
                 "    <!--Javascript-->\n" +
                 "    <script src=\"Frameworks/jquery-1.11.3.min.js\"></script>\n" +
