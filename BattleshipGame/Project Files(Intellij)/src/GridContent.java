@@ -28,7 +28,7 @@ public class GridContent {
     }
 
     public String constructGridContent(char[][] grid, int size) {
-        String content = getGameFileHeader() + getNotifications() + getGridContent(grid, size) + getStatsContent() + getTableBoatInfoContent() + getGameFileFooter();
+        String content = getGameFileHeader() + getGridContent(grid, size) + getStatsContent() + getTableBoatInfoContent() + getGameFileFooter();
 
         return  content;
     }
@@ -104,20 +104,46 @@ public class GridContent {
 
         for (int i = 0; i < size; i++) {
             content += "                <tr>\n";
-            content += "                    <td>"+i+"</td>\n";
-            for (int k = 0; k < size; k++) {
-                colC = map_Indexes.get(k);
-                if (theGrid[i][k] == '1') {
-                    content += "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot="+colC + i+"\"';\" formmethod=\"get\" id=\""+colC + i+"\" disabled><i class=\"fa fa-ban fa-3x\"></i> </button></td>\n";
+            content += "                    <td>" + i + "</td>\n";
+            if (size == 6) {
+                for (int k = 0; k < size; k++) {
+                    colC = map_Indexes.get(k);
+                    if (theGrid[i][k] == '1') {
+                        content += "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=" + colC + i + "\"';\" formmethod=\"get\" id=\"" + colC + i + "\" disabled><i class=\"fa fa-ban fa-3x\"></i> </button></td>\n";
+                    } else if (theGrid[i][k] == '2') {
+                        content += "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=" + colC + i + "';\" formmethod=\"get\" id=\"" + colC + i + "\" disabled><i class=\"fa fa-fire fa-3x\" style=\"color: red\"></i></button></td>\n";
+                    } else {
+                        content += "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=" + colC + i + "';\" formmethod=\"get\" id=\"" + colC + i + "\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n";
+                    }
                 }
-                else if (theGrid[i][k] == '2') {
-                    content +=  "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot="+colC + i+"';\" formmethod=\"get\" id=\""+colC + i+"\" disabled><i class=\"fa fa-fire fa-3x\" style=\"color: red\"></i></button></td>\n";
-                }
-                else {
-                    content +=  "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot="+colC + i+"';\" formmethod=\"get\" id=\""+colC + i+"\"><i class=\"fa fa-map-marker fa-3x\" style=\"color: #269abc;\"></i></button></td>\n";
-                }
+                content += "               </tr>\n";
             }
-            content +=  "               </tr>\n";
+            else if (size == 8){
+                for (int k = 0; k < size; k++) {
+                    colC = map_Indexes.get(k);
+                    if (theGrid[i][k] == '1') {
+                        content += "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=" + colC + i + "\"';\" formmethod=\"get\" id=\"" + colC + i + "\" disabled><i class=\"fa fa-ban fa-2x\"></i> </button></td>\n";
+                    } else if (theGrid[i][k] == '2') {
+                        content += "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=" + colC + i + "';\" formmethod=\"get\" id=\"" + colC + i + "\" disabled><i class=\"fa fa-fire fa-2x\" style=\"color: red\"></i></button></td>\n";
+                    } else {
+                        content += "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=" + colC + i + "';\" formmethod=\"get\" id=\"" + colC + i + "\"><i class=\"fa fa-map-marker fa-2x\" style=\"color: #269abc;\"></i></button></td>\n";
+                    }
+                }
+                content += "               </tr>\n";
+            }
+            else{
+                for (int k = 0; k < size; k++) {
+                    colC = map_Indexes.get(k);
+                    if (theGrid[i][k] == '1') {
+                        content += "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=" + colC + i + "\"';\" formmethod=\"get\" id=\"" + colC + i + "\" disabled><i class=\"fa fa-ban\"></i> </button></td>\n";
+                    } else if (theGrid[i][k] == '2') {
+                        content += "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=" + colC + i + "';\" formmethod=\"get\" id=\"" + colC + i + "\" disabled><i class=\"fa fa-fire\" style=\"color: red\"></i></button></td>\n";
+                    } else {
+                        content += "                    <td><button class=\"btn\" onclick=\"location.href = 'shoot=" + colC + i + "';\" formmethod=\"get\" id=\"" + colC + i + "\"><i class=\"fa fa-map-marker\" style=\"color: #269abc;\"></i></button></td>\n";
+                    }
+                }
+                content += "               </tr>\n";
+            }
         }
 
         content +=
@@ -142,7 +168,9 @@ public class GridContent {
     }
 
     private  String getStatsContent() {
-        return "<div class=\"col-md-3 col-md-offset-1\" style=\"background-color: rgba(0,0,0,0.7); margin-top: 7.5%;\">\n" +
+        return "<div class=\"col-md-3 col-md-offset-1\" style=\"margin-top: 3%\">\n" +
+                getNotifications() +
+                "<div class=\"container-fluid\" style=\"background-color: rgba(0,0,0,0.7); margin-top: 7.5%;\">"+
                 "            <h3 style=\"color: white\">Current Standings</h3>\n" +
                 "            <div class=\"container-fluid text-center\">\n" +
                 "                <p style=\"color: white;\" class=\"pull-left\"><b>Hits:</b></p><p id=\"Hits\" style=\"color: white;\" class=\"text-right\">"+game.getHits()+"</p>\n" +
@@ -171,6 +199,7 @@ public class GridContent {
 
     public void setTableBoatInfoContent6() {
         setTableBoatInfoContent(
+                "<div class=\"text-center\">"+
                 "<table class=\"table\" style=\"color: white;\">\n" +
                 "                <thead>\n" +
                 "                <tr>\n" +
@@ -202,11 +231,12 @@ public class GridContent {
                 "                    </td>\n" +
                 "                </tr>" +
                 "                </tbody>\n" +
-                "            </table>");
+                "            </table></div></div>");
     }
 
     public void setTableBoatInfoContent8() {
         setTableBoatInfoContent(
+                "<div class=\"text-center\">" +
                 "<table class=\"table\" style=\"color: white;\">\n" +
                         "                <thead>\n" +
                         "                <tr>\n" +
@@ -245,12 +275,13 @@ public class GridContent {
                         "                    </td>\n" +
                         "                </tr>"+
                         "                </tbody>\n" +
-                        "            </table>");
+                        "            </table></div></div>");
 
     }
 
     public void setTableBoatInfoContent10() {
         setTableBoatInfoContent(
+                        "<div class=\"text-center\">" +
                         "<table class=\"table\" style=\"color: white;\">\n" +
                         "                <thead>\n" +
                         "                <tr>\n" +
@@ -296,6 +327,6 @@ public class GridContent {
                         "                    </td>\n" +
                         "                </tr>\n" +
                         "                </tbody>\n" +
-                        "            </table>");
+                        "            </table></div></div>");
     }
 }

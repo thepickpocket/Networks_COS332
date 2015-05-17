@@ -144,25 +144,15 @@ public class BattleShip {
         BattleShip.puzzleNr = puzzleNr;
     }
 
-    public String getNumberofA() {
-        return "                    <td>"+ numberofA+"</td>\n";
-    }
+    public String getNumberofA() {return "" + numberofA;}
 
-    public String getNumberofB() {
-        return "                    <td>"+ numberofB +"</td>\n";
-    }
+    public String getNumberofB() {return "" + numberofB;}
 
-    public String getNumberofC() {
-        return "                    <td>"+ numberofC +"</td>\n";
-    }
+    public String getNumberofC() {return "" + numberofC; }
 
-    public String getNumberofD() {
-        return "                    <td>"+ numberofD +"</td>\n";
-    }
+    public String getNumberofD() {return ""+ numberofD;}
 
-    public String getNumberofE() {
-        return "                    <td>"+ numberofE +"</td>\n";
-    }
+    public String getNumberofE() {return ""+ numberofE;}
 
     public int getTotalNumberOfBlocks() {
         return totalNumberOfBlocks;
