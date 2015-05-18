@@ -31,7 +31,11 @@ public class GridContent {
     }
 
     public String constructGridContent(char[][] grid, int size) {
-        String content = getGameFileHeader() + getGridContent(grid, size) + getStatsContent() + getTableBoatInfoContent() + getGameFileFooter();
+        String content;
+        if (game.hasWon)
+            content = getGameFileHeader() + getWinner() + getGameFileFooter();
+        else
+            content = getGameFileHeader() + getGridContent(grid, size) + getStatsContent() + getTableBoatInfoContent() + getGameFileFooter();
 
         return  content;
     }
@@ -51,6 +55,7 @@ public class GridContent {
                 "    <!--Javascript-->\n" +
                 "    <script src=\"Frameworks/jquery-1.11.3.min.js\"></script>\n" +
                 "    <script src=\"Frameworks/Bootstrap/js/bootstrap.min.js\"></script>\n" +
+                "    <script src=\"ShipInformation/animation.js\"></script>\n" +
                 "\n" +
                 "</head>\n" +
                 "<body style=\"background-image: url('Images/WorldMap.jpg'); background-size: cover;\">\n" +
@@ -184,10 +189,7 @@ public class GridContent {
     }
 
     private String getGameFileFooter() {
-        return " </div>\n" +
-                "    </div>\n" +
-                "</div>\n" +
-                "</body>\n" +
+        return "</body>\n" +
                 "</html>";
     }
 
@@ -234,7 +236,7 @@ public class GridContent {
                 "                    </td>\n" +
                 "                </tr>" +
                 "                </tbody>\n" +
-                "            </table></div></div>");
+                "            </table></div></div></div>");
     }
 
     public void setTableBoatInfoContent8() {
@@ -278,7 +280,7 @@ public class GridContent {
                         "                    </td>\n" +
                         "                </tr>"+
                         "                </tbody>\n" +
-                        "            </table></div></div>");
+                        "            </table></div></div></div>");
 
     }
 
@@ -330,6 +332,15 @@ public class GridContent {
                         "                    </td>\n" +
                         "                </tr>\n" +
                         "                </tbody>\n" +
-                        "            </table></div></div>");
+                        "            </table></div></div></div>");
+    }
+
+    private String getWinner(){
+        return "<div class=\"container-fluid\" id=\"Text\">" +
+                "   <div class=\"text-center\" style=\"background-color: rgba(0,0,0, 0.7)\">" +
+                "       <h1 style=\"color: white; text-shadow: 3px 1px 3px #09b6ff;\">Congratulations</h1>" +
+                "       <p style=\"color: white;\">You have overthrown the enemy and the sea is now yours. Go forth and attack more ships and make even more of the ocean yours. Keep on going like this and you will be noted in history as the best battleship commander.</p>" +
+                "   </div>" +
+                "</div>";
     }
 }

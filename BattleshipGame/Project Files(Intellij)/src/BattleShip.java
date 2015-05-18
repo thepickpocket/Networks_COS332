@@ -26,6 +26,7 @@ public class BattleShip {
     private int totalShots = 0;
 
     static String GLOBAL_Notification = "";
+    public boolean hasWon = false;
 
     private static BattleShip instance = null;
     private static GridContent gc = null;
@@ -175,6 +176,7 @@ public class BattleShip {
 
     public void won() {
         GLOBAL_Notification = "You have sunk all the ships! Congratulations, You have Won!";
+        hasWon = true;
         disableGrid();
     }
 
