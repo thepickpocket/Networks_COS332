@@ -24,6 +24,8 @@ public class BattleShip {
     private int counterC = 6;
     private int counterD = 7;
     private int counterE = 9;
+
+    public int counter = 0;
     private int totalNumberOfBlocks = 0;
 
     private int hits = 0;
@@ -104,6 +106,7 @@ public class BattleShip {
         numberofC = 0;
         numberofB = 0;
         numberofA = 0;
+        counter = 0;
         GLOBAL_Notification = "";
     }
 
@@ -402,5 +405,25 @@ public class BattleShip {
             return 0.0;
         }
         return ( (hits*100)/totalShots );
+    }
+
+    public int getCounterA() {
+        return counterA;
+    }
+
+    public int getCounterB() {
+        return counterB;
+    }
+
+    public int getCounterC() {
+        return counterC;
+    }
+
+    public int getCounterD() {
+        return counterD;
+    }
+
+    public int getCounterE() {
+        return counterE;
     }
 }
