@@ -251,12 +251,8 @@ public class GridContent {
                 "                    </td>\n" +
                 "                </tr>" +
                 "                </tbody>\n" +
-<<<<<<< HEAD
-                "            </table></div></div></div>");
-=======
                 "            </table></div></div>");
         game.counter++;
->>>>>>> origin/master
     }
 
     public void setTableBoatInfoContent8() {

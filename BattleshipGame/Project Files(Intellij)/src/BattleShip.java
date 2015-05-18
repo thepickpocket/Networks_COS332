@@ -183,16 +183,12 @@ public class BattleShip {
     }
 
     public void won() {
-<<<<<<< HEAD
-        GLOBAL_Notification = "You have sunk all the ships! Congratulations, You have Won!";
-        hasWon = true;
-=======
         GLOBAL_Notification =
                 "        <p style=\"color: red;\" id=\"message\">" +
                         "You have sunk all the ships! Congratulations, You have Won!"+
                         "        </p>\n";
->>>>>>> origin/master
         disableGrid();
+        hasWon= true;
     }
 
     private void disableGrid() {
