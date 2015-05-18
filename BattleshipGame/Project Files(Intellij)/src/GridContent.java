@@ -90,9 +90,7 @@ public class GridContent {
         return "<div class=\"container-fluid text-center\" style=\"background-color: rgba(0,0,0,0.7)\">\n" +
                 "    <div id=\"notifications\">\n" +
                 "        <h2 style=\"color: white; text-shadow: 3px 1px 3px #09b6ff\">Notifications</h2>\n" +
-                "        <p style=\"color: white;\" id=\"message\">" +
-                            game.GLOBAL_Notification +
-                "        </p>\n" +
+                        game.GLOBAL_Notification+
                 "    </div>\n" +
                 "</div>\n";
     }
@@ -203,6 +201,23 @@ public class GridContent {
     }
 
     public void setTableBoatInfoContent6() {
+        String lineA = "                <tr>\n";
+        String lineB = "                <tr>\n";
+        String lineC = "                <tr>\n";
+
+        /*if (game.counter > 0) {
+            if (game.getCounterA() == 0) {
+                lineA = "                <tr style=\"color: red;\">\n";
+            }
+
+            if (game.getCounterB() == 0) {
+                lineB = "                <tr style=\"color: red;\">\n";
+            }
+
+            if (game.getCounterC() == 0) {
+                lineC = "                <tr style=\"color: red;\">\n";
+            }
+        }*/
         setTableBoatInfoContent(
                 "<div class=\"text-center\">"+
                 "<table class=\"table\" style=\"color: white;\">\n" +
@@ -214,21 +229,21 @@ public class GridContent {
                 "                </tr>\n" +
                 "                </thead>\n" +
                 "                <tbody>\n" +
-                "                <tr>\n" +
+                                 lineA +
                 "                    <td>Aircraft Carrier</td>\n" +
                 "                    <td>5</td>\n" +
                 "                    <td id=\"AircraftDestroyed\">" +
                                         game.getNumberofA() +
                 "                    </td>\n" +
                 "                </tr>" +
-                "                <tr>\n" +
+                                 lineB +
                 "                    <td>Battleship</td>\n" +
                 "                    <td>2</td>\n" +
                 "                    <td id=\"BattleshipDestroyed\">" +
                                         game.getNumberofB() +
                 "                    </td>\n" +
                 "                </tr>" +
-                "                <tr>\n" +
+                                 lineC +
                 "                    <td>Destroyer</td>\n" +
                 "                    <td>6</td>\n" +
                 "                    <td id=\"DestroyerDestroyed\">" +
@@ -236,7 +251,12 @@ public class GridContent {
                 "                    </td>\n" +
                 "                </tr>" +
                 "                </tbody>\n" +
+<<<<<<< HEAD
                 "            </table></div></div></div>");
+=======
+                "            </table></div></div>");
+        game.counter++;
+>>>>>>> origin/master
     }
 
     public void setTableBoatInfoContent8() {
