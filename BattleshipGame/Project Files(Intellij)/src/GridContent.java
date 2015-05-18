@@ -1,7 +1,10 @@
 import java.util.HashMap;
 
 /**
- * Created by VivianWork on 5/16/2015.
+ * Vivian Venter (13238435) & Jason Evans (13032608)
+ * COS 332 - Practical 9
+ * Battleship Game
+ * Collaboration
  */
 public class GridContent {
 

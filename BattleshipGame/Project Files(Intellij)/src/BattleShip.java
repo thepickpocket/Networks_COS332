@@ -4,19 +4,22 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * Created by VivianWork on 5/16/2015.
+ * Vivian Venter (13238435) & Jason Evans (13032608)
+ * COS 332 - Practical 9
+ * Battleship Game
+ * Collaboration
  */
 public class BattleShip {
 
     private char grid[][];
     private static int gridSize = 0;
     private static int puzzleNr = 0;
-    private int numberofA;
-    private int numberofB;
-    private int numberofC;
-    private int numberofD;
-    private int numberofE;
-    private int totalNumberOfBlocks;
+    private int numberofA = 0;
+    private int numberofB = 0;
+    private int numberofC = 0;
+    private int numberofD = 0;
+    private int numberofE = 0;
+    private int totalNumberOfBlocks = 0;
 
     private int hits = 0;
     private int misses = 0;
@@ -42,42 +45,27 @@ public class BattleShip {
     public void initializeGrid() throws IOException {
         // textfile will have naming convention: grid#+* where # is the grid size and * is the puzzle number
         // for example: grid6_2 will be puzzle 2 for a grid of size 6x6
+        clearData();
+
         int size = getGridSize();
         int gridNr = getPuzzleNr();
 
 
         //Since each block will consist of a certain number of blocks, this is where we initialize the number of blocks per ship
         if (size == 6) { // only 3 ships: A,B,C
-            System.out.println("Initializing a grid of size 6");
-            numberofA = 5; // ship A will always have 5 blocks
-            numberofB = 2; // ship B will always have 2 blocks
-            numberofC = 6; // ship C will always have 6 blocks
-            numberofD = 0;
-            numberofE = 0;
             gc.setTableBoatInfoContent6();
-
-
+            setTotalNumberOfBlocks(5 + 2 + 6);
         }
         else if (size == 8) { // only 4 ships: A,B,C,D
-            numberofA = 5; // ship A will always have 5 blocks
-            numberofB = 2; // ship B will always have 2 blocks
-            numberofC = 6; // ship C will always have 6 blocks
-            numberofD = 7; // ship D will always have 7 blocks
-            numberofE = 0;
             gc.setTableBoatInfoContent8();
-
+            setTotalNumberOfBlocks(5 + 2 + 6 + 7);
         }
         else if (size == 10) { // only 5 ships: A,B,C,D,E
-            numberofA = 5; // ship A will always have 5 blocks
-            numberofB = 2; // ship B will always have 2 blocks
-            numberofC = 6; // ship C will always have 6 blocks
-            numberofD = 7; // ship D will always have 7 blocks
-            numberofE = 9; // ship E will always have 9 blocks
             gc.setTableBoatInfoContent10();
-
+            setTotalNumberOfBlocks(5 + 2 + 6 +7+9);
         }
 
-        setTotalNumberOfBlocks(numberofA+numberofB+numberofC+numberofD+numberofE);
+
 
         String line;
         char ch;
@@ -99,6 +87,19 @@ public class BattleShip {
 
         printGrid();
 
+    }
+
+    private void clearData() {
+        hits = 0;
+        misses = 0;
+        totalShots = 0;
+        totalNumberOfBlocks = 0;
+        numberofE = 0;
+        numberofD = 0;
+        numberofC = 0;
+        numberofB = 0;
+        numberofA = 0;
+        GLOBAL_Notification = "";
     }
 
     private void printGrid() {
@@ -200,7 +201,8 @@ public class BattleShip {
     public void shipEShot(int row, int col) {
         System.out.println("Ship E was shot!");
         grid[row][col] = '2';
-        numberofE--;
+
+        numberofE++;
         totalNumberOfBlocks--;
         hits++;
         totalShots++;
@@ -226,7 +228,8 @@ public class BattleShip {
     public void shipDShot(int row, int col) {
         System.out.println("Ship D was shot!");
         grid[row][col] = '2';
-        numberofD--;
+
+        numberofD++;
         totalNumberOfBlocks--;
 
         hits++;
@@ -253,7 +256,8 @@ public class BattleShip {
     public void shipCShot(int row, int col) {
         System.out.println("Ship C was shot!");
         grid[row][col] = '2';
-        numberofC--;
+
+        numberofC++;
         totalNumberOfBlocks--;
 
         hits++;
@@ -280,7 +284,8 @@ public class BattleShip {
     public void shipBShot(int row, int col) {
         System.out.println("Ship B was shot!");
         grid[row][col] = '2';
-        numberofB--;
+
+        numberofB++;
         totalNumberOfBlocks--;
 
         hits++;
@@ -307,7 +312,8 @@ public class BattleShip {
     public void shipAShot(int row, int col) {
         System.out.println("Ship A was shot!");
         grid[row][col] = '2';
-        numberofA--;
+
+        numberofA++;
         totalNumberOfBlocks--;
 
         hits++;

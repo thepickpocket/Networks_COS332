@@ -8,8 +8,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import javax.xml.bind.annotation.XmlElementDecl.GLOBAL;
-
 public class HTTPServer extends Thread{
 
 	Socket connectionClient = null;
@@ -63,12 +61,37 @@ public class HTTPServer extends Thread{
 
 				if (Method.equals("GET")) {  // GET Method used for http protocol
 					if (Query.equals("/") || Query.equals("/index.html") ) {  // The default home page
-						String fileName = Query.replaceFirst("/", "index.html");
+						Query= "";
+						String fileName = "index.html";
 						fileName = URLDecoder.decode(fileName);
 						requestedFile(fileName);
 					}
-					else if ( /*Query.equals("/g")*/ Query.contains("/?Grid")) {  //Grid init (format : /?Grid=6x6&Game=Game+2)
+					else if (Query.contains("/?Grid")) {  //Grid init (format : /?Grid=6x6&Game=Game+2)
 						game.setGridSize(Integer.parseInt(Query.substring(7, Query.indexOf('x'))));
+						game.setPuzzleNr(Integer.parseInt(Query.substring(Query.indexOf('+') + 1, Query.length())));
+
+						System.out.println("Server setting the size of the grid to " + game.getGridSize() + " by " + game.getGridSize());
+						System.out.println("Puzzle number is: " + game.getPuzzleNr());
+
+						game.setGrid();
+						game.initializeGrid();
+
+						String fileName = "game.html";
+						fileName = URLDecoder.decode(fileName);
+
+						String fileContent = game.constructGameFile();
+
+						FileWriter out = new FileWriter(fileName, false);
+						BufferedWriter b = new BufferedWriter(out);
+						b.write(fileContent);
+						b.close();
+
+						requestedFile(fileName);
+					}
+					else if (Query.contains("/index.html?Grid")) {  //Grid init (format : /?Grid=6x6&Game=Game+2)
+						Query = Query.substring(11,Query.length());
+						System.out.println(Query);
+						game.setGridSize(Integer.parseInt(Query.substring(6, Query.indexOf('x'))));
 						game.setPuzzleNr(Integer.parseInt(Query.substring(Query.indexOf('+') + 1, Query.length())));
 
 						System.out.println("Server setting the size of the grid to " + game.getGridSize() + " by " + game.getGridSize());
