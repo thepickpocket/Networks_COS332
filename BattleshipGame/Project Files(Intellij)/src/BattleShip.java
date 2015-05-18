@@ -19,6 +19,11 @@ public class BattleShip {
     private int numberofC = 0;
     private int numberofD = 0;
     private int numberofE = 0;
+    private int counterA = 5;
+    private int counterB = 2;
+    private int counterC = 6;
+    private int counterD = 7;
+    private int counterE = 9;
     private int totalNumberOfBlocks = 0;
 
     private int hits = 0;
@@ -62,7 +67,7 @@ public class BattleShip {
         }
         else if (size == 10) { // only 5 ships: A,B,C,D,E
             gc.setTableBoatInfoContent10();
-            setTotalNumberOfBlocks(5 + 2 + 6 +7+9);
+            setTotalNumberOfBlocks(5 + 2 + 6 + 7 + 9);
         }
 
 
@@ -174,7 +179,10 @@ public class BattleShip {
     }
 
     public void won() {
-        GLOBAL_Notification = "You have sunk all the ships! Congratulations, You have Won!";
+        GLOBAL_Notification =
+                "        <p style=\"color: red;\" id=\"message\">" +
+                        "You have sunk all the ships! Congratulations, You have Won!"+
+                        "        </p>\n";
         disableGrid();
     }
 
@@ -195,7 +203,10 @@ public class BattleShip {
         totalShots++;
 
         System.out.println("No Ship was shot!");
-        GLOBAL_Notification = "No Ship was shot! Try Again...";
+        GLOBAL_Notification =
+                "        <p style=\"color: white;\" id=\"message\">" +
+                        "No Ship was shot! Try Again..."+
+                        "        </p>\n";
     }
 
     public void shipEShot(int row, int col) {
@@ -203,6 +214,7 @@ public class BattleShip {
         grid[row][col] = '2';
 
         numberofE++;
+        counterE--;
         totalNumberOfBlocks--;
         hits++;
         totalShots++;
@@ -217,11 +229,17 @@ public class BattleShip {
             gc.setTableBoatInfoContent10();
         }
 
-        if (numberofE == 0) {
-            GLOBAL_Notification =  "Ship E was shot!\n Ship E has sunk!";
+        if (numberofE == 9) {
+            GLOBAL_Notification =
+                    "        <p style=\"color: red;\" id=\"message\">" +
+                            "Ship E was shot!\n Ship E has sunk!"+
+                    "        </p>\n";
         }
         else {
-            GLOBAL_Notification =  "Ship E was shot!\n Only " + numberofE + " blocks left for Ship E to sink!";
+            GLOBAL_Notification =
+                    "        <p style=\"color: white;\" id=\"message\">" +
+                            "Ship E was shot!\n Only " + counterE + " block(s) left for Ship E to sink!"+
+                            "        </p>\n";
         }
     }
 
@@ -230,6 +248,7 @@ public class BattleShip {
         grid[row][col] = '2';
 
         numberofD++;
+        counterD--;
         totalNumberOfBlocks--;
 
         hits++;
@@ -245,11 +264,17 @@ public class BattleShip {
             gc.setTableBoatInfoContent10();
         }
 
-        if (numberofD == 0) {
-            GLOBAL_Notification =  "Ship D was shot!\n Ship D has sunk!";
+        if (numberofD == 7) {
+            GLOBAL_Notification =
+                    "        <p style=\"color: red;\" id=\"message\">" +
+                            "Ship D was shot!\n Ship D has sunk!"+
+                    "        </p>\n";
         }
         else {
-            GLOBAL_Notification =  "Ship D was shot!\n Only " + numberofD + " blocks left for Ship D to sink!";
+            GLOBAL_Notification =
+                    "        <p style=\"color: white;\" id=\"message\">" +
+                            "Ship D was shot!\n Only " + counterD + " block(s) left for Ship D to sink!"+
+                            "        </p>\n";
         }
     }
 
@@ -258,6 +283,7 @@ public class BattleShip {
         grid[row][col] = '2';
 
         numberofC++;
+        counterC--;
         totalNumberOfBlocks--;
 
         hits++;
@@ -273,11 +299,17 @@ public class BattleShip {
             gc.setTableBoatInfoContent10();
         }
 
-        if (numberofC == 0) {
-            GLOBAL_Notification =  "Ship C was shot!\n Ship C has sunk!";
+        if (numberofC == 6) {
+            GLOBAL_Notification =
+                    "        <p style=\"color: red;\" id=\"message\">" +
+                            "Ship C was shot!\n Ship C has sunk!"+
+                    "        </p>\n";
         }
         else {
-            GLOBAL_Notification =  "Ship C was shot!\n Only " + numberofC + " blocks left for Ship C to sink!";
+            GLOBAL_Notification =
+                    "        <p style=\"color: white;\" id=\"message\">" +
+                            "Ship C was shot!\n Only " + counterC + " block(s) left for Ship C to sink!"+
+                            "        </p>\n";
         }
     }
 
@@ -286,6 +318,7 @@ public class BattleShip {
         grid[row][col] = '2';
 
         numberofB++;
+        counterB--;
         totalNumberOfBlocks--;
 
         hits++;
@@ -301,11 +334,18 @@ public class BattleShip {
             gc.setTableBoatInfoContent10();
         }
 
-        if (numberofB == 0) {
-            GLOBAL_Notification =  "Ship B was shot!\n Ship B has sunk!";
+        if (numberofB == 2) {
+
+            GLOBAL_Notification =
+                    "        <p style=\"color: red;\" id=\"message\">" +
+                    "Ship B was shot!\n Ship B has sunk!"+
+                    "        </p>\n";
         }
         else {
-            GLOBAL_Notification =  "Ship B was shot!\n Only " + numberofB + " blocks left for Ship B to sink!";
+            GLOBAL_Notification =
+                    "        <p style=\"color: white;\" id=\"message\">" +
+                            "Ship B was shot!\n Only " + counterB + " block(s) left for Ship B to sink!"+
+                            "        </p>\n";
         }
     }
 
@@ -314,6 +354,7 @@ public class BattleShip {
         grid[row][col] = '2';
 
         numberofA++;
+        counterA--;
         totalNumberOfBlocks--;
 
         hits++;
@@ -329,11 +370,17 @@ public class BattleShip {
             gc.setTableBoatInfoContent10();
         }
 
-        if (numberofA == 0) {
-            GLOBAL_Notification = "Ship A was shot!\n Ship A has sunk!";
+        if (numberofA == 5) {
+            GLOBAL_Notification =
+                    "        <p style=\"color: red;\" id=\"message\">" +
+                            "Ship A was shot!\n Ship A has sunk!"+
+                            "        </p>\n";
         }
         else {
-            GLOBAL_Notification = "Ship A was shot!\n Only " + numberofA + " blocks left for Ship A to sink!";
+            GLOBAL_Notification =
+                    "        <p style=\"color: white;\" id=\"message\">" +
+                            "Ship A was shot!\n Only " + counterA + " block(s) left for Ship A to sink!"+
+                            "        </p>\n";
         }
 
     }

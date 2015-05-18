@@ -85,9 +85,7 @@ public class GridContent {
         return "<div class=\"container-fluid text-center\" style=\"background-color: rgba(0,0,0,0.7)\">\n" +
                 "    <div id=\"notifications\">\n" +
                 "        <h2 style=\"color: white; text-shadow: 3px 1px 3px #09b6ff\">Notifications</h2>\n" +
-                "        <p style=\"color: white;\" id=\"message\">" +
-                            game.GLOBAL_Notification +
-                "        </p>\n" +
+                        game.GLOBAL_Notification+
                 "    </div>\n" +
                 "</div>\n";
     }
