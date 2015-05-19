@@ -55,7 +55,7 @@ public class GridContent {
                 "    <!--Javascript-->\n" +
                 "    <script src=\"Frameworks/jquery-1.11.3.min.js\"></script>\n" +
                 "    <script src=\"Frameworks/Bootstrap/js/bootstrap.min.js\"></script>\n" +
-                "    <script src=\"ShipInformation/animation.js\"></script>\n" +
+                "    <script src=\"ShipInformation/animations.js\"></script>\n" +
                 "\n" +
                 "</head>\n" +
                 "<body style=\"background-image: url('Images/WorldMap.jpg'); background-size: cover;\">\n" +
@@ -353,10 +353,14 @@ public class GridContent {
 
     private String getWinner(){
         return "<div class=\"container-fluid\" id=\"Text\">" +
-                "   <div class=\"text-center\" style=\"background-color: rgba(0,0,0, 0.7)\">" +
-                "       <h1 style=\"color: white; text-shadow: 3px 1px 3px #09b6ff;\">Congratulations</h1>" +
-                "       <p style=\"color: white;\">You have overthrown the enemy and the sea is now yours. Go forth and attack more ships and make even more of the ocean yours. Keep on going like this and you will be noted in history as the best battleship commander.</p>" +
-                "   </div>" +
+                "   <div class=\"row\">" +
+                "       <div class=\"col-md-4\"></div>" +
+                "       <div class=\"col-md-4 text-center\" style=\"background-color: rgba(0,0,0, 0.7); margin-top: 12%;\">" +
+                "           <h1 style=\"color: white; text-shadow: 3px 1px 3px #09b6ff;\">Congratulations</h1>" +
+                "           <p style=\"color: white;\">You have overthrown the enemy and the sea is now yours. Go forth and attack more ships and make even more of the ocean yours. Keep on going like this and you will be noted in history as the best battleship commander.</p>" +
+                "           <i class=\"fa fa-ship fa-5x\" style=\"color:white;\"></i>" +
+                "       </div>" +
+                "       <div class=\"col-md-4\"></div>" +
                 "</div>";
     }
 }
