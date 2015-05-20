@@ -11,6 +11,7 @@ import java.io.IOException;
  */
 public class BattleShip {
 
+    private String playerName;
     private char grid[][];
     private static int gridSize = 0;
     private static int puzzleNr = 0;
@@ -107,6 +108,11 @@ public class BattleShip {
         numberofC = 0;
         numberofB = 0;
         numberofA = 0;
+        counterA = 5;
+        counterB = 2;
+        counterC = 6;
+        counterD = 7;
+        counterE = 9;
         counter = 0;
         GLOBAL_Notification = "";
     }
@@ -427,5 +433,13 @@ public class BattleShip {
 
     public int getCounterE() {
         return counterE;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
     }
 }

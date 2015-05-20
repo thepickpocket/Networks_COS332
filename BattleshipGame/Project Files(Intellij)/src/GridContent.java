@@ -37,6 +37,7 @@ public class GridContent {
         else
             content = getGameFileHeader() + getGridContent(grid, size) + getStatsContent() + getTableBoatInfoContent() + getGameFileFooter();
 
+        game.hasWon = false;
         return  content;
     }
 
@@ -89,7 +90,7 @@ public class GridContent {
     private String getNotifications() {
         return "<div class=\"container-fluid text-center\" style=\"background-color: rgba(0,0,0,0.7)\">\n" +
                 "    <div id=\"notifications\">\n" +
-                "        <h2 style=\"color: white; text-shadow: 3px 1px 3px #09b6ff\">Notifications</h2>\n" +
+                "        <h2 style=\"color: white; text-shadow: 3px 1px 3px #09b6ff\"> Hi, "+game.getPlayerName()+"!</h2>\n" +
                         game.GLOBAL_Notification+
                 "    </div>\n" +
                 "</div>\n";
