@@ -8,6 +8,7 @@ import java.util.HashMap;
  */
 public class GridContent {
 
+    private String[] ranking = new String[] {"Leutenant", "Commander", "Captain", "Admiral"};
     private HashMap<Integer, Character> map_Indexes;
     private String tableBoatInfoContent = "";
 
@@ -353,12 +354,21 @@ public class GridContent {
     }
 
     private String getWinner(){
+        String currentRanking;
+        if (game.getAccuracy() >= 90)
+            currentRanking = ranking[3];
+        else if (game.getAccuracy() >= 70)
+            currentRanking = ranking[2];
+        else if (game.getAccuracy() >= 40)
+            currentRanking = ranking[1];
+        else
+            currentRanking = ranking[0];
         return "<div class=\"container-fluid\" id=\"Text\" hidden>" +
                 "   <div class=\"row\">" +
                 "       <div class=\"col-md-4\"></div>" +
                 "       <div class=\"col-md-4 text-center\" style=\"background-color: rgba(0,0,0, 0.7); margin-top: 12%;\">" +
-                "           <h1 style=\"color: white; text-shadow: 3px 1px 3px #09b6ff;\">Congratulations</h1>" +
-                "           <p style=\"color: white;\">You have overthrown the enemy and the sea is now yours. Go forth and attack more ships and make even more of the ocean yours. Keep on going like this and you will be noted in history as the best battleship commander.</p>" +
+                "           <h1 style=\"color: white; text-shadow: 3px 1px 3px #09b6ff;\">Congratulations <br />"+ currentRanking + " " + game.getPlayerName() + "</h1>" +
+                "           <p style=\"color: white;\">You have overthrown the enemy and the sea is now yours. Go forth and attack more ships and make even more of the ocean yours. Keep on going like this and you will be noted in history as the best battleship " + currentRanking +".</p>" +
                 "           <i class=\"fa fa-ship fa-5x\" style=\"color:white;\"></i><br /><br />" +
                 "           <a href=\"index.html\"><button class='btn btn-default'>New Game</button></a>" +
                 "       </div>" +
