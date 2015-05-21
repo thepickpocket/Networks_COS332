@@ -1,3 +1,3 @@
 $(document).ready(function(){
-    $('#Text').show("slow", "swing");
+    $('#Text').fadeIn(1000);
 })
