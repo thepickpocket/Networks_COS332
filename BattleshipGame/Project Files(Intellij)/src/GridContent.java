@@ -240,7 +240,7 @@ public class GridContent {
                 "                    </td>\n" +
                 "                </tr>" +
                 "                </tbody>\n" +
-                "            </table></div></div>");
+                "            </table></div></div></div>");
         game.counter++;
     }
 
