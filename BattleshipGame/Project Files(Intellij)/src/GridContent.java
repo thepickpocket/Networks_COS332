@@ -341,10 +341,10 @@ public class GridContent {
     }
 
     private String getWinner(){
-        String currentRanking;
-        if (game.getAccuracy() >= 90)
+        String currentRanking = "";
+        if (game.getAccuracy() >= 80)
             currentRanking = ranking[3];
-        else if (game.getAccuracy() >= 70)
+        else if (game.getAccuracy() >= 60)
             currentRanking = ranking[2];
         else if (game.getAccuracy() >= 40)
             currentRanking = ranking[1];

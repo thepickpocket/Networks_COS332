@@ -49,6 +49,8 @@ public class BattleShip {
     }
 
     private BattleShip() {
+        totalShots = 0;
+        hits = 0;
         System.out.println("Game Initialized!");
         gc = new GridContent(this);
     }
