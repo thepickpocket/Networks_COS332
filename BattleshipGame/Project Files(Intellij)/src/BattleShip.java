@@ -2,6 +2,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * Vivian Venter (13238435) & Jason Evans (13032608)
@@ -11,6 +12,7 @@ import java.io.IOException;
  */
 public class BattleShip {
 
+    Random rand = new Random();
     private String playerName;
     private char grid[][];
     private static int gridSize = 0;
@@ -57,7 +59,7 @@ public class BattleShip {
         clearData();
 
         int size = getGridSize();
-        int gridNr = getPuzzleNr();
+        int gridNr = randomGrid(1, 6);
 
 
         //Since each block will consist of a certain number of blocks, this is where we initialize the number of blocks per ship
@@ -79,6 +81,7 @@ public class BattleShip {
         String line;
         char ch;
         int rowC = 0;
+        System.out.println("Grid Number: " + gridNr);
         String gridFilename = "GameFiles/grid"+size+"_"+gridNr+".txt";
         File gridFile = new File(gridFilename);
         FileInputStream in = new FileInputStream(gridFile);
@@ -96,6 +99,12 @@ public class BattleShip {
 
         printGrid();
 
+    }
+
+    public int randomGrid(int min, int max) {
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
     }
 
     private void clearData() {

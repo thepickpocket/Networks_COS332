@@ -79,18 +79,13 @@ public class HTTPServer extends Thread{
 							}
 						}
 						game.setPlayerName(playerNew);
-						Query = Query.substring(Query.indexOf('&')+1,Query.length());
-						//System.out.println(playerPart + " " + game.getPlayerName() + "\n" + Query );
 
-						gridPart = Query.substring(0,Query.indexOf('&'));
+						gridPart = Query.substring(Query.indexOf('&')+1,Query.length());
 						game.setGridSize(Integer.parseInt(gridPart.substring(5,gridPart.indexOf('x'))));
 						Query = Query.substring(Query.indexOf('&')+1,Query.length());
 						//System.out.println(gridPart + " " + game.getGridSize() + "\n" + Query);
 
-						game.setPuzzleNr(Integer.parseInt(Query.substring(Query.indexOf('+') + 1, Query.length())));
-
 						System.out.println(game.getPlayerName()+ " Server setting the size of the grid to " + game.getGridSize() + " by " + game.getGridSize());
-						System.out.println("Puzzle number is: " + game.getPuzzleNr());
 
 						game.setGrid();
 						game.initializeGrid();
@@ -121,18 +116,13 @@ public class HTTPServer extends Thread{
 							}
 						}
 						game.setPlayerName(playerNew);
-						Query = Query.substring(Query.indexOf('&')+1,Query.length());
-						//System.out.println(playerPart + " " + game.getPlayerName() + "\n" + Query );
 
-						gridPart = Query.substring(0,Query.indexOf('&'));
+						gridPart = Query.substring(Query.indexOf('&')+1,Query.length());
 						game.setGridSize(Integer.parseInt(gridPart.substring(5, gridPart.indexOf('x'))));
 						Query = Query.substring(Query.indexOf('&')+1,Query.length());
 						//System.out.println(gridPart + " " + game.getGridSize() + "\n" + Query);
 
-						game.setPuzzleNr(Integer.parseInt(Query.substring(Query.indexOf('+') + 1, Query.length())));
-
 						System.out.println(game.getPlayerName()+ " Server setting the size of the grid to " + game.getGridSize() + " by " + game.getGridSize());
-						System.out.println("Puzzle number is: " + game.getPuzzleNr());
 
 						game.setGrid();
 						game.initializeGrid();

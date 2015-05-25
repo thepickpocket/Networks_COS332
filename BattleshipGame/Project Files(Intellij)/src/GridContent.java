@@ -207,19 +207,6 @@ public class GridContent {
         String lineB = "                <tr>\n";
         String lineC = "                <tr>\n";
 
-        /*if (game.counter > 0) {
-            if (game.getCounterA() == 0) {
-                lineA = "                <tr style=\"color: red;\">\n";
-            }
-
-            if (game.getCounterB() == 0) {
-                lineB = "                <tr style=\"color: red;\">\n";
-            }
-
-            if (game.getCounterC() == 0) {
-                lineC = "                <tr style=\"color: red;\">\n";
-            }
-        }*/
         setTableBoatInfoContent(
                 "<div class=\"text-center\">"+
                 "<table class=\"table\" style=\"color: white;\">\n" +
